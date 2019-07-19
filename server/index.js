@@ -8,12 +8,12 @@ const app = express()
 const bodyParser = require("body-parser")
 const ipInfo = require("ipinfo")
 const cities = require("all-the-cities")
+const jwt = require('jsonwebtoken')
 
 const connection = mysql.createConnection({
 	host: "localhost",
 	user: "root",
-	port: 3307,
-	password: "tpompon",
+	password: "",
 	database: "matcha",
 	multipleStatements: true,
 })
@@ -72,18 +72,61 @@ const uniqueId = () => {
 	return `${Date.now()}${Math.floor(Math.random() * 10000)}`
 }
 
+const jwtKey = 'my_secret_key'
+const jwtExpirySeconds = 300
+
 connection.connect(err => {
 	if (err) {
 		return err
 	}
 })
 
-app.use(cors())
+app.use(cors({ credentials: true, origin: "http://localhost:3000" }))
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json({ limit: "50mb" }))
 
 app.get("/", (req, res) => {
 	res.send("hello from the products server")
+})
+
+app.get("/cookieDataUser", (req, res) => {
+	// We can obtain the session token from the requests cookies, which come with every request
+	let array = req.headers.cookie
+	// if the cookie is not set, return an unauthorized error
+    if (array === undefined) {
+		return res.json({ dataUser: undefined })
+	}
+	array = array.split("=")
+	const token = array[1]
+    let payload
+    try {
+      // Parse the JWT string and store the result in `payload`.
+      // Note that we are passing the key in this method as well. This method will throw an error
+      // if the token is invalid (if it has expired according to the expiry time we set on sign in),
+      // or if the signature does not match
+      payload = jwt.verify(token, jwtKey)
+    } catch (e) {
+      if (e instanceof jwt.JsonWebTokenError) {
+		// if the error thrown is because the JWT is unauthorized, return a 401 error
+        return res.json({ dataUser: undefined })
+	  }
+		// otherwise, return a bad request error
+		return res.status(400).end()
+	}
+    // Finally, return the welcome message to the user, along with their
+    // username given in the token
+	const sql = `SELECT p.*, u.age, u.biography, u.listInterest, u.gender, u.orientation, u.userLocation, u.userAddress, u.userApproximateLocation, u.userApproximateCity, u.populareScore FROM profil p INNER JOIN userinfos u ON p.userName=u.userName WHERE p.userName='${payload.name}'`
+	connection.query(sql, (error, results) => {
+		if (error) {
+			return res.send(error)
+		} else {
+			if (results.length > 0) {
+				return res.json({ dataUser: results })
+			} else {
+				return res.json({ dataUser: 0 })
+			}
+		}
+	})
 })
 
 app.get("/users", (req, res) => {
@@ -104,7 +147,21 @@ app.post("/users/checkLogin", (req, res) => {
 		if (error) {
 			return res.send(error)
 		} else {
-			return res.json({ dataUser: results })
+			if (results.length > 0) {
+				const token = jwt.sign({ name, hashPassword }, jwtKey, {
+					algorithm: "HS256",
+					expiresIn: "1h",
+				})
+				res.cookie("token", token)
+			}
+			const getDataUser = `SELECT p.*, u.age, u.biography, u.listInterest, u.gender, u.orientation, u.userLocation, u.userAddress, u.userApproximateLocation, u.userApproximateCity, u.populareScore FROM profil p INNER JOIN userinfos u ON p.userName=u.userName WHERE p.userName='${name}'`
+			connection.query(getDataUser, (error, results) => {
+				if (error) {
+					return res.send(error)
+				} else {
+					return res.json({ dataUser: results })
+				}
+			})
 		}
 	})
 })
@@ -534,7 +591,11 @@ app.post("/users/getNotificationsNoRead", (req, res) => {
 		if (error) {
 			return res.send(error)
 		} else {
-			return res.json({ notifications: results })
+			const array = []
+			results.forEach((notification) => {
+				array.push(notification.notificationType)
+			})
+			return res.json({ notifications: array })
 		}
 	})
 })
@@ -577,6 +638,7 @@ app.post("/users/userIsLog", (req, res) => {
 
 app.post("/users/userIsDelog", (req, res) => {
 	const { userName } = req.body
+	res.clearCookie("token")
 	const setUserIsDelog = `UPDATE inlineuser SET inline=0, date=NOW() WHERE user='${userName}'`
 	connection.query(setUserIsDelog, (error, results) => {
 		if (error) {

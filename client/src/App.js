@@ -1,9 +1,21 @@
 import React from "react"
+import { BrowserRouter, Route, Switch } from "react-router-dom"
+import UserProvider from "store/UserProvider"
 
-import Path from "./Path"
+import Error from "./components/Error"
+
+import LoginAccount from "./Scene/LoginAccount"
+import LoadingData from "./Scene/LoadingData"
 
 const App = () => (
-    <Path />
+    <UserProvider>
+        <BrowserRouter>
+            <Switch>
+                <Route exact path="/LoginAccount" component={ LoginAccount } />
+                <Route component={ LoadingData } />
+            </Switch>
+        </BrowserRouter>
+    </UserProvider>
 )
 
 export default App

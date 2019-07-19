@@ -8,6 +8,7 @@ const optionsFetch = (dataBody) => {
             Accept: "application/json",
             "Content-Type": "application/json",
         },
+        credentials: "include",
         method: "POST",
         body: JSON.stringify(dataBody),
     }
@@ -81,7 +82,7 @@ export const checkLogIn = (inputArray) => {
 export const checkKey = (name, key) => {
     return fetch(`http://localhost:4000/users/confirmIdendity`, optionsFetch({ key, name }))
         .then((response) => response.json())
-        .then((responseJson) => { console.log(responseJson);return responseJson })
+        .then((responseJson) => responseJson)
         .catch((error) => console.log(error))
 }
 
@@ -229,7 +230,7 @@ export const userIsLog = (userName) => {
 }
 
 export const userIsDeLog = (userName) => {
-    fetch("http://localhost:4000/users/userIsDelog", optionsFetch({ userName }))
+    return fetch("http://localhost:4000/users/userIsDelog", optionsFetch({ userName }))
 }
 
 export const reportingFakeProfil = (profilName) => {
@@ -296,6 +297,16 @@ export const calculDistance = (lat1, lon1, lat2, lon2) => {
         distance = distance * 1.609344
         return distance
     }
+}
+
+export const getDataFromCookie = () => {
+    return fetch("http://localhost:4000/cookieDataUser", {
+        credentials: "include",
+        method: "GET",
+    })
+        .then((response) => response.json())
+        .then(responseJson => responseJson)
+        .catch(error => console.log(error))
 }
 
 /*
