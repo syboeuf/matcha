@@ -2,8 +2,6 @@ import React from "react"
 import { BrowserRouter, Route, Switch } from "react-router-dom"
 import UserProvider from "store/UserProvider"
 
-import Error from "./components/Error"
-
 import LoginAccount from "./Scene/LoginAccount"
 import LoadingData from "./Scene/LoadingData"
 

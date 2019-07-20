@@ -4,8 +4,6 @@ import { withRouter } from "react-router-dom"
 import CollectionView from "./components/CollectionView"
 import InfosPerson from "./components/InfosPerson"
 
-import { Container, Row, Col } from "reactstrap"
-
 import { blockList, getAllOtherDataOfProfil, visitProfil, blockProfil } from "utils/fileProvider"
 import { UserConsumer } from "store/UserProvider"
 
@@ -62,24 +60,18 @@ class Discover extends Component {
             return <div />
         }
         return (
-            <Container fluid style={ { width: "80%" } }>
-                <Row>
-                    <Col md="7">
-                        <CollectionView
-                            dataUser={ dataUser }
-                            listPerson={ listPerson }
-                            chooseDataPerson={ this.chooseDataPerson }
-                        />
-                    </Col>
-                    <Col md="3">
-                        <InfosPerson
-                            dataUser={ dataUser }
-                            dataPerson={ dataPerson }
-                            getListUser={ this.getListUser }
-                        />
-                    </Col>
-                </Row>
-            </Container>
+            <div>
+                <CollectionView
+                    dataUser={ dataUser }
+                    listPerson={ listPerson }
+                    chooseDataPerson={ this.chooseDataPerson }
+                />
+                <InfosPerson
+                    dataUser={ dataUser }
+                    dataPerson={ dataPerson }
+                    getListUser={ this.getListUser }
+                />
+            </div>
 
         )
     }

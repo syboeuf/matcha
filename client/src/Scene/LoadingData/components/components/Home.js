@@ -16,8 +16,6 @@ class Home extends Component {
     }
 
     render() {
-        const { dataUser } = this.context
-        const { history } = this.props
         return (
             <div>Home</div>
         )

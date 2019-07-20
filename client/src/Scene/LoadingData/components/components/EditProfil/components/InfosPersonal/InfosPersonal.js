@@ -85,19 +85,13 @@ class InfosPersonal extends Component {
                     userId={ id }
                     userName={ userName }
                 />
-                {
-                    /*
-
-                    <div style={ { width: "100%", height: 200 } }>
-                        <Map
-                            userName={ userName }
-                            userLocation={ userLocation }
-                            userApproximateLocation={ userApproximateLocation }
-                        />
-                    </div>
-
-                    */
-                }
+                <div style={ { width: "100%", height: 200 } }>
+                    <Map
+                        userName={ userName }
+                        userLocation={ userLocation }
+                        userApproximateLocation={ userApproximateLocation }
+                    />
+                </div>
                 <button onClick={ () => this.onClick(infosPersonalUser, userName) }>Save</button>
             </div>
         )

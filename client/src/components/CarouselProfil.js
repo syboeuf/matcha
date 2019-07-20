@@ -1,106 +1,212 @@
-import React, { Component } from 'react';
-import {
-  Carousel,
-  CarouselItem,
-  CarouselControl,
-  CarouselIndicators,
-  CarouselCaption
-} from 'reactstrap';
+import React, { Component } from "react"
 
-class CarouselProfil extends Component {
-  constructor(props) {
-	super(props);
-	this.state = {
-		activeIndex: 0,
-		items: [],
-	}
-	this.next = this.next.bind(this);
-	this.previous = this.previous.bind(this);
-	this.goToIndex = this.goToIndex.bind(this);
-	this.onExiting = this.onExiting.bind(this);
-	this.onExited = this.onExited.bind(this);
-  }
+import { FaAngleLeft, FaAngleRight } from "react-icons/fa"
 
-  componentWillMount() {
-	  const { pictureProfil } = this.props
-	  const arrayPicture = []
-	  pictureProfil.forEach((picture, index) => {
-		console.log(`../../public/imageProfil/${picture.userId}/${picture.picture}`)
-		arrayPicture.push({ src: `public/imageProfil/${picture.userId}/${picture.picture}`, id: index, altText: `PictureProfil${index}`, caption: `PictureProfil${index}` })
-	  })
-	  this.setState({ items: arrayPicture })
-  }
-
-  onExiting() {
-	this.animating = true;
-  }
-
-  onExited() {
-	this.animating = false;
-  }
-
-  next() {
-	if (this.animating) return;
-	const { items } = this.state
-	const nextIndex = this.state.activeIndex === items.length - 1 ? 0 : this.state.activeIndex + 1;
-	this.setState({ activeIndex: nextIndex });
-  }
-
-  previous() {
-	if (this.animating) return;
-	const { items } = this.state
-	const nextIndex = this.state.activeIndex === 0 ? items.length - 1 : this.state.activeIndex - 1;
-	this.setState({ activeIndex: nextIndex });
-  }
-
-  goToIndex(newIndex) {
-	if (this.animating) return;
-	this.setState({ activeIndex: newIndex });
-  }
-
-  render() {
-	const { activeIndex, items } = this.state;
-	if (items.length === 0) {
-		return <div />
-	}
-	const slides = items.map((item) => {
-	  return (
-		<CarouselItem
-		  className="custom-tag"
-		  tag="div"
-		  key={item.id}
-		  onExiting={this.onExiting}
-		  onExited={this.onExited}
-		>
-		  <CarouselCaption className="text-danger" captionText={item.caption} captionHeader={item.caption} />
-		</CarouselItem>
-	  );
-	});
-
-	return (
-	  <div>
-		<style>
-		  {
-			`.custom-tag {
-				max-width: 100%;
-				height: 500px;
-				background: black;
-			  }`
-		  }
-		</style>
-		<Carousel
-		  activeIndex={activeIndex}
-		  next={this.next}
-		  previous={this.previous}
-		>
-		  <CarouselIndicators items={items} activeIndex={activeIndex} onClickHandler={this.goToIndex} />
-		  {slides}
-		  <CarouselControl direction="prev" directionText="Previous" onClickHandler={this.previous} />
-		  <CarouselControl direction="next" directionText="Next" onClickHandler={this.next} />
-		</Carousel>
-	  </div>
-	);
-  }
+const styles = {
+	container: {
+		position: "relative",
+		width: 200,
+		height: 200,
+		margin: "auto",
+	},
+	picture: {
+		width: 200,
+    	height: 200,
+    	opacity: 0,
+    	position: "absolute",
+    	top: 0,
+    	margin: "auto",
+    	zIndex: 100,
+    	transition: "transform .5s, opacity .5s, z-index .5s",
+	},
+	buttonPrevNext: {
+		width: "15%",
+		position: "absolute",
+		zIndex: 100000,
+		top: "50%",
+	},
+	miniButton: {
+		position: "absolute",
+		bottom: 0,
+		zIndex: 1000,
+		display: "flex",
+		justifyContent: "space-around",
+		width: "100%",
+	},
+	customButton: { width: "15%" },
 }
 
-export default CarouselProfil
+class App extends Component {
+
+	constructor(props) {
+    	super(props)
+    	this.state = {
+    		prev: props.pictureProfil.length - 1,
+    		next: 1,
+    		active: 0,
+		}
+  	}
+
+	next = () => {
+		const { pictureProfil } = this.props
+    	const { active } = this.state
+    	if (active === 0) {
+      		this.setState({
+        		prev: active,
+        		next: active + 2,
+        		active: active + 1,
+      		})
+    	} else if (active === pictureProfil.length - 1) {
+      		this.setState({
+        		prev: pictureProfil.length - 1,
+        		next: 1,
+        		active: 0,
+      		})
+    	} else {
+      		this.setState({
+        		prev: active,
+        		next: (active + 1 === pictureProfil.length - 1) ? 0 : active + 2,
+        		active: active + 1,
+      		})
+    	}
+  	}
+
+  	prev = () => {
+		const { pictureProfil } = this.props
+    	const { active } = this.state
+    	if (active === 0) {
+      		this.setState({
+        		prev: pictureProfil.length - 2,
+        		next: 0,
+        		active: pictureProfil.length - 1,
+      		})
+    	} else if (active === pictureProfil.length - 1) {
+      		this.setState({
+        		prev: active - 2,
+        		next: pictureProfil.length - 1,
+        		active: pictureProfil.length - 2,
+      		})
+    	} else {
+      		this.setState({
+        		prev: (active - 1 === 0) ? pictureProfil.length - 1 : active - 2,
+        		next: active,
+        		active: active - 1,
+      		})
+    	}
+	}
+	  
+	goToTheIndex = (index) => {
+		const { pictureProfil } = this.props
+		if (index === 0) {
+			this.setState({
+				prev: pictureProfil.length - 1,
+        		next: index + 1,
+        		active: index,
+			})
+		} else if (index === pictureProfil.length - 1) {
+			this.setState({
+				prev: index - 1,
+        		next: 0,
+        		active: index,
+			})
+		} else {
+			this.setState({
+				prev: index - 1,
+        		next: index + 1,
+        		active: index,
+			})
+		}
+	}
+
+  	render() {
+	  	const { pictureProfil } = this.props
+		const { prev, active, next } = this.state
+		if (pictureProfil === undefined) {
+			return <div />
+		}
+		const arrayButtonIndex = []
+		pictureProfil.forEach((picture, index) => {
+			arrayButtonIndex.push(index)
+		})
+    	return (
+			<div style={ styles.container }>
+				<div>
+					{
+						pictureProfil.map((picture, index) => {
+							let newStyles = {}
+							if (index === prev) {
+								newStyles = {
+									zIndex: 800,
+									transform: "translateX(-100%)",
+								}
+							}
+							if (index === active) {
+								newStyles = {
+									opacity: 1,
+									position: "relative",
+									zIndex: 900,
+								}
+							}
+							if (index === next) {
+								newStyles = {
+									zIndex: 800,
+									transform: "translateX(100%)",
+								}
+							}
+							return (
+								<div key={ `picture-${index}` }>
+									<img
+										src={ process.env.PUBLIC_URL + `/imageProfil/${picture.userId}/${picture.picture}` }
+										alt={ `${index}` }
+										style={
+											{
+												...styles.picture,
+												...newStyles,
+											}
+										}
+									/>
+								</div>
+							)
+						})
+					}
+				</div>	
+				<div
+					onClick={ () => this.prev() }
+					style={
+						{
+							...styles.buttonPrevNext,
+							left: 0,
+						}
+					}
+				>
+					<FaAngleLeft />
+				</div>
+				<div
+					onClick={ () => this.next() }
+					style={
+						{
+							...styles.buttonPrevNext,
+							right: 0,
+						}
+					}
+				>
+					<FaAngleRight />
+				</div>
+				<div style={ styles.miniButton }>
+					{
+						arrayButtonIndex.map((i) => (
+							<button
+								key={ `picture-${i}` }
+								style={ styles.customButton }
+								onClick={ () => this.goToTheIndex(i) }
+							/>
+						))
+					}
+				</div>
+			</div>
+		)
+  	}
+
+}
+
+export default App

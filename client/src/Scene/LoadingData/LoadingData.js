@@ -28,7 +28,6 @@ class LoadingData extends Component {
         getDataFromCookie()
             .then((data) => {
                 const { history } = this.props
-                console.log(data)
                 if (Object.keys(data).length === 0) {
                     history.push("/LoginAccount")
                 } else {

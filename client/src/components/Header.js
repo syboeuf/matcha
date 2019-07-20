@@ -36,9 +36,12 @@ class Header extends React.Component {
 
     componentWillMount() {
         const { dataUser } = this.context
-        console.log(dataUser)
         getImageProfil(dataUser.id)
-            .then((response) => this.setState({ profilePic: response.imageProfil[0].picture }))
+            .then((response) => {
+                if (response.imageProfil.length > 0) {
+                    this.setState({ profilePic: response.imageProfil[0].picture })
+                }
+            })
             .catch((error) => console.error(error))
     }
 
@@ -93,7 +96,17 @@ class Header extends React.Component {
                         ))
                 }
                 <Menu
-                    title={ <img src={ process.env.PUBLIC_URL + `/imageProfil/${dataUser.id}/${profilePic}` } alt="picProfile" style={ { width: 30 } } /> }
+                    title={
+                        <img
+                            src={
+                                (profilePic !== "")
+                                    ? process.env.PUBLIC_URL + `/imageProfil/${dataUser.id}/${profilePic}`
+                                    : process.env.PUBLIC_URL + "noImage.png"
+                            }
+                            alt="picProfile"
+                            style={ { width: 30 } }
+                        />
+                    }
                     array={ newMenuProfil }
                 />            
             </div>

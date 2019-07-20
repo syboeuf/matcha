@@ -22,8 +22,8 @@ class ConfirmKey extends Component {
             .then((response) => {
                 if (response.dataUser !== undefined && response.dataUser.userName === userName) {
                     userIsLog(userName)
-                    this.context.setNewDataUser(response)
-                    history.push("/", { dataUser: response.dataUser })
+                    this.context.setNewDataUser(response.dataUser)
+                    history.push("/", { dataUser: { ...response.dataUser } })
                 } else if (response.results !== undefined && response.results === false) {
                     alert("Wrong key")
                 }

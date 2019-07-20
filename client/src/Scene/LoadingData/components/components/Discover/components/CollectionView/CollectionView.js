@@ -5,7 +5,16 @@ import Form from "components/Form"
 
 import { calculDistance } from "utils/fileProvider"
 
-import { Container, Row, Col, Button } from "reactstrap"
+import Container from "@material-ui/core/Container"
+import Grid from "@material-ui/core/Grid"
+import { withStyles } from "@material-ui/core/styles"
+
+const styles = theme => ({
+    cardGrid: {
+        paddingTop: theme.spacing(8),
+        paddingBottom: theme.spacing(8),
+    },
+})
 
 const listTagArray = [
     "#Movie",
@@ -202,55 +211,46 @@ class CollectionView extends Component {
     }
 
     render() {
-        const { chooseDataPerson, listPerson } = this.props
+        const { chooseDataPerson, listPerson, classes } = this.props
         const {
             listProfil, listTag, age, distance, score,
         } = this.state
         return (
-            <Container fluid style={{border: "1px solid red"}}>
-                <Row>
-                    <Col md="3">
-                        <Form inputArray={ age } onChangeValue={ this.onChangeAge } />
-                    </Col>
-                    <Col md="3">
-                        <Form inputArray={ distance } onChangeValue={ this.onChangeDistance } />
-                    </Col>
-                    <Col md="3">
-                        <Form inputArray={ score } onChangeValue={ this.onChangeScore } />                 
-                    </Col>
-                    <Col md="3">
-                        <button onClick={ () => this.filterList(listPerson) }>Filter populare score</button>                    
-                    </Col>
-                </Row>
-                <Row>
+            <div>
+                <div>
+                    <Form inputArray={ age } onChangeValue={ this.onChangeAge } />
+                    <Form inputArray={ distance } onChangeValue={ this.onChangeDistance } />
+                    <Form inputArray={ score } onChangeValue={ this.onChangeScore } />
+                    <button onClick={ () => this.filterList(listPerson) }>Filter populare score</button>                    
                     {
                         listTagArray.map((tag) => (
-                            <Button
+                            <button
                                 key={ `Btn-${tag}` }
                                 onClick={ () => this.chooseTag(tag) }
                                 style={ { marginRight: 5, color: (listTag.indexOf(tag) !== -1) ? "red" : null } }
                             >
                                 { tag }
-                            </Button>
+                            </button>
                         ))
                     }
-                </Row>
-                <Row>
-                    {
-                        listProfil.map((data) => (
-                            <Col key={ `PreviewProfil-${data.id}` } md="3">
+                </div>
+                <Container className={ classes.cardGrid } maxWidth="lg">
+                    <Grid container spacing={ 4 }>
+                        {
+                            listProfil.map((data) => (
                                 <PreviewProfil
-                                    data={ data }
-                                    chooseDataPerson={ chooseDataPerson }
+                                        key={ `PreviewProfil-${data.id}` }
+                                        data={ data }
+                                        chooseDataPerson={ chooseDataPerson }
                                 />
-                            </Col>
-                        ))
-                    }               
-                </Row>
-            </Container>
+                            ))
+                        }
+                    </Grid>
+                </Container>
+            </div>
         )
     }
 
 }
 
-export default CollectionView
+export default withStyles(styles)(CollectionView)

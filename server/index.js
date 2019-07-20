@@ -297,6 +297,11 @@ app.post("/users/confirmIdendity", (req, res) => {
 					if (error) {
 						return res.send(error)
 					} else {
+						const token = jwt.sign({ name: results[2][0].userName, hashPassword: results[2][0].password }, jwtKey, {
+							algorithm: "HS256",
+							expiresIn: "1h",
+						})
+						res.cookie("token", token)
 						return res.json({ dataUser: results[2][0] })
 					}
 				})

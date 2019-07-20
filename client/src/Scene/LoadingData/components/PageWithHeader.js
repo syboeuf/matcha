@@ -1,5 +1,5 @@
 import React from "react"
-import { BrowserRouter, Route, Switch } from "react-router-dom"
+import { Route } from "react-router-dom"
 
 import Header from "components/Header"
 import Home from "./components/Home"
@@ -13,6 +13,7 @@ const PageWithHeader = () => {
         <div>
             <Header />
             <main>
+                <Route path="/Home" component={ Home } />
                 <Route path="/Messages" component={ Messages } />
                 <Route path="/EditProfil" component={ EditProfil } />
                 <Route path="/Discover" component={ Discover } />
