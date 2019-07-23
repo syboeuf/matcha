@@ -5,19 +5,18 @@ import { FaAngleLeft, FaAngleRight } from "react-icons/fa"
 const styles = {
 	container: {
 		position: "relative",
-		width: 200,
-		height: 200,
+		width: "100%",
+		height: "100%",
 		margin: "auto",
 	},
 	picture: {
-		width: 200,
-    	height: 200,
-    	opacity: 0,
+		width: "100%",
+		height: "100%",
     	position: "absolute",
     	top: 0,
     	margin: "auto",
     	zIndex: 100,
-    	transition: "transform .5s, opacity .5s, z-index .5s",
+    	transition: "transform 1s, z-index .5s",
 	},
 	buttonPrevNext: {
 		width: "15%",
@@ -130,7 +129,7 @@ class App extends Component {
 		})
     	return (
 			<div style={ styles.container }>
-				<div>
+				<div style={ { overflow: "hidden", position: "relative" } }>
 					{
 						pictureProfil.map((picture, index) => {
 							let newStyles = {}

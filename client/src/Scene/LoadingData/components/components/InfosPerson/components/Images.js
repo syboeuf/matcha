@@ -40,21 +40,6 @@ class Images extends Component {
         }
         return (
             <div>
-                {/*
-                    imagesArray.map((image, index) => (
-                        <img
-                            key={ `image-${index}` }
-                            style={
-                                {
-                                    width: (index === 0) ? 200 : 100,
-                                    height: (index === 0) ? 200 : 100,
-                                }
-                            }
-                            src={ process.env.PUBLIC_URL + `/imageProfil/${image.userId}/${image.picture}` }
-                            alt={ `PhotoProfil-${index}` }
-                        />
-                    ))
-                */}
                 <CarouselProfil pictureProfil={ imagesArray } />
             </div>
         )

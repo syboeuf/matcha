@@ -1,8 +1,8 @@
 import React, { Component } from "react"
 
-import LikeButtons from "components/LikeButtons"
+import StyledButton from "components/StyledButton"
 
-import { getPicturesUser } from "utils/fileProvider"
+import { getPicturesUser, likeOrUnkikeUser } from "utils/fileProvider"
 
 class LikeUser extends Component {
 
@@ -51,10 +51,15 @@ class LikeUser extends Component {
                         )
                         : null
                 }
-                <LikeButtons
-                    user={ user }
-                    profilName={ profilName }
-                    isLikable={ isLikable }
+                <StyledButton
+                    text="Like"
+                    color="primary"
+                    functionOnClick={ (isLikable === true) ? () => likeOrUnkikeUser(user, profilName, 1) : null }
+                />
+                <StyledButton
+                    text="Unlike"
+                    color="primary"
+                    functionOnClick={ (isLikable === true) ? () => likeOrUnkikeUser(user, profilName, -1) : null }
                 />
             </div>
         )

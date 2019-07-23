@@ -538,15 +538,18 @@ app.post("/users/getAllOtherDataOfProfil", (req, res) => {
 
 app.post("/users/getListMatch", (req, res) => {
 	const { userName } = req.body
-	let getList = `SELECT CONCAT(firstPerson, secondPerson) AS name, id FROM profilmatch WHERE firstPerson='${userName}' OR secondPerson='${userName}';`
+	//let getList = `SELECT CONCAT(firstPerson, secondPerson) AS name, id FROM profilmatch WHERE firstPerson='${userName}' OR secondPerson='${userName}';`
+	//getList += `SELECT blockProfil FROM listblockprofil WHERE user='${userName}'`
+	let getList = `SELECT p.id, m.secondPerson AS person, u.picture FROM profilmatch m INNER JOIN profil p ON m.secondPerson=p.userName INNER JOIN picturesusers u ON p.id=u.userId WHERE m.firstPerson='${userName}' GROUP BY (m.secondPerson);`
+	getList += `SELECT p.id, m.firstPerson AS person, u.picture FROM profilmatch m INNER JOIN profil p ON m.firstPerson=p.userName INNER JOIN picturesusers u ON p.id=u.userId WHERE m.secondPerson='${userName}' GROUP BY (m.firstPerson);`
 	getList += `SELECT blockProfil FROM listblockprofil WHERE user='${userName}'`
 	connection.query(getList, (error, results) => {
 		if (error) {
 			return res.send(error)
 		} else {
+			/*
 			const getListMatch = []
 			results[0].forEach((name) => {
-				console.log(name.id)
 				const profil = name.name.replace(userName, "")
 				let block = 0
 				results[1].forEach((blockUser) => {
@@ -556,6 +559,14 @@ app.post("/users/getListMatch", (req, res) => {
 				})
 				if (block === 0) {
 					getListMatch.push(profil)
+				}
+			})
+			*/
+			const getList = results[0].concat(results[1])
+			const getListMatch = []
+			getList.forEach((user) => {
+				if (results[2].filter(name => name === user.person).length === 0) {
+					getListMatch.push(user)
 				}
 			})
 			return res.json({ listMatch: getListMatch })

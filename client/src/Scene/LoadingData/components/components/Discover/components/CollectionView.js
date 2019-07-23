@@ -28,8 +28,8 @@ const defaultAgeMin = 10
 const defaultAgeMax = 50
 const defaultDistanceMin = 0
 const defaultDistanceMax = 30
-const defaultPopulareScoreMin = 30
-const defaultPopulareScoreMax = 70
+const defaultPopulareScoreMin = 10
+const defaultPopulareScoreMax = 100
 
 class CollectionView extends Component {
 

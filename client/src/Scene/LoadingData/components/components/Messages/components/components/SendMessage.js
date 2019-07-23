@@ -6,9 +6,7 @@ import { sendMessage } from "utils/fileProvider"
 import { FaRegPaperPlane } from "react-icons/fa"
 
 const styles = {
-    container: {
-        display: "flex",
-    },
+    container: { display: "flex" },
 }
 
 class SendMessage extends Component {

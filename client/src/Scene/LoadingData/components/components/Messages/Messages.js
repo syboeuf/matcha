@@ -1,11 +1,20 @@
 import React, { Component } from "react"
-import { Container, Row, Col } from "reactstrap"
-
-import ChatWithUser from "./components/ChatWithUser"
 import { withRouter } from "react-router-dom"
+
+import Container from "@material-ui/core/Container"
+import Grid from "@material-ui/core/Grid"
+import ChatWithUser from "./components/ChatWithUser"
+import Avatar from "@material-ui/core/Avatar"
 
 import { getListMatch } from "utils/fileProvider"
 import { UserConsumer } from "store/UserProvider"
+
+const styles = {
+    avatar: {
+        width: 60,
+        height: 60,
+    },
+}
 
 class Messages extends Component {
 
@@ -36,23 +45,21 @@ class Messages extends Component {
             return <div />
         }
         return (
-            <Container fluid style={{width: "80%"}}>
-                <Row>
-                    <Col md="3">
-                        <div style={ { borderBottom: "1px solid gray" } } >
+            <Container maxWidth="lg">
+                <Grid container spacing={ 4 }>
+                    <Grid item xs={ 12 } sm={ 4 }>
+                        <Grid direction="row" container spacing={ 4 }>
                             {
                                 listMatch.map((match) => (
-                                    <button
-                                        key={ `match-${match}` }
-                                        onClick={ () => this.setState({ profilYourMatch: match }) }
-                                    >
-                                        { match }
-                                    </button>
+                                    <Grid item key={ `match-${match.person}` } xs={ 12 } sm={ 6 }>
+                                        <Avatar alt={ `avatar${match.person}` } style={ styles.avatar } src={ process.env.PUBLIC_URL + `/imageProfil/${match.id}/${match.picture}` } />
+                                        <button onClick={ () => this.setState({ profilYourMatch: match.person }) }>{ match.person }</button>
+                                    </Grid>
                                 ))
                             }
-                        </div>
-                    </Col>
-                    <Col md="8">
+                        </Grid>
+                    </Grid>
+                    <Grid item xs={ 12 } sm={ 8 }>
                         {
                             (profilYourMatch !== null)
                                 ? (
@@ -63,8 +70,8 @@ class Messages extends Component {
                                 )
                                 : null
                         }
-                    </Col>
-                </Row>
+                    </Grid>
+                </Grid>
             </Container>
         )
     }

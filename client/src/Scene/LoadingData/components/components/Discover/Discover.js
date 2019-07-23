@@ -2,7 +2,6 @@ import React, { Component } from "react"
 import { withRouter } from "react-router-dom"
 
 import CollectionView from "./components/CollectionView"
-import InfosPerson from "./components/InfosPerson"
 
 import { blockList, getAllOtherDataOfProfil, visitProfil, blockProfil } from "utils/fileProvider"
 import { UserConsumer } from "store/UserProvider"
@@ -33,10 +32,11 @@ class Discover extends Component {
     }
 
     chooseDataPerson = (dataPerson) => {
+        const { history } = this.props
         const { dataUser } = this.context
         visitProfil(dataUser.userName, dataPerson.userName)
         getAllOtherDataOfProfil(dataUser.userName, dataPerson.userName)
-            .then((response) => this.setState({ dataPerson: response.otherData }))
+            .then((response) => history.push("/InfosPerson", { dataPerson: response.otherData }))
             .catch((error) => console.log(error))
     }
 
@@ -55,7 +55,7 @@ class Discover extends Component {
                 </div>
             )
         }
-        const { dataPerson, listPerson } = this.state
+        const { listPerson } = this.state
         if (listPerson === null) {
             return <div />
         }
@@ -65,11 +65,6 @@ class Discover extends Component {
                     dataUser={ dataUser }
                     listPerson={ listPerson }
                     chooseDataPerson={ this.chooseDataPerson }
-                />
-                <InfosPerson
-                    dataUser={ dataUser }
-                    dataPerson={ dataPerson }
-                    getListUser={ this.getListUser }
                 />
             </div>
 

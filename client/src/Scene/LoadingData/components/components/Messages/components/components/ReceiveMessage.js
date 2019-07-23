@@ -1,5 +1,7 @@
 import React, { Component } from "react"
-import { Row, Col } from "reactstrap"
+
+import Container from "@material-ui/core/Container"
+import Grid from "@material-ui/core/Grid"
 
 import { getAllMessages } from "utils/fileProvider"
 
@@ -52,13 +54,13 @@ class ReceiveMessage extends Component {
             return <div />
         }
         return (
-            <Row>
+            <Container maxWidth="md">
                 {
                     listMessages.map((data) => (
-                        <Col
+                        <Grid
                             key={ `message-${data.id}` }
-                            sm={ { size: 5, offset: (data.fromUser === userName) ? 7 : 0} }
-                            md={ { size: 5, offset: (data.fromUser === userName) ? 7 : 0} }
+                            container
+                            justify={ (data.fromUser === userName) ? "flex-end" : "flex-start" }
                         >
                             <div
                                 style={
@@ -74,10 +76,10 @@ class ReceiveMessage extends Component {
                                 <p>{ `${data.message}` }</p>
                                 <p>{ `Send ${data.date}` }</p>
                             </div>
-                        </Col>
+                        </Grid>
                     ))
                 }
-            </Row>
+            </Container>
         )
     }
 
