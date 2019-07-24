@@ -9,7 +9,7 @@ import Container from "@material-ui/core/Container"
 import Grid from "@material-ui/core/Grid"
 import { withStyles } from "@material-ui/core/styles"
 
-const styles = theme => ({
+const styles = (theme) => ({
     cardGrid: {
         paddingTop: theme.spacing(8),
         paddingBottom: theme.spacing(8),

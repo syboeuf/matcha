@@ -1,22 +1,24 @@
 import React from "react"
 import PropTypes from "prop-types"
 
-const styles = {
-    input: {},
-}
+import TextField from "@material-ui/core/TextField"
 
 const TextInput = ({
     value, placeholder, onChangeValue, type,
 }) => (
-    <div>
-        <input
-            onChange={ onChangeValue }
-            style={ styles.input }
-            placeholder={ placeholder }
-            value={ value }
-            type={ type }
-        />
-    </div>
+    <TextField
+        variant="outlined"
+        margin="normal"
+        required
+        fullWidth
+        name={ type }
+        label={ placeholder }
+        type={ type }
+        onChange={ onChangeValue }
+        placeholder={ placeholder }
+        autoComplete="current-password"
+        value={ value }
+    />
 )
 
 TextInput.propTypes = {
