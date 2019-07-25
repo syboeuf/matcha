@@ -42,7 +42,7 @@ export const getPicturesUser = (userId) => {
 
 export const addNewUser = (newUser) => {
     const userData = { ...transformArrayInObject(newUser) }
-    return checkUserAlreadyExist(userData)
+    checkUserAlreadyExist(userData)
         .then((userExist) => {
             if (userExist === 0) {
                 if (!checkEmail(userData.email)) {
@@ -60,12 +60,10 @@ export const addNewUser = (newUser) => {
                         firstName: userData.firstName,
                         confirmKey,
                     }))
-                    return { ...userData, confirmKey }
                 }
             } else {
                 alert("Le nom ou l'adresse email est déjà utilisé")
             }
-            return 0
         })
 }
 

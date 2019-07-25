@@ -1,7 +1,6 @@
 import React, { Component } from "react"
 import { withRouter } from "react-router-dom"
 
-
 import Avatar from "@material-ui/core/Avatar"
 import StyledButton from "components/StyledButton"
 import CssBaseline from "@material-ui/core/CssBaseline"
@@ -17,7 +16,6 @@ import Container from "@material-ui/core/Container"
 import { addNewUser } from "utils/fileProvider"
 
 import Form from "components/Form"
-import ConfirmKey from "./components/ConfirmKey"
 
 const styles = (theme) => ({
     "@global": {
@@ -48,8 +46,6 @@ class CreateAccount extends Component {
                 { name: "confirmPassword", type: "password", value: "", placeholder: "Confirm password" },
                 { name: "email", type: "email", value: "", placeholder: "email" },
             ],
-            showConfirmKey: false,
-            userName: "",
         }
     }
 
@@ -62,16 +58,6 @@ class CreateAccount extends Component {
     checkIfUserExist = () => {
         const { inputArray } = this.state
         addNewUser(inputArray)
-            .then((response) => {
-                if (response) {
-                    this.setState({ showConfirmKey: true, userName: response.userName })
-                }
-            })
-            .catch((error) => console.log(error))
-    }
-
-    toggleShowConfirmKey = () => {
-        this.setState({ showConfirmKey: !this.state.showConfirmKey })
     }
 
     checkEmptyForm = () => {
@@ -99,7 +85,7 @@ class CreateAccount extends Component {
     )
 
     render() {
-        const { inputArray, showConfirmKey, userName } = this.state
+        const { inputArray } = this.state
         return (
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
@@ -117,11 +103,6 @@ class CreateAccount extends Component {
                         text="Create your account"
                         color="primary"
                     />
-                    <StyledButton
-                        functionOnClick={ () => (this.checkEmptyForm() && this.doesPasswordMatch()) ? this.setState({ showConfirmKey: true }) : null }
-                        color="primary"
-                        text="Show modal"
-                    />
                     <Grid container justify="flex-end">
                         <Grid item>
                             <Link href="#" variant="body2">
@@ -133,16 +114,6 @@ class CreateAccount extends Component {
                 <Box mt={5}>
                     { this.MadeWithLove() }
                 </Box>
-                {
-                    (showConfirmKey && this.checkEmptyForm() && this.doesPasswordMatch())
-                        ? (
-                            <ConfirmKey
-                                userName={ userName }
-                                closeModal={ this.toggleShowConfirmKey }
-                            />
-                        )
-                        : null
-                }
             </Container>
         )
     }

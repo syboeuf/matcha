@@ -13,7 +13,7 @@ const jwt = require('jsonwebtoken')
 const connection = mysql.createConnection({
 	host: "localhost",
 	user: "root",
-	password: "",
+	password: "input305",
 	database: "matcha",
 	multipleStatements: true,
 })
@@ -202,12 +202,12 @@ app.post("/users/add", (req, res) => {
 		if (error) {
 			return res.send(error)
 		} else {
+			const text = `This is your ${confirmKey} and the link: http://localhost:3000/ConfirmKey`
+			const subject = "Confirm you key"
+			sendMail(email, text, subject)
 			return res.send("added user")
 		}
 	})
-	const text = `This is your ${confirmKey}`
-	const subject = "Confirm you key"
-	sendMail(email, text, subject)
 })
 
 app.post("/users/checkUserAlreadyExist", (req, res) => {

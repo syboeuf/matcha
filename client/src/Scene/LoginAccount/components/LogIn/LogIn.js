@@ -120,7 +120,7 @@ class LogIn extends Component {
                         <Grid item>
                             { /* Link or button with onclick history.push */ }
                             <Link href="#" variant="body2">
-                                { "Don't have an account? Sign Up" }
+                                Don't have an account? Sign Up
                             </Link>
                         </Grid>
                     </Grid>
