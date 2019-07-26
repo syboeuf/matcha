@@ -87,7 +87,7 @@ class Header extends React.Component {
                 {
                     pagesArray.map((dataPage) => (
                         (dataPage.page === "Notifications")
-                            ? <div style={ { display: "flex" } } key={ `page-${dataPage.page}` }>{ dataPage.icon }<Menu title={ dataPage.page } array={ notificationsArray } /></div>
+                            ? <div style={ { display: "flex" } } key={ `page-${dataPage.page}` }><Menu title={ dataPage.icon } array={ notificationsArray } /></div>
                             : (
                                 <div key={ `page-${dataPage.page}` } onClick={ () => { history.push(`/${dataPage.page}`) } }>
                                     { dataPage.icon } { dataPage.page }

@@ -33,6 +33,17 @@ export const getUserProfil = (id) => {
         .catch((error) => console.log(error))
 }
 
+export const getAllProfilName = () => {
+    return fetch("http://localhost:4000/users/findUser")
+        .then((response) => response.json())
+        .then((responseJson) => responseJson)
+        .catch((error) => console.log(error))
+}
+
+export const banUser = (username, bantime) => {
+    fetch(`http://localhost:4000/users/ban`, optionsFetch({ username, bantime }))
+}
+
 export const getPicturesUser = (userId) => {
     return fetch(`http://localhost:4000/users/picturesUser`, optionsFetch({ userId }))
         .then((response) => response.json())

@@ -1,15 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.4
--- https://www.phpmyadmin.net/
+-- version 4.5.5.1
+-- http://www.phpmyadmin.net
 --
--- Hôte : 127.0.0.1:3306
--- Généré le :  lun. 17 juin 2019 à 22:04
--- Version du serveur :  5.7.24
--- Version de PHP :  7.2.14
+-- Client :  localhost:3306
+-- Généré le :  Ven 26 Juillet 2019 à 03:47
+-- Version du serveur :  5.6.29
+-- Version de PHP :  5.6.20
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
-START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -28,15 +26,13 @@ SET time_zone = "+00:00";
 -- Structure de la table `fakeuser`
 --
 
-DROP TABLE IF EXISTS `fakeuser`;
-CREATE TABLE IF NOT EXISTS `fakeuser` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `fakeUser` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8;
+CREATE TABLE `fakeuser` (
+  `id` int(11) NOT NULL,
+  `fakeUser` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Déchargement des données de la table `fakeuser`
+-- Contenu de la table `fakeuser`
 --
 
 INSERT INTO `fakeuser` (`id`, `fakeUser`) VALUES
@@ -52,22 +48,20 @@ INSERT INTO `fakeuser` (`id`, `fakeUser`) VALUES
 -- Structure de la table `inlineuser`
 --
 
-DROP TABLE IF EXISTS `inlineuser`;
-CREATE TABLE IF NOT EXISTS `inlineuser` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `inlineuser` (
+  `id` int(11) NOT NULL,
   `user` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `inline` int(11) NOT NULL DEFAULT '0',
-  `date` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;
+  `date` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Déchargement des données de la table `inlineuser`
+-- Contenu de la table `inlineuser`
 --
 
 INSERT INTO `inlineuser` (`id`, `user`, `inline`, `date`) VALUES
-(1, 'metentis', 0, '2019-06-17 19:52:21'),
-(2, 'jai', 0, '2019-06-12 14:20:28'),
+(1, 'metentis', 1, '2019-07-26 11:11:49'),
+(2, 'jai', 1, '2019-07-26 11:08:31'),
 (3, 'HH', 0, '2019-06-09 00:13:25'),
 (4, 'tyr', 0, '2019-06-09 00:12:53'),
 (5, 'bouboule', 0, '2019-06-12 14:10:16'),
@@ -90,7 +84,13 @@ INSERT INTO `inlineuser` (`id`, `user`, `inline`, `date`) VALUES
 (22, 'test28', 0, '2019-06-17 19:54:55'),
 (23, 'test29', 0, '2019-06-17 20:02:58'),
 (24, 'test30', 0, '2019-06-17 21:20:11'),
-(25, 'x', 0, '2019-06-17 21:21:06');
+(25, 'x', 0, '2019-06-17 21:21:06'),
+(26, 'test40', 0, '2019-07-25 12:14:43'),
+(27, 'spiderman', 0, '2019-07-25 12:26:26'),
+(28, 'test41', 0, '2019-07-25 12:35:16'),
+(29, 'test42', 0, '2019-07-25 12:39:55'),
+(30, 'test43', 0, '2019-07-25 12:41:21'),
+(31, 'test45', 1, '2019-07-26 11:10:52');
 
 -- --------------------------------------------------------
 
@@ -98,17 +98,15 @@ INSERT INTO `inlineuser` (`id`, `user`, `inline`, `date`) VALUES
 -- Structure de la table `likeuser`
 --
 
-DROP TABLE IF EXISTS `likeuser`;
-CREATE TABLE IF NOT EXISTS `likeuser` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `likeuser` (
+  `id` int(11) NOT NULL,
   `userName` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `profilName` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-  `likeUser` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8;
+  `likeUser` int(11) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Déchargement des données de la table `likeuser`
+-- Contenu de la table `likeuser`
 --
 
 INSERT INTO `likeuser` (`id`, `userName`, `profilName`, `likeUser`) VALUES
@@ -154,16 +152,14 @@ INSERT INTO `likeuser` (`id`, `userName`, `profilName`, `likeUser`) VALUES
 -- Structure de la table `listblockprofil`
 --
 
-DROP TABLE IF EXISTS `listblockprofil`;
-CREATE TABLE IF NOT EXISTS `listblockprofil` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `listblockprofil` (
+  `id` int(11) NOT NULL,
   `user` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-  `blockProfil` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=74 DEFAULT CHARSET=utf8;
+  `blockProfil` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Déchargement des données de la table `listblockprofil`
+-- Contenu de la table `listblockprofil`
 --
 
 INSERT INTO `listblockprofil` (`id`, `user`, `blockProfil`) VALUES
@@ -178,20 +174,22 @@ INSERT INTO `listblockprofil` (`id`, `user`, `blockProfil`) VALUES
 -- Structure de la table `messages`
 --
 
-DROP TABLE IF EXISTS `messages`;
-CREATE TABLE IF NOT EXISTS `messages` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `messages` (
+  `id` int(11) NOT NULL,
   `fromUser` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
   `toUser` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
   `message` text,
-  `date` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8;
+  `date` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Déchargement des données de la table `messages`
+-- Contenu de la table `messages`
 --
 
+INSERT INTO `messages` (`id`, `fromUser`, `toUser`, `message`, `date`) VALUES
+(71, 'metentis', 'jai', 'coucou', '2019-07-25 10:28:25'),
+(72, 'jai', 'metentis', 'ojook', '2019-07-26 12:34:43'),
+(73, 'jai', 'metentis', 'ojookrdsvfjsfhdiuvbhsfiuhbfviuhsiufhviulsfhuyghuhduilvresoa;vnhroilrsehnvolghnurtfgoir', '2019-07-26 12:34:58');
 
 -- --------------------------------------------------------
 
@@ -199,20 +197,30 @@ CREATE TABLE IF NOT EXISTS `messages` (
 -- Structure de la table `notifications`
 --
 
-DROP TABLE IF EXISTS `notifications`;
-CREATE TABLE IF NOT EXISTS `notifications` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `notifications` (
+  `id` int(11) NOT NULL,
   `notificationUser` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `notificationType` text NOT NULL,
   `notificationRead` int(11) NOT NULL DEFAULT '0',
-  `date` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=468 DEFAULT CHARSET=utf8;
+  `date` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Déchargement des données de la table `notifications`
+-- Contenu de la table `notifications`
 --
 
+INSERT INTO `notifications` (`id`, `notificationUser`, `notificationType`, `notificationRead`, `date`) VALUES
+(468, 'jai', 'You are new message from metentis', 0, '2019-07-25 10:28:25'),
+(469, 'test4', 'metentis visit you\'re profil', 0, '2019-07-26 11:02:11'),
+(470, 'metentis', 'jai visit you\'re profil', 0, '2019-07-26 11:03:07'),
+(471, 'test4', 'jai visit you\'re profil', 0, '2019-07-26 11:05:37'),
+(472, 'test4', 'jai visit you\'re profil', 0, '2019-07-26 12:29:49'),
+(473, 'test30', 'jai visit you\'re profil', 0, '2019-07-26 12:34:21'),
+(474, 'metentis', 'You are new message from jai', 0, '2019-07-26 12:34:43'),
+(475, 'metentis', 'You are new message from jai', 0, '2019-07-26 12:34:58'),
+(476, 'metentis', 'jai visit you\'re profil', 0, '2019-07-26 12:36:02'),
+(477, 'test30', 'jai visit you\'re profil', 0, '2019-07-26 12:36:16'),
+(478, 'test4', 'jai visit you\'re profil', 0, '2019-07-26 12:36:37');
 
 -- --------------------------------------------------------
 
@@ -220,16 +228,14 @@ CREATE TABLE IF NOT EXISTS `notifications` (
 -- Structure de la table `picturesusers`
 --
 
-DROP TABLE IF EXISTS `picturesusers`;
-CREATE TABLE IF NOT EXISTS `picturesusers` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `picturesusers` (
+  `id` int(11) NOT NULL,
   `userId` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-  `picture` longtext CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=199 DEFAULT CHARSET=latin1;
+  `picture` longtext CHARACTER SET utf8 COLLATE utf8_bin NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Déchargement des données de la table `picturesusers`
+-- Contenu de la table `picturesusers`
 --
 
 INSERT INTO `picturesusers` (`id`, `userId`, `picture`) VALUES
@@ -259,9 +265,8 @@ INSERT INTO `picturesusers` (`id`, `userId`, `picture`) VALUES
 -- Structure de la table `profil`
 --
 
-DROP TABLE IF EXISTS `profil`;
-CREATE TABLE IF NOT EXISTS `profil` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `profil` (
+  `id` int(11) NOT NULL,
   `userName` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `password` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `email` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
@@ -269,49 +274,56 @@ CREATE TABLE IF NOT EXISTS `profil` (
   `firstName` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `confirmKey` bigint(20) NOT NULL,
   `confirmKeyOk` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=166 DEFAULT CHARSET=latin1;
+  `keyResetPassword` varchar(255) DEFAULT NULL,
+  `bantime` varchar(50) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Déchargement des données de la table `profil`
+-- Contenu de la table `profil`
 --
 
-INSERT INTO `profil` (`id`, `userName`, `password`, `email`, `lastName`, `firstName`, `confirmKey`, `confirmKeyOk`) VALUES
-(128, 'metentis', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'sylvain.boeuf@orange.fr', 'boeuf', 'sylvain', 8394950248921, 1),
-(129, 'jai', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'florent.boeuf@free.fr', 'boeuf', 'florent', 6923653259421, 1),
-(130, 'bouboule', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'audrey.boeuf@free.fr', 'boeuf', 'audrey', 7772988799848, 1),
-(131, 'tyr', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'amandine.richard@free.fr', 'Richard', 'amandine', 9971396599816, 1),
-(132, 'HH', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'dimitri.richard@free.fr', 'richard', 'dimitri', 2200237506864, 1),
-(133, 'le roi des math', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'bruno.chatelain@free.fr', 'chatelin', 'bruno', 7136743763158, 1),
-(134, 'test', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test@gmail.com', 'test', 'test', 3454300560392, 1),
-(135, 'test2', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test2@gmail.com', 'test2', 'test2', 1677337025450, 1),
-(136, 'test3', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test3@gmail.fr', 'test3', 'test3', 2376701668198, 1),
-(137, 'test4', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test4@gmail.com', 'test4', 'test4', 6037373664254, 1),
-(139, 'coucou', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'coucoucou@gmail.com', 'coucou', 'coucou', 6981057521520, 1),
-(142, 'bat test', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'sylvain.boeuf@gmail.fr', 'Wayne', 'Bruce', 7960381791630, 1),
-(143, 'the man of steel', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'sylvain.boeuf@free.fr', 'kent', 'Clark', 8318236214024, 1),
-(144, 'test5', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test5@gmail.com', 'test5', 'test5', 7566931969138, 1),
-(145, 'test6', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test6@gmail.com', 'test6', 'test6', 582266724213, 1),
-(146, 'test9', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test9@gmail.com', 'test9', 'test9', 3488552820732, 1),
-(147, 'test10', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test10@gmail.com', 'test10', 'test10', 7358031551689, 0),
-(148, 'test11', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test11@gmail.fr', 'test11', 'test11', 9736868538874, 1),
-(149, 'test12', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test12@gmail.fr', 'test12', 'test12', 4021348015825, 1),
-(150, 'test13', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test13@gmail.fr', 'test13', 'test13', 6033169455479, 0),
-(151, 'test14', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test14@gmail.com', 'test14', 'test14', 6190844112524, 0),
-(152, 'test15', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test15@gmail.com', 'test15', 'test15', 5783414770008, 1),
-(153, 'test16', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test16@gmail.com', 'test16', 'test16', 2569539059679, 1),
-(154, 'test17', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test17@gmail.com', 'test17', 'test17', 9559486991302, 1),
-(155, 'test18', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test18@gmail.com', 'test18', 'test18', 8335081320354, 1),
-(156, 'test19', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test19@gmail.com', 'test19', 'test19', 7533706907012, 1),
-(157, 'test20', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test20@gmail.fr', 'test20', 'test20', 8699907264766, 1),
-(158, 'test21', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test21@gmail.com', 'test21', 'test21', 9861767162669, 1),
-(159, 'test25', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test25@gmail.com', 'test25', 'test25', 8279664659955, 1),
-(160, 'test26', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test26@gmail.com', 'test26', 'test26', 1559224598050, 1),
-(161, 'test27', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test27@gmail.com', 'test27', 'test27', 3505394069835, 1),
-(162, 'test28', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test28@gmail.com', 'test28', 'test28', 3001966743280, 1),
-(163, 'test29', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test29@gmail.com', 'test29', 'test29', 5287304086401, 1),
-(164, 'test30', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test30@gmail.com', 'test30', 'test30', 914499620047, 1),
-(165, 'x', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'xavier@hotmail.free', 'boeuf', 'xa', 318246101647, 1);
+INSERT INTO `profil` (`id`, `userName`, `password`, `email`, `lastName`, `firstName`, `confirmKey`, `confirmKeyOk`, `keyResetPassword`, `bantime`) VALUES
+(128, 'metentis', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'sylvain.boeuf@orange.fr', 'boeuf', 'sylvain', 8394950248921, 1, NULL, '0'),
+(129, 'jai', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'florent.boeuf@free.fr', 'boeuf', 'florent', 6923653259421, 1, NULL, '0'),
+(130, 'bouboule', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'audrey.boeuf@free.fr', 'boeuf', 'audrey', 7772988799848, 1, NULL, '0'),
+(131, 'tyr', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'amandine.richard@free.fr', 'Richard', 'amandine', 9971396599816, 1, NULL, '0'),
+(132, 'HH', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'dimitri.richard@free.fr', 'richard', 'dimitri', 2200237506864, 1, NULL, '1564306715'),
+(133, 'le roi des math', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'bruno.chatelain@free.fr', 'chatelin', 'bruno', 7136743763158, 1, NULL, '0'),
+(134, 'test', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test@gmail.com', 'test', 'test', 3454300560392, 1, NULL, '0'),
+(135, 'test2', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test2@gmail.com', 'test2', 'test2', 1677337025450, 1, NULL, '0'),
+(136, 'test3', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test3@gmail.fr', 'test3', 'test3', 2376701668198, 1, NULL, '0'),
+(137, 'test4', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test4@gmail.com', 'test4', 'test4', 6037373664254, 1, NULL, '0'),
+(139, 'coucou', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'coucoucou@gmail.com', 'coucou', 'coucou', 6981057521520, 1, NULL, '0'),
+(142, 'bat test', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'sylvain.boeuf@gmail.fr', 'Wayne', 'Bruce', 7960381791630, 1, NULL, '0'),
+(143, 'the man of steel', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'sylvain.boeuf@fre.fr', 'kent', 'Clark', 8318236214024, 1, NULL, '0'),
+(144, 'test5', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test5@gmail.com', 'test5', 'test5', 7566931969138, 1, NULL, '0'),
+(145, 'test6', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test6@gmail.com', 'test6', 'test6', 582266724213, 1, NULL, '0'),
+(146, 'test9', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test9@gmail.com', 'test9', 'test9', 3488552820732, 1, NULL, '0'),
+(147, 'test10', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test10@gmail.com', 'test10', 'test10', 7358031551689, 0, NULL, '0'),
+(148, 'test11', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test11@gmail.fr', 'test11', 'test11', 9736868538874, 1, NULL, '0'),
+(149, 'test12', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test12@gmail.fr', 'test12', 'test12', 4021348015825, 1, NULL, '0'),
+(150, 'test13', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test13@gmail.fr', 'test13', 'test13', 6033169455479, 0, NULL, '0'),
+(151, 'test14', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test14@gmail.com', 'test14', 'test14', 6190844112524, 0, NULL, '0'),
+(152, 'test15', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test15@gmail.com', 'test15', 'test15', 5783414770008, 1, NULL, '0'),
+(153, 'test16', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test16@gmail.com', 'test16', 'test16', 2569539059679, 1, NULL, '0'),
+(154, 'test17', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test17@gmail.com', 'test17', 'test17', 9559486991302, 1, NULL, '0'),
+(155, 'test18', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test18@gmail.com', 'test18', 'test18', 8335081320354, 1, NULL, '0'),
+(156, 'test19', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test19@gmail.com', 'test19', 'test19', 7533706907012, 1, NULL, '0'),
+(157, 'test20', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test20@gmail.fr', 'test20', 'test20', 8699907264766, 1, NULL, '0'),
+(158, 'test21', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test21@gmail.com', 'test21', 'test21', 9861767162669, 1, NULL, '0'),
+(159, 'test25', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test25@gmail.com', 'test25', 'test25', 8279664659955, 1, NULL, '0'),
+(160, 'test26', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test26@gmail.com', 'test26', 'test26', 1559224598050, 1, NULL, '0'),
+(161, 'test27', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test27@gmail.com', 'test27', 'test27', 3505394069835, 1, NULL, '0'),
+(162, 'test28', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test28@gmail.com', 'test28', 'test28', 3001966743280, 1, NULL, '0'),
+(163, 'test29', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test29@gmail.com', 'test29', 'test29', 5287304086401, 1, NULL, '0'),
+(164, 'test30', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test30@gmail.com', 'test30', 'test30', 914499620047, 1, NULL, '0'),
+(165, 'x', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'xavier@hotmail.free', 'boeuf', 'xa', 318246101647, 1, NULL, '0'),
+(166, 'test40', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test40@gmail.com', 'test40', 'test40', 8468830061885, 1, NULL, '0'),
+(167, 'spiderman', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'sylvain.boeuf@fr.fr', 'spider', 'man', 5809011190170, 1, NULL, '0'),
+(168, 'test41', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test41@gmail.com', 'test41', 'test41', 6978960014910, 1, NULL, '0'),
+(169, 'test42', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'sylvain.boeuf@ve.fr', 'test42', 'test42', 3111879212092, 1, NULL, '0'),
+(170, 'test43', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'test43@gmail.com', 'test43', 'test43', 9435144338801, 1, NULL, '0'),
+(171, 'test45', '88d093c646a6ab751441641f00f01bfbd9104c9a804e4a72e03c36eb4ca3247d', 'sylvain.boeuf@free.fr', 'test45', 'test45', 6679666313965, 1, NULL, '0');
 
 -- --------------------------------------------------------
 
@@ -319,16 +331,14 @@ INSERT INTO `profil` (`id`, `userName`, `password`, `email`, `lastName`, `firstN
 -- Structure de la table `profilmatch`
 --
 
-DROP TABLE IF EXISTS `profilmatch`;
-CREATE TABLE IF NOT EXISTS `profilmatch` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `profilmatch` (
+  `id` int(11) NOT NULL,
   `firstPerson` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-  `secondPerson` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
+  `secondPerson` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Déchargement des données de la table `profilmatch`
+-- Contenu de la table `profilmatch`
 --
 
 INSERT INTO `profilmatch` (`id`, `firstPerson`, `secondPerson`) VALUES
@@ -345,9 +355,8 @@ INSERT INTO `profilmatch` (`id`, `firstPerson`, `secondPerson`) VALUES
 -- Structure de la table `userinfos`
 --
 
-DROP TABLE IF EXISTS `userinfos`;
-CREATE TABLE IF NOT EXISTS `userinfos` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `userinfos` (
+  `id` int(11) NOT NULL,
   `userName` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `age` int(11) DEFAULT NULL,
   `biography` text,
@@ -358,17 +367,16 @@ CREATE TABLE IF NOT EXISTS `userinfos` (
   `userApproximateLocation` text,
   `userAddress` text,
   `userApproximateCity` text,
-  `populareScore` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8;
+  `populareScore` int(11) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Déchargement des données de la table `userinfos`
+-- Contenu de la table `userinfos`
 --
 
 INSERT INTO `userinfos` (`id`, `userName`, `age`, `biography`, `gender`, `orientation`, `listInterest`, `userLocation`, `userApproximateLocation`, `userAddress`, `userApproximateCity`, `populareScore`) VALUES
-(1, 'metentis', 27, 'plus maintenannt', 'Femme', 'Homme', 'null#Movie#data processing#NigthParty#Sport#Manga', '48.80799184533588 , 2.2395570507480613', '48.81206000000003, 2.2377800000000434', '2-6 Rue Servien, 92190, Meudon, Hauts-de-Seine, Île-de-France, FRA', 'Meudon, Hauts-de-Seine, Île-de-France', 100),
-(2, 'jai', 22, 'jcavjlerabv', 'Male', 'Homme', 'null#Movie#Manga#Sport', '48.80921180000001, 2.2395904', '48.8574, 2.3795', '89A Rue de Paris, 92190 Meudon, France', 'Paris', 60),
+(1, 'metentis', 27, 'plus maintenannt', 'Femme', 'Homme', 'null#Movie#data processing#NigthParty#Sport#Manga', '48.887609988891555 , 2.3128799816781886', '48.85341, 2.3488', 'Dr. Giroux Bruno, 7 Boulevard Pereire, 75017, 17e Arrondissement, Paris, Île-de-France, FRA', 'Paris', 100),
+(2, 'jai', 22, 'jcavjlerabv', 'Male', 'Homme', 'null#Movie#Manga#Sport', '48.887609988891555 , 2.3128799816781886', '48.85341, 2.3488', 'Dr. Giroux Bruno, 7 Boulevard Pereire, 75017, 17e Arrondissement, Paris, Île-de-France, FRA', 'Paris', 60),
 (3, 'bouboule', 29, 'vhkrueiubv', 'Male', 'Femme', 'null#data processing#NigthParty#Sport', '48.8079933, 2.2396035999999997', '48.8574, 2.3795', '2bis Rue Servien, 92190 Meudon, France', 'Paris', 0),
 (6, 'tyr', 23, 'vsdvhuy', 'Male', 'Femme', 'null#Movie#Manga#Sport#NigthParty#data processing', '48.8079933, 2.2396035999999997', '48.8138, 2.235', '2bis Rue Servien, 92190 Meudon, France', 'Meudon', 0),
 (7, 'HH', 30, 'null', 'Male', 'Homme', 'null#Manga#Sport', '48.8042, 2.2810200000000123', '48.8138, 2.235', '46 Rue Jean Jaurès, 92320 Châtillon, France', 'Meudon', 0),
@@ -396,9 +404,132 @@ INSERT INTO `userinfos` (`id`, `userName`, `age`, `biography`, `gender`, `orient
 (38, 'test28', NULL, NULL, NULL, NULL, NULL, '48.8125933694097 , 2.2471824262798554', '48.8138, 2.235', '12B Rue du Docteur Vuillième, 92190, Meudon, Hauts-de-Seine, Île-de-France, FRA', 'Meudon, France', 0),
 (39, 'test29', NULL, NULL, NULL, NULL, NULL, '48.80799184533588 , 2.2395570507480613', '48.8138, 2.235', '2-6 Rue Servien, 92190, Meudon, Hauts-de-Seine, Île-de-France, FRA', 'Meudon, France', 0),
 (40, 'test30', 40, '', 'null', 'null', 'null', '48.80799184533588 , 2.2395570507480613', '48.81206000000003, 2.2377800000000434', '2-6 Rue Servien, 92190, Meudon, Hauts-de-Seine, Île-de-France, FRA', 'Meudon, Hauts-de-Seine, Île-de-France', 100),
-(41, 'x', 40, 'bonjour, les amis', 'null', 'Femme', 'null#Movie', '48.812541380518205, 2.2472115401061767', '48.81206000000003, 2.2377800000000434', '12 Rue du Docteur Vuillième, 92190, Meudon, Hauts-de-Seine, Île-de-France', 'Meudon, Hauts-de-Seine, Île-de-France', 100);
-COMMIT;
+(41, 'x', 40, 'bonjour, les amis', 'null', 'Femme', 'null#Movie', '48.812541380518205, 2.2472115401061767', '48.81206000000003, 2.2377800000000434', '12 Rue du Docteur Vuillième, 92190, Meudon, Hauts-de-Seine, Île-de-France', 'Meudon, Hauts-de-Seine, Île-de-France', 100),
+(42, 'test40', NULL, NULL, 'Male', 'Bisexuelle', NULL, '48.88745128980902 , 2.3134637153442483', '48.85341, 2.3488', '1 Boulevard Pereire, 75017, 17e Arrondissement, Paris, Île-de-France, FRA', 'Paris', 0),
+(43, 'spiderman', NULL, NULL, 'Male', 'Bisexuelle', NULL, '48.88745128980902 , 2.3134637153442483', '48.85341, 2.3488', '1 Boulevard Pereire, 75017, 17e Arrondissement, Paris, Île-de-France, FRA', 'Paris', 0),
+(44, 'test41', NULL, NULL, 'Male', 'Bisexuelle', NULL, '48.88745128980902 , 2.3134637153442483', '48.85341, 2.3488', '1 Boulevard Pereire, 75017, 17e Arrondissement, Paris, Île-de-France, FRA', 'Paris', 0),
+(45, 'test42', NULL, NULL, 'Male', 'Bisexuelle', NULL, '48.88745128980902 , 2.3134637153442483', '48.85341, 2.3488', '1 Boulevard Pereire, 75017, 17e Arrondissement, Paris, Île-de-France, FRA', 'Paris', 0),
+(46, 'test43', NULL, NULL, 'Male', 'Bisexuelle', NULL, '48.88745128980902 , 2.3134637153442483', '48.85341, 2.3488', '1 Boulevard Pereire, 75017, 17e Arrondissement, Paris, Île-de-France, FRA', 'Paris', 0),
+(47, 'test45', NULL, NULL, 'Male', 'Bisexuelle', NULL, '48.887609988891555 , 2.3128799816781886', '48.85341, 2.3488', 'Dr. Giroux Bruno, 7 Boulevard Pereire, 75017, 17e Arrondissement, Paris, Île-de-France, FRA', 'Paris', 0);
 
+--
+-- Index pour les tables exportées
+--
+
+--
+-- Index pour la table `fakeuser`
+--
+ALTER TABLE `fakeuser`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Index pour la table `inlineuser`
+--
+ALTER TABLE `inlineuser`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Index pour la table `likeuser`
+--
+ALTER TABLE `likeuser`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Index pour la table `listblockprofil`
+--
+ALTER TABLE `listblockprofil`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Index pour la table `messages`
+--
+ALTER TABLE `messages`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Index pour la table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Index pour la table `picturesusers`
+--
+ALTER TABLE `picturesusers`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Index pour la table `profil`
+--
+ALTER TABLE `profil`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Index pour la table `profilmatch`
+--
+ALTER TABLE `profilmatch`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Index pour la table `userinfos`
+--
+ALTER TABLE `userinfos`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT pour les tables exportées
+--
+
+--
+-- AUTO_INCREMENT pour la table `fakeuser`
+--
+ALTER TABLE `fakeuser`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+--
+-- AUTO_INCREMENT pour la table `inlineuser`
+--
+ALTER TABLE `inlineuser`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+--
+-- AUTO_INCREMENT pour la table `likeuser`
+--
+ALTER TABLE `likeuser`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
+--
+-- AUTO_INCREMENT pour la table `listblockprofil`
+--
+ALTER TABLE `listblockprofil`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
+--
+-- AUTO_INCREMENT pour la table `messages`
+--
+ALTER TABLE `messages`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
+--
+-- AUTO_INCREMENT pour la table `notifications`
+--
+ALTER TABLE `notifications`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=479;
+--
+-- AUTO_INCREMENT pour la table `picturesusers`
+--
+ALTER TABLE `picturesusers`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=199;
+--
+-- AUTO_INCREMENT pour la table `profil`
+--
+ALTER TABLE `profil`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=172;
+--
+-- AUTO_INCREMENT pour la table `profilmatch`
+--
+ALTER TABLE `profilmatch`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+--
+-- AUTO_INCREMENT pour la table `userinfos`
+--
+ALTER TABLE `userinfos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

@@ -129,8 +129,9 @@ app.get("/cookieDataUser", (req, res) => {
 	})
 })
 
-app.get("/users", (req, res) => {
-	const selectAllProfil = `SELECT p.*, u.biography, u.gender, u.orientation, u.listInterest FROM profil p INNER JOIN userinfos u ON p.userName=u.userName`
+app.post("/users", (req, res) => {
+	const { userName } = req.body
+	const selectAllProfil = `SELECT p.*, u.age, u.biography, u.listInterest, u.gender, u.orientation, u.userLocation, u.userAddress, u.userApproximateLocation, u.userApproximateCity, u.populareScore FROM profil p INNER JOIN userinfos u ON p.userName=u.userName WHERE p.userName=${userName}`
 	connection.query(selectAllProfil, (error, results) => {
 		if (error) {
 			return res.send(error)
@@ -163,6 +164,18 @@ app.post("/users/checkLogin", (req, res) => {
 				}
 			})
 		}
+	})
+})
+
+app.post("/users/ban", (req, res) => {
+	const { username, bantime } = req.body
+	const setBantime = `UPDATE profil SET bantime='${bantime}' WHERE userName='${username}'`
+	connection.query(setBantime, (error, results) => {
+			if (error) {
+					return res.send(error)
+			} else {
+					return res.send(`Bantime updated`)
+			}
 	})
 })
 
@@ -538,8 +551,6 @@ app.post("/users/getAllOtherDataOfProfil", (req, res) => {
 
 app.post("/users/getListMatch", (req, res) => {
 	const { userName } = req.body
-	//let getList = `SELECT CONCAT(firstPerson, secondPerson) AS name, id FROM profilmatch WHERE firstPerson='${userName}' OR secondPerson='${userName}';`
-	//getList += `SELECT blockProfil FROM listblockprofil WHERE user='${userName}'`
 	let getList = `SELECT p.id, m.secondPerson AS person, u.picture FROM profilmatch m INNER JOIN profil p ON m.secondPerson=p.userName INNER JOIN picturesusers u ON p.id=u.userId WHERE m.firstPerson='${userName}' GROUP BY (m.secondPerson);`
 	getList += `SELECT p.id, m.firstPerson AS person, u.picture FROM profilmatch m INNER JOIN profil p ON m.firstPerson=p.userName INNER JOIN picturesusers u ON p.id=u.userId WHERE m.secondPerson='${userName}' GROUP BY (m.firstPerson);`
 	getList += `SELECT blockProfil FROM listblockprofil WHERE user='${userName}'`
@@ -547,21 +558,6 @@ app.post("/users/getListMatch", (req, res) => {
 		if (error) {
 			return res.send(error)
 		} else {
-			/*
-			const getListMatch = []
-			results[0].forEach((name) => {
-				const profil = name.name.replace(userName, "")
-				let block = 0
-				results[1].forEach((blockUser) => {
-					if (blockUser.blockProfil === profil) {
-						block = 1
-					}
-				})
-				if (block === 0) {
-					getListMatch.push(profil)
-				}
-			})
-			*/
 			const getList = results[0].concat(results[1])
 			const getListMatch = []
 			getList.forEach((user) => {
@@ -720,6 +716,18 @@ app.post("/users/setLocationToNull", (req, res) => {
 			return res.send(error)
 		} else {
 			return res.send("set location to null")
+		}
+	})
+})
+
+app.get("/users/findUser", (req, res) => {
+	const getAllName = `SELECT userName FROM profil`
+	connection.query(getAllName, (error, results) => {
+		if (error) {
+			return res.send(error)
+		} else {
+			console.log(results)
+			return res.json({ allProfilName: results })
 		}
 	})
 })
