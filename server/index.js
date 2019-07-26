@@ -148,21 +148,26 @@ app.post("/users/checkLogin", (req, res) => {
 		if (error) {
 			return res.send(error)
 		} else {
+			const date = Math.floor(Date.now() / 1000)
 			if (results.length > 0) {
-				const token = jwt.sign({ name, hashPassword }, jwtKey, {
-					algorithm: "HS256",
-					expiresIn: "1h",
-				})
-				res.cookie("token", token)
-			}
-			const getDataUser = `SELECT p.*, u.age, u.biography, u.listInterest, u.gender, u.orientation, u.userLocation, u.userAddress, u.userApproximateLocation, u.userApproximateCity, u.populareScore FROM profil p INNER JOIN userinfos u ON p.userName=u.userName WHERE p.userName='${name}'`
-			connection.query(getDataUser, (error, results) => {
-				if (error) {
-					return res.send(error)
+				if (date > results[0].bantime || results[0].bantime === 0) {
+					const token = jwt.sign({ name, hashPassword }, jwtKey, {
+						algorithm: "HS256",
+						expiresIn: "1h",
+					})
+					res.cookie("token", token)
+					const getDataUser = `SELECT p.*, u.age, u.biography, u.listInterest, u.gender, u.orientation, u.userLocation, u.userAddress, u.userApproximateLocation, u.userApproximateCity, u.populareScore FROM profil p INNER JOIN userinfos u ON p.userName=u.userName WHERE p.userName='${name}'`
+					connection.query(getDataUser, (error, results) => {
+						if (error) {
+							return res.send(error)
+						} else {
+							return res.json({ dataUser: results })
+						}
+					})
 				} else {
-					return res.json({ dataUser: results })
+					return 
 				}
-			})
+			}
 		}
 	})
 })
@@ -726,7 +731,6 @@ app.get("/users/findUser", (req, res) => {
 		if (error) {
 			return res.send(error)
 		} else {
-			console.log(results)
 			return res.json({ allProfilName: results })
 		}
 	})
