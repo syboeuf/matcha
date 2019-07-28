@@ -1,7 +1,6 @@
 import React, { Component } from "react"
 // import PropTypes from "prop-types"
 
-import Age from "./components/Age"
 import Biography from "./components/Biography"
 import ListInterest from "./components/ListInterest"
 import Orientation from "./components/Orientation"
@@ -61,10 +60,6 @@ class InfosPersonal extends Component {
         } = infosPersonalUser
         return (
             <div>
-                <Age
-                    onChangeValue={ this.onChangeValue }
-                    age={ age }
-                />
                 <Orientation
                     onChangeValue={ this.onChangeValue }
                     optionChecked={ orientation }

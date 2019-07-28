@@ -1,5 +1,4 @@
 import React, { Component } from "react"
-import { Input, Button } from "reactstrap"
 
 import { sendMessage } from "utils/fileProvider"
 
@@ -21,13 +20,13 @@ class SendMessage extends Component {
         const { messageValue } = this.state
         return (
             <div style={ styles.container }>
-                <Input
+                <input
                     type="text"
                     value={ messageValue }
                     onChange={ (e) => this.setState({ messageValue: e.target.value }) }
                     placeholder="Put your message here"
                 />
-                <Button color="primary" onClick={ () => sendMessage(userName, profilMatchName, messageValue) }><FaRegPaperPlane /></Button>
+                <button color="primary" onClick={ () => sendMessage(userName, profilMatchName, messageValue) }><FaRegPaperPlane /></button>
             </div>
         )
     }

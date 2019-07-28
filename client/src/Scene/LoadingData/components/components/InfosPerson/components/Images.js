@@ -8,9 +8,7 @@ class Images extends Component {
 
     constructor(props) {
         super(props)
-        this.state = {
-            imagesArray: null,
-        }
+        this.state = { imagesArray: null }
     }
 
     componentWillMount() {

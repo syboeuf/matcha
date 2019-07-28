@@ -1,6 +1,8 @@
 import React from "react"
 import { withRouter } from "react-router-dom"
-import { FaRegBell, FaRegHeart, FaRegEnvelope, FaAlignJustify } from "react-icons/fa"
+import {
+    FaRegBell, FaRegHeart, FaRegEnvelope, FaAlignJustify,
+} from "react-icons/fa"
 import { UserConsumer } from "store/UserProvider"
 
 import Hidden from '@material-ui/core/Hidden'
@@ -78,6 +80,9 @@ class Header extends React.Component {
         notificationsArray.forEach((notification) => {
             newNotificationsArray.push(<p>{ notification }</p>)
         })
+        if (dataUser.admin === 1) {
+            newMenuProfil.push(<p onClick={ () => { history.push("/Admin") } }>Admin</p>)
+        }
         menuProfil.forEach((menu) => {
             newMenuProfil.push(<p onClick={ () => { history.push(`/${menu}`) } }>{ menu }</p>)
         })

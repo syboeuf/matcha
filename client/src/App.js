@@ -6,14 +6,6 @@ import ConfirmKey from "./Scene/ConfirmKey"
 import LoginAccount from "./Scene/LoginAccount"
 import LoadingData from "./Scene/LoadingData"
 
-import Admin from "./Admin"
-
-/*
-const App = () => (
-    <Admin />
-)
-*/
-
 const App = () => (
     <UserProvider>
         <BrowserRouter>

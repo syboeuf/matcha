@@ -4,19 +4,21 @@ import React, { Component } from "react"
 import { updateInfosProfil } from "utils/fileProvider"
 
 import Form from "components/Form"
+import StyledButton from "components/StyledButton"
 
 class InfosProfil extends Component {
 
     constructor(props) {
         super(props)
         const {
-            lastName, firstName, userName, email,
+            lastName, firstName, userName, email, age,
         } = props.infosUser
         this.state = {
             inputArray: [
                 { name: "lastName", type: "text", value: lastName, placeholder: "lastName" },
                 { name: "firstName", type: "text", value: firstName, placeholder: "firstName" },
                 { name: "userName", type: "text", value: userName, placeholder: "userName" },
+                { name: "age", type: "number", value: (age === null) ? "" : age, placeholder: "age" },
                 { name: "newPassword", type: "password", value: "", placeholder: "New password" },
                 { name: "email", type: "email", value: email, placeholder: "email" },
             ],
@@ -55,7 +57,11 @@ class InfosProfil extends Component {
         return (
             <div>
                 <Form inputArray={ inputArray } onChangeValue={ this.onChangeValue } />
-                <button onClick={ () => this.onClick(id, userName, inputArray) }>Save</button>
+                <StyledButton
+                    text="Save"
+                    color="primary"
+                    functionOnClick={ () => this.onClick(id, userName, inputArray) }
+                />
             </div>
         )
     }

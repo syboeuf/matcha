@@ -38,6 +38,8 @@ class CollectionView extends Component {
         this.state = {
             listProfil: null,
             listTag: "",
+            searchProfilValue: "",
+            searchProfilArray: [],
             age: [
                 { name: "ageMin", type: "number", placeholder: "ageMin", value: defaultAgeMin },
                 { name: "ageMax", type: "number", placeholder: "ageMax", value: defaultAgeMax },
@@ -210,14 +212,28 @@ class CollectionView extends Component {
         this.setState({ score })
     }
 
+    onSearchUserChange = (e) => {
+        let { searchProfilValue, listProfil, searchProfilArray } = this.state
+        searchProfilValue = e.target.value
+        searchProfilArray = listProfil.filter(name => name.userName.toLowerCase().startsWith(searchProfilValue.toLowerCase()))
+        this.setState({ searchProfilValue, searchProfilArray })
+    }
+
     render() {
         const { chooseDataPerson, listPerson, classes } = this.props
         const {
-            listProfil, listTag, age, distance, score,
+            listProfil, listTag, age, distance, score, searchProfilArray, searchProfilValue,
         } = this.state
+        // console.log(searchProfilArray)
         return (
             <div>
                 <div>
+                    <input
+                        type="text"
+                        value={ searchProfilValue }
+                        onChange={ (e) => this.onSearchUserChange(e) }
+                        placeholder="Seach a profil by the name"
+                    />
                     <Form inputArray={ age } onChangeValue={ this.onChangeAge } />
                     <Form inputArray={ distance } onChangeValue={ this.onChangeDistance } />
                     <Form inputArray={ score } onChangeValue={ this.onChangeScore } />

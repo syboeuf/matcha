@@ -13,7 +13,7 @@ const jwt = require('jsonwebtoken')
 const connection = mysql.createConnection({
 	host: "localhost",
 	user: "root",
-	password: "input305",
+	password: "",
 	database: "matcha",
 	multipleStatements: true,
 })
@@ -161,12 +161,15 @@ app.post("/users/checkLogin", (req, res) => {
 						if (error) {
 							return res.send(error)
 						} else {
+							console.log(results)
 							return res.json({ dataUser: results })
 						}
 					})
 				} else {
-					return 
+					return res.send("nop")
 				}
+			} else {
+				return res.send("nop")
 			}
 		}
 	})
@@ -697,7 +700,7 @@ app.post("/users/getUserApproximateLocation", (req, res) => {
 			return error
 		} else {
 			const city = cities.filter(city => {
-				if (city.name === cLoc.city && city.country === cLoc.country) {
+				if (city.name.startsWith(cLoc.city) !== -1 && city.country === cLoc.country) {
 					return city.name.match(cLoc.city)
 				}
 			})

@@ -3,7 +3,9 @@ import { withRouter } from "react-router-dom"
 
 import CollectionView from "./components/CollectionView"
 
-import { blockList, getAllOtherDataOfProfil, visitProfil, blockProfil } from "utils/fileProvider"
+import {
+    blockList, getAllOtherDataOfProfil, visitProfil, blockProfil,
+} from "utils/fileProvider"
 import { UserConsumer } from "store/UserProvider"
 
 class Discover extends Component {
@@ -60,14 +62,11 @@ class Discover extends Component {
             return <div />
         }
         return (
-            <div>
-                <CollectionView
-                    dataUser={ dataUser }
-                    listPerson={ listPerson }
-                    chooseDataPerson={ this.chooseDataPerson }
-                />
-            </div>
-
+            <CollectionView
+                dataUser={ dataUser }
+                listPerson={ listPerson }
+                chooseDataPerson={ this.chooseDataPerson }
+            />
         )
     }
 
