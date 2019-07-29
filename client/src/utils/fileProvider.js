@@ -318,6 +318,13 @@ export const getDataFromCookie = () => {
         .catch(error => console.log(error))
 }
 
+export const getDataPeople = () => {
+    return fetch("http://localhost:4000/dataForMap")
+        .then((response) => response.json())
+        .then((responseJson) => responseJson)
+        .catch((error) => console.log(error))
+}
+
 /*
 const escapeHtml = (text) => {
     var map = {

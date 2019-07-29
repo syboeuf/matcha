@@ -141,6 +141,19 @@ app.post("/users", (req, res) => {
 	})
 })
 
+app.get("/dataForMap", (req, res) => {
+	const dataPeople = `SELECT p.*, u.age, u.biography, u.listInterest, u.gender, u.orientation, u.userLocation, u.userAddress, u.userApproximateLocation, u.userApproximateCity, u.populareScore, i.picture FROM profil p INNER JOIN userinfos u ON p.userName=u.userName INNER JOIN picturesusers i ON p.id=i.userId GROUP BY (p.id)`
+	connection.query(dataPeople, (error, results) => {
+		if (error) {
+			return res.send(error)
+		} else {
+			if (results.length > 0) {
+				return res.json({ dataPeople: results })
+			}
+		}
+	})
+})
+
 app.post("/users/checkLogin", (req, res) => {
 	const { name, hashPassword } = req.body
 	const checkLogin = `SELECT p.* FROM profil p INNER JOIN inlineuser i ON p.userName=i.user WHERE (userName, password, confirmKeyOk) IN (('${name}', '${hashPassword}', 1)) AND i.inline=0`
@@ -161,7 +174,6 @@ app.post("/users/checkLogin", (req, res) => {
 						if (error) {
 							return res.send(error)
 						} else {
-							console.log(results)
 							return res.json({ dataUser: results })
 						}
 					})

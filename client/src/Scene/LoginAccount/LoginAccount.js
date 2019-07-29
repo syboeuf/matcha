@@ -57,20 +57,30 @@ class LoginAccount extends Component {
         }
     }
 
+    hideLoginAndCreateAccount = () => {
+        this.setState({ showLogIn: false, showCreateAccount: false })
+    }
+
+    showLogIn = () => {
+        this.setState({ showLogIn: !this.state.showLogIn, showCreateAccount: false })
+    }
+
+    showCreateAccount = () => {
+        this.setState({ showLogIn: false, showCreateAccount: !this.state.showCreateAccount })
+    }
+
     render() {
         const { showLogIn, showCreateAccount } = this.state
         return (
-            <div
-                style={ styles.container }
-            >
+            <div style={ styles.container }>
                 <img
                     src="logo.png"
-                    onClick={ () => this.setState({ showLogIn: false, showCreateAccount: false }) }
+                    alt="background"
+                    onClick={ () => this.hideLoginAndCreateAccount() }
                     style={ styles.logo }
-                >
-                </img>
+                />
                 <div
-                    onClick={ () => this.setState({ showLogIn: !this.state.showLogIn, showCreateAccount: false }) }
+                    onClick={ () => this.showLogIn() }
                     style={ styles.logIn }
                 >
                     Log In
@@ -79,32 +89,27 @@ class LoginAccount extends Component {
                     (showCreateAccount || showLogIn )
                     ? null
                     :
-                    <div
-                        style={ styles.createAccount }
-                    >
+                    <div style={ styles.createAccount }>
                         <h1 style={ styles.title1 }>Bonjour, vous cherchez l'amour ?</h1>
                         <h2 style={ styles.title2 }>Alors vous êtes au bon endroit, inscrivez-vous dès maintenant.</h2>
-
                         <hr style={ styles.hr } />
-
                         <div
-                            onClick={ () => this.setState({ showLogIn: false, showCreateAccount: !this.state.showCreateAccount }) }
+                            onClick={ () => this.showCreateAccount() }
                             style={ styles.buttonCreateAccount }
                         >
                             Create account
                         </div>
-                        <span style={ styles.span } onClick={ () => this.setState({ showLogIn: true }) }>Already have an account ?</span>
+                        <span style={ styles.span } onClick={ () => this.showCreateAccount() }>Already have an account ?</span>
                     </div>
                 }
                 {
                     (showCreateAccount)
-                        ? <CreateAccount />
+                        ? <CreateAccount showLogIn={ this.showLogIn } />
                         : null
-                        
                 }
                 {
                     (showLogIn)
-                        ? <LogIn />
+                        ? <LogIn showCreateAccount={ this.showCreateAccount } />
                         : null
                 }
             </div>

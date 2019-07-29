@@ -1,14 +1,17 @@
 import React, { Component } from "react"
 import L from "leaflet"
 import * as ELG from "esri-leaflet-geocoder"
-import { Map, TileLayer } from "react-leaflet"
+import {
+    Map, TileLayer, Marker, Popup,
+} from "react-leaflet"
+import { withRouter } from "react-router-dom"
 
-import { setNewLocation } from "utils/fileProvider"
+import { setNewLocation, getDataPeople } from "utils/fileProvider"
 
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: "https://unpkg.com/leaflet@1.4.0/dist/images/marker-icon-2x.png",
-    iconUrl: "https://unpkg.com/leaflet@1.4.0/dist/images/marker-icon.png",
+    iconUrl: process.env.PUBLIC_URL + `/imageProfil/128/CD.jpg`,
     shadowUrl: "https://unpkg.com/leaflet@1.4.0/dist/images/marker-shadow.png",
 })
 
@@ -16,12 +19,17 @@ class MapComp extends Component {
 
     constructor(props) {
         super(props)
-        this.state = { center: [48.866667, 2.33333] }
+        this.state = {
+            center: [48.866667, 2.33333],
+            dataPeople: undefined,
+        }
     }
 
     componentWillMount() {
-        console.log(this.props)
-        this.findLocation(this.props)
+       this.findLocation(this.props)
+       getDataPeople()
+        .then((response) => this.setState({ dataPeople: response.dataPeople }))
+        .catch((error) => console.log(error))
     }
 
     componentDidMount() {
@@ -34,8 +42,8 @@ class MapComp extends Component {
             collapseAfterResult: false,
             expanded: true,
         }).addTo(map)
+        // results.addLayer(L.marker({ lat: center[0], lng: center[1] }))
         const results = new L.LayerGroup().addTo(map)
-        results.addLayer(L.marker({ lat: center[0], lng: center[1] }))
         searchControl.on("results", (data) => {
             results.clearLayers()
             for (let i = data.results.length - 1; i >= 0; i--) {
@@ -63,9 +71,11 @@ class MapComp extends Component {
         this.setState({ center: coords })
     }
 
+
+
     render() {
-        const { userLocation } = this.props
-        const { center } = this.state
+        const { userLocation, history } = this.props
+        const { center, dataPeople } = this.state
         return (
             <Map
                 style={ { height: "100%" } }
@@ -78,6 +88,33 @@ class MapComp extends Component {
                     attribution="&copy; <a href='https://osm.org/copyright'>OpenStreetMap</a> contributors"
                     url={ "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" }
                 />
+                {
+                    (dataPeople === undefined)
+                        ? null
+                        : (
+                            dataPeople.map((data, index) => {
+                                const greenIcon = L.icon({
+                                    iconUrl: process.env.PUBLIC_URL + `/imageProfil/${data.id}/${data.picture}`,
+                                    iconSize: [30, 30],
+                                })
+                                let position
+                                if (data.userLocation === null) {
+                                    position = data.userApproximateLocation.split(", ")
+                                } else {
+                                    position = data.userLocation.split(", ")
+                                }
+                                return (
+                                    <Marker icon={ greenIcon } key={ `dataPeople-${index}` } position={ position }>
+                                        <Popup>
+                                            <span onClick={ () => {
+                                                history.push("/InfosPerson", { dataPerson: data })
+                                            } }>{ data.userName }</span>
+                                        </Popup>
+                                    </Marker>
+                                )
+                            })
+                        )
+                }
                 <div className="pointer" />
             </Map>
         )
@@ -85,4 +122,4 @@ class MapComp extends Component {
 
 }
 
-export default MapComp
+export default withRouter(MapComp)
