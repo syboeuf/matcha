@@ -55,7 +55,7 @@ class InfosPersonal extends Component {
         const { userName, id } = infosUser
         const { infosPersonalUser } = this.state
         const {
-            age, orientation, gender, biography,
+            orientation, gender, biography,
             listInterest, userLocation, userApproximateLocation,
         } = infosPersonalUser
         return (

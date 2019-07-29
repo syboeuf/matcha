@@ -1,12 +1,16 @@
 import React from "react"
 import PropTypes from "prop-types"
 
+import TextField from "@material-ui/core/TextField"
+
 const Biography = ({ value, onChangeValue }) => (
     <div>
-        <textarea
+        <TextField
             placeholder="Put your summary here !!!"
-            rows={ 10 }
-            cols={ 50 }
+            required
+            type="text"
+            label="Biography"
+            multiline={ true }
             value={ (value === null) ? "" : value }
             onChange={ (e) => onChangeValue(e, "biography") }
         />

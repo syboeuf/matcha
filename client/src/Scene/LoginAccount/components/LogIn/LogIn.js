@@ -37,12 +37,12 @@ class LogIn extends Component {
 
     static contextType = UserConsumer
 
-   constructor(props) {
+    constructor(props) {
         super(props)
         this.state = {
             inputArray: [
-                { name: "userName", type: "text", value: "", placeholder: "userName" },
-                { name: "password", type: "password", value: "", placeholder: "password" },
+                { name: "userName", type: "text", value: "", placeholder: "Username" },
+                { name: "password", type: "password", value: "", placeholder: "Password" },
             ],
             showForgetPassword: false,
         }
@@ -83,7 +83,7 @@ class LogIn extends Component {
     render() {
         const { showForgetPassword, inputArray } = this.state
         return (
-            <Container component="main" maxWidth="xs">
+            <Container component="main" maxWidth="xs" style={{ background: 'white', padding: 50, borderRadius: 10 }}>
                 <CssBaseline />
                 <div className={ styles.paper }>
                     <Avatar className={ styles.avatar }>
@@ -94,16 +94,20 @@ class LogIn extends Component {
                     </Typography>
                     <div>
                         <Form inputArray={ inputArray } onChangeValue={ this.onChangeValue } />
-                        <StyledButton
-                            color="primary"
-                            text="Log"
-                            functionOnClick={ () => this.checkIfUserExist() }
-                        />
-                        <StyledButton
-                            color="primary"
-                            text="Forget password"
-                            functionOnClick={ () => this.setState({ showForgetPassword: !this.state.showForgetPassword }) }
-                        />
+                        <div
+                            onClick={ () => this.checkIfUserExist() }
+                            style={{
+                                marginTop: '40px',
+                                padding: '20px',
+                                backgroundColor: '#c31e27',
+                                borderRadius: '5px',
+                                color: 'white',
+                                border: 'none',
+                                textAlign: 'center'
+                            }}
+                        >
+                            Login
+                        </div>
                         {
                             (showForgetPassword)
                                 ? <ForgetPassword hideForgetPassword={ this.hideForgetPassword } />
@@ -113,14 +117,14 @@ class LogIn extends Component {
                     <Grid container>
                         <Grid item xs>
                             { /* Link or Button ? */ }
-                            <Link href="#" variant="body2">
-                                Forgot password?
+                            <Link href="#" variant="body2" style={{ color: '#c31e27' }} onClick={ () => this.setState({ showForgetPassword: !this.state.showForgetPassword }) }>
+                                Forgot password ?
                             </Link>
                         </Grid>
                         <Grid item>
                             { /* Link or button with onclick history.push */ }
-                            <Link href="#" variant="body2">
-                                Don't have an account? Sign Up
+                            <Link href="#" variant="body2" style={{ color: '#c31e27' }}>
+                                Don't have an account ? Sign up
                             </Link>
                         </Grid>
                     </Grid>

@@ -1,16 +1,29 @@
 import React, { Component } from "react"
 //import PropTypes from "prop-types"
 
+import { withStyles } from "@material-ui/core/styles"
+import GridList from "@material-ui/core/GridList"
+import GridListTile from "@material-ui/core/GridListTile"
+
 import { getPicturesUser } from "utils/fileProvider"
 
-const styles = {
+const styles = (theme) => ({
+    root: {
+        display: "flex",
+        flexWrap: "wrap",
+        justifyContent: "space-around",
+        overflow: "hidden",
+        backgroundColor: theme.palette.background.paper,
+    },
+    gridList: {
+        width: 500,
+        height: 450,
+    },
     pictures: {
-        width: 100,
-        height: 100,
         borderRadius: 10,
         border: "10px dashed red",
-    }
-}
+    },
+})
 
 class Pictures extends Component {
 
@@ -49,10 +62,10 @@ class Pictures extends Component {
         const { userId, userName } = this.props
         const { picturesFiles, picturesArray } = this.state
         if (picturesFiles[index].file.type !== "image/jpeg" &&  picturesFiles[index].file.type !== "image/png"
-                && picturesFiles[index].file.type !== "image/jpg") {
-                    alert("Sorry, only files jpeg, jpg and png are allowed")
-                    return
-                }
+            && picturesFiles[index].file.type !== "image/jpg") {
+            alert("Sorry, only files jpeg, jpg and png are allowed")
+            return
+        }
         if (picturesFiles[index].imagePreviewUrl) {
             fetch("http://localhost:4000/users/editProfil/sendPictures", {
                 headers: {
@@ -92,7 +105,7 @@ class Pictures extends Component {
         if (picturesArray === undefined) {
             return <div />
         }
-        const { userId } = this.props
+        const { userId, classes } = this.props
         const picturesDataArray = []
         for (let i = 0; i < 5; i++) {
             if (picturesArray[i] === undefined) {
@@ -102,34 +115,37 @@ class Pictures extends Component {
             }
         }
         return (
-            <div>
-                {
-                    picturesDataArray.map((pictureData, index) => (
-                        <div key={ `picture-${index}` }>
-                            {
-                                (pictureData !== null)
-                                    ? (
-                                        <img
-                                            key={ `pictureData-${index}` }
-                                            alt={ `pictureData-${index}` }
-                                            src={ process.env.PUBLIC_URL + `/imageProfil/${userId}/${pictureData.picture}` }
-                                            style={ { width: 200, height: 150 } }
-                                        />
-                                    )
-                                    : <div style={ styles.pictures } />
-                            }
-                            <input
-                                type="file"
-                                onChange={ (e) => this.handleImageChange(e, index) }
-                            />
-                            <button
-                                onClick={ (e) => this.handleSubmit(e, index) }
-                            >
-                                Upload Image
-                            </button>
-                        </div>
-                    ))
-                }
+            <div className={ classes.root }>
+                <GridList cellHeight={ 250 } className={ classes.gridList } cols={ 2 }>
+                    {
+                        picturesDataArray.map((pictureData, index) => (
+                            <GridListTile key={ `picture-${index}` } cols={ 1 }>
+                                <div>
+                                    {
+                                        (pictureData !== null)
+                                            ? (
+                                                <img
+                                                    alt={ `pictureData-${index}` }
+                                                    src={ process.env.PUBLIC_URL + `/imageProfil/${userId}/${pictureData.picture}` }
+                                                    style={ { width: 200, height: 150 } }
+                                                />
+                                            )
+                                            : <div style={ styles.pictures } />
+                                    }
+                                    <input
+                                        type="file"
+                                        onChange={ (e) => this.handleImageChange(e, index) }
+                                    />
+                                    <button
+                                        onClick={ (e) => this.handleSubmit(e, index) }
+                                    >
+                                        Upload Image
+                                    </button>
+                                </div>
+                            </GridListTile>
+                        ))
+                    }
+                </GridList>
             </div>
         )
     }
@@ -138,4 +154,4 @@ class Pictures extends Component {
 
 //Pictures.propTypes = {}
 
-export default Pictures
+export default withStyles(styles)(Pictures)

@@ -16,7 +16,6 @@ const TextInput = ({
         type={ type }
         onChange={ onChangeValue }
         placeholder={ placeholder }
-        autoComplete="current-password"
         value={ value }
     />
 )

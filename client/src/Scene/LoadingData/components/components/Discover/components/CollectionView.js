@@ -255,9 +255,9 @@ class CollectionView extends Component {
                         {
                             listProfil.map((data) => (
                                 <PreviewProfil
-                                        key={ `PreviewProfil-${data.id}` }
-                                        data={ data }
-                                        chooseDataPerson={ chooseDataPerson }
+                                    key={ `PreviewProfil-${data.id}` }
+                                    data={ data }
+                                    chooseDataPerson={ chooseDataPerson }
                                 />
                             ))
                         }

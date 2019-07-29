@@ -1,5 +1,7 @@
 import React from "react"
 
+import StyledButton from "components/StyledButton"
+
 const ListInterestArray = [
     "#Movie",
     "#Manga",
@@ -10,22 +12,19 @@ const ListInterestArray = [
 
 const ListInterest = ({ list, onChangeValue }) => (
     <div>
-        <ul>
-            {
-                ListInterestArray.map((interest) => {
-                    const checkInterest = (list !== null) ? list.indexOf(interest) : -1
-                    return (
-                        <li
-                            key={ `interest-${interest}` }
-                            style={ { color: (checkInterest !== -1) ? "red" : null } }
-                            onClick={ () => ((checkInterest !== -1)) ? onChangeValue(list.replace(interest, "")) : onChangeValue((list === null) ? "" :  list + `${interest}`) }
-                        >
-                            { interest }
-                        </li>
-                    )
-                })
-            }
-        </ul>
+        {
+            ListInterestArray.map((interest) => {
+                const checkInterest = (list !== null) ? list.indexOf(interest) : -1
+                return (
+                    <StyledButton
+                        key={ `interest-${interest}` }
+                        color={ (checkInterest !== -1) ? "secondary" : "primary" }
+                        functionOnClick={ () => ((checkInterest !== -1)) ? onChangeValue(list.replace(interest, "")) : onChangeValue((list === null) ? "" :  list + `${interest}`) }
+                        text={ interest }
+                    />
+                )
+            })
+        }
     </div>
 )
 

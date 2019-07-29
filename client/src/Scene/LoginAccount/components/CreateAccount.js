@@ -16,6 +16,7 @@ import Container from "@material-ui/core/Container"
 import { addNewUser } from "utils/fileProvider"
 
 import Form from "components/Form"
+import { textAlign } from "@material-ui/system";
 
 const styles = (theme) => ({
     "@global": {
@@ -25,7 +26,7 @@ const styles = (theme) => ({
       marginTop: theme.spacing(8),
       display: "flex",
       flexDirection: "column",
-      alignItems: "center",
+      alignItems: "center"
     },
     avatar: {
       margin: theme.spacing(1),
@@ -39,12 +40,12 @@ class CreateAccount extends Component {
         super(props)
         this.state = {
             inputArray: [
-                { name: "lastName", type: "text", value: "", placeholder: "lastName" },
-                { name: "firstName", type: "text", value: "", placeholder: "firstName" },
-                { name: "userName", type: "text", value: "", placeholder: "userName" },
-                { name: "password", type: "password", value: "", placeholder: "password" },
+                { name: "lastName", type: "text", value: "", placeholder: "Lastname" },
+                { name: "firstName", type: "text", value: "", placeholder: "Firstname" },
+                { name: "userName", type: "text", value: "", placeholder: "Username" },
+                { name: "password", type: "password", value: "", placeholder: "Password" },
                 { name: "confirmPassword", type: "password", value: "", placeholder: "Confirm password" },
-                { name: "email", type: "email", value: "", placeholder: "email" },
+                { name: "email", type: "email", value: "", placeholder: "Email" },
             ],
         }
     }
@@ -87,7 +88,7 @@ class CreateAccount extends Component {
     render() {
         const { inputArray } = this.state
         return (
-            <Container component="main" maxWidth="xs">
+            <Container component="main" maxWidth="xs" style={{ background: 'white', padding: 50, borderRadius: 10 }}>
                 <CssBaseline />
                 <div className={ styles.paper}>
                     <Avatar className={ styles.avatar }>
@@ -98,15 +99,24 @@ class CreateAccount extends Component {
                     </Typography>
                     <Form inputArray={ inputArray } onChangeValue={ this.onChangeValue } />
                     <span> { this.doesPasswordMatch() ? null : "Password doesn't match" }</span>
-                    <StyledButton
-                        functionOnClick={ () => (this.checkEmptyForm() && this.doesPasswordMatch()) ? this.checkIfUserExist() : null }
-                        text="Create your account"
-                        color="primary"
-                    />
+                    <div
+                        onClick={ () => (this.checkEmptyForm() && this.doesPasswordMatch()) ? this.checkIfUserExist() : null }
+                        style={{
+                            marginTop: '40px',
+                            padding: '20px',
+                            backgroundColor: '#c31e27',
+                            borderRadius: '5px',
+                            color: 'white',
+                            border: 'none',
+                            textAlign: 'center'
+                        }}
+                    >
+                        Create your account
+                    </div>
                     <Grid container justify="flex-end">
                         <Grid item>
-                            <Link href="#" variant="body2">
-                                Already have an account? Sign in
+                            <Link href="#" variant="body2" style={{ color: '#c31e27' }}>
+                                Already have an account ? Sign in
                             </Link>
                         </Grid>
                     </Grid>

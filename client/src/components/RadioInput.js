@@ -1,16 +1,18 @@
 import React from "react"
 import PropTypes from "prop-types"
 
+import Radio from "@material-ui/core/Radio"
+
 const RadioInput = ({ radioInputArray, onChangeValue, optionChecked }) => (
     <div>
         {
             radioInputArray.map((inputData) => (
-                <input
+                <Radio
                     key={ `option-${inputData}` }
-                    type="radio"
                     value={ inputData }
                     onChange={ onChangeValue }
                     checked={ optionChecked === inputData }
+                    inputProps={{ 'aria-label': `${inputData}` }}
                 />
             ))
         }
