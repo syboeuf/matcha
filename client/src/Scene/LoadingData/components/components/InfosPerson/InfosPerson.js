@@ -54,7 +54,7 @@ class InfosPerson extends Component {
         } = dataPerson
         const dataProfil = { userName, lastName, firstName }
         const dataPersonal = {
-            biography, listInterest, gender, orientation, populareScore,
+            biography, listInterest, gender, orientation, populareScore, id,
         }
         return (
             <div>
@@ -95,6 +95,7 @@ class InfosPerson extends Component {
                                             userName={ userName }
                                             age={ age }
                                             date={ date }
+                                            gender={ gender }
                                             inline={ inline }
                                         />
                                         <Interest listInterest={ listInterest } />

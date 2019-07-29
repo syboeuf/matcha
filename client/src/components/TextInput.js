@@ -17,6 +17,7 @@ const TextInput = ({
         onChange={ onChangeValue }
         placeholder={ placeholder }
         value={ value }
+        inputProps={{ style: { color: "black" } }}
     />
 )
 

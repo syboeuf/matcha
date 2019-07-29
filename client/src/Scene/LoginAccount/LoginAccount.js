@@ -14,16 +14,17 @@ const styles = {
     logo: { maxWidth: 180 },
     logIn: {
         marginTop: '40px',
-        maxWidth: 90,
+        width: 60,
         padding: 20,
         backgroundColor: '#c31e27',
         borderRadius: '5px',
         color: 'white',
         border: 'none',
+        textAlign: 'center'
     },
     createAccount: {
         backgroundColor: 'white',
-        maxWidth: '400px',
+        width: '400px',
         padding: '30px',
         borderRadius: '10px',
         position: 'absolute',
@@ -37,7 +38,7 @@ const styles = {
     },
     buttonCreateAccount: {
         marginTop: '40px',
-        width: '100%',
+        width: '90%',
         padding: '20px',
         backgroundColor: '#c31e27',
         borderRadius: '5px',

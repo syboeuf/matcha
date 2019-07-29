@@ -5,6 +5,7 @@ import {
 } from "react-icons/fa"
 import { UserConsumer } from "store/UserProvider"
 
+import { withStyles } from "@material-ui/core/styles"
 import Hidden from '@material-ui/core/Hidden'
 import Grid from '@material-ui/core/Grid'
 import Menu from "./Menu"
@@ -13,10 +14,56 @@ import { getNotificationsNoRead, getImageProfil } from "utils/fileProvider"
 
 import Disconnect from "./Disconnect"
 
+const styles = {
+    header: {
+        borderBottom: '1px solid rgba(0, 0, 0, .1)',
+        paddingLeft: 25,
+        paddingRight: 25,
+        paddingTop: 30
+    },
+    logo: {
+        '&:hover': {
+            cursor: 'pointer'
+        }
+    },
+    headerLinks: {
+        fontSize: '1.3em',
+    },
+    headerLink: {
+        marginRight: '1em',
+        '&:hover': {
+            borderBottom: '2px solid black',
+            cursor: 'pointer'
+        }
+    },
+    profilePic: {
+        width: 50,
+        height: 50,
+        borderRadius: '50%',
+        border: '3px solid rgba(0, 0, 0, .1)'
+    },
+    dotBlue: {
+        height: 10,
+        width: 10,
+        marginLeft: 5,
+        backgroundColor: '#4A90E2',
+        borderRadius: '50%',
+        display: 'inline-block'
+    },
+    dotGrey: {
+        height: 10,
+        width: 10,
+        marginLeft: 5,
+        backgroundColor: 'rgba(0, 0, 0, .1)',
+        borderRadius: '50%',
+        display: 'inline-block'
+    }
+}
+
 const pagesArray = [
     { page: "Discover", icon: <FaRegHeart /> },
     { page: "Messages", icon: <FaRegEnvelope /> },
-    { page: "Notifications", icon: <FaRegBell /> },
+    { page: "Notifications", icon: <div><FaRegBell /><span style={ styles.dotGrey }></span></div>, iconUnread: <div><FaRegBell /><span style={ styles.dotBlue }></span></div> },
 ]
 
 const menuProfil = ["EditProfil", "ListProfilBlock"]
@@ -71,7 +118,7 @@ class Header extends React.Component {
     }
 
     pageComponent = (highResolution) => {
-        const { history } = this.props
+        const { history, classes } = this.props
         const { dataUser } = this.context
         const { profilePic, notificationsArray } = this.state
         const stylesGrid = { display: "flex", float: "right"  }
@@ -88,13 +135,13 @@ class Header extends React.Component {
         })
         newMenuProfil.push(<Disconnect />)
         return (
-            <div style={ (highResolution === true) ? stylesGrid : null }>
+            <div style={ (highResolution === true) ? { ...stylesGrid, ...styles.headerLinks } : null }>
                 {
                     pagesArray.map((dataPage) => (
                         (dataPage.page === "Notifications")
-                            ? <div style={ { display: "flex" } } key={ `page-${dataPage.page}` }><Menu title={ dataPage.icon } array={ notificationsArray } /></div>
+                            ? <div style={{ display: 'flex' }} className={ classes.headerLink } key={ `page-${dataPage.page}` }><Menu title={ notificationsArray.length > 0 ? dataPage.iconUnread : dataPage.icon } array={ notificationsArray } /></div>
                             : (
-                                <div key={ `page-${dataPage.page}` } onClick={ () => { history.push(`/${dataPage.page}`) } }>
+                                <div className={ classes.headerLink } key={ `page-${dataPage.page}` } onClick={ () => { history.push(`/${dataPage.page}`) } }>
                                     { dataPage.icon } { dataPage.page }
                                 </div>
                             )
@@ -109,7 +156,7 @@ class Header extends React.Component {
                                     : process.env.PUBLIC_URL + "noImage.png"
                             }
                             alt="picProfile"
-                            style={ { width: 30 } }
+                            style={ styles.profilePic }
                         />
                     }
                     array={ newMenuProfil }
@@ -119,7 +166,7 @@ class Header extends React.Component {
     }
 
     render() {
-        const { history } = this.props
+        const { history, classes } = this.props
         const { isOpen } = this.state
         const { dataUser } = this.context
         if (dataUser === undefined) {
@@ -127,9 +174,9 @@ class Header extends React.Component {
         }
         return (
             <div>
-                <Grid container direction="row">
+                <Grid container direction="row" style={ styles.header }>
                     <Grid item xs>
-                        <img src={ process.env.PUBLIC_URL + "img/header.png" } onClick={ () => history.push("/") } alt="header" style={ { width: 200 } } />
+                        <img src={ process.env.PUBLIC_URL + "img/header.png" } onClick={ () => history.push("/") } className={ classes.logo } alt="header" style={ { width: 200 } } />
                     </Grid>
                     <Hidden only={ ["xs", "sm"] }>
                         <Grid item xs>
@@ -153,4 +200,4 @@ class Header extends React.Component {
     
 }
 
-export default withRouter(Header)
+export default withRouter((withStyles(styles)(Header)))

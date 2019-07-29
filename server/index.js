@@ -13,8 +13,9 @@ const jwt = require('jsonwebtoken')
 const connection = mysql.createConnection({
 	host: "localhost",
 	user: "root",
-	password: "input305",
+	password: "tpompon",
 	database: "matcha",
+	port: "3307",
 	multipleStatements: true,
 })
 

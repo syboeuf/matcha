@@ -3,8 +3,11 @@ import React from "react"
 const styles = {
     container: { display: "flex" },
     tag: {
-        border: "1px solid black",
-        borderRadius: "30%",
+        color: '#4A90E2',
+        borderRadius: 20,
+        padding: '5px 10px 5px 10px',
+        border: '1px solid #4A90E2',
+        marginRight: 10
     },
 }
 
