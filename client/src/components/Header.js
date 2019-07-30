@@ -122,6 +122,7 @@ class Header extends React.Component {
         const { history } = this.props
         const { isOpen } = this.state
         const { dataUser } = this.context
+        console.log(this.context)
         if (dataUser === undefined) {
             return <div />
         }

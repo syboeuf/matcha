@@ -6,14 +6,16 @@ import {
 } from "react-leaflet"
 import { withRouter } from "react-router-dom"
 
-import { setNewLocation, getDataPeople } from "utils/fileProvider"
+import { setNewLocation, getDataPeople, visitProfil } from "utils/fileProvider"
 
+/*
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: "https://unpkg.com/leaflet@1.4.0/dist/images/marker-icon-2x.png",
     iconUrl: process.env.PUBLIC_URL + `/imageProfil/128/CD.jpg`,
     shadowUrl: "https://unpkg.com/leaflet@1.4.0/dist/images/marker-shadow.png",
 })
+*/
 
 class MapComp extends Component {
 
@@ -33,8 +35,7 @@ class MapComp extends Component {
     }
 
     componentDidMount() {
-        const { userName } = this.props
-        const { center } = this.state
+        const { updateDataUser, infosUser } = this.props
         const map = this.leafleMap.leafletElement
         const searchControl = new ELG.Geosearch({
             useMapBounds: false,
@@ -42,26 +43,29 @@ class MapComp extends Component {
             collapseAfterResult: false,
             expanded: true,
         }).addTo(map)
-        // results.addLayer(L.marker({ lat: center[0], lng: center[1] }))
         const results = new L.LayerGroup().addTo(map)
         searchControl.on("results", (data) => {
             results.clearLayers()
             for (let i = data.results.length - 1; i >= 0; i--) {
-                results.addLayer(L.marker(data.results[i].latlng))
-                setNewLocation(userName, `${data.results[i].latlng.lat}, ${data.results[i].latlng.lng}`, data.results[i].text)
+                this.setState({ center: [data.results[i].latlng.lat, data.results[i].latlng.lng] },
+                    () => {
+                        const userLocation = `${data.results[i].latlng.lat}, ${data.results[i].latlng.lng}`
+                        updateDataUser({ ...infosUser, userLocation })
+                        setNewLocation(infosUser.userName, `${data.results[i].latlng.lat}, ${data.results[i].latlng.lng}`, data.results[i].text)
+                    })
             }
         })
     }
 
     componentWillReceiveProps(nextProps) {
-        const { userLocation, userApproximateCity } = nextProps
-        if (this.props.userLocation !== userLocation || this.props.userApproximateCity !== userApproximateCity) {
+        const { userLocation, userApproximateCity } = nextProps.infosUser
+        if (this.props.infosUser.userLocation !== userLocation || this.props.infosUser.userApproximateCity !== userApproximateCity) {
             this.findLocation(nextProps)
         }
     }
 
     findLocation = (location) => {
-        const { userLocation, userApproximateLocation } = location
+        const { userLocation, userApproximateLocation } = location.infosUser
         let coords
         if (userLocation === null) {
             coords = userApproximateLocation.split(", ")
@@ -71,10 +75,15 @@ class MapComp extends Component {
         this.setState({ center: coords })
     }
 
-
+    onClick = (data) => {
+        const { history, infosUser } = this.props
+        visitProfil(infosUser.userName, data.userName)
+        history.push("/InfosPerson", { dataPerson: data })
+    }
 
     render() {
-        const { userLocation, history } = this.props
+        const { infosUser } = this.props
+        const { userLocation, userName } = infosUser
         const { center, dataPeople } = this.state
         return (
             <Map
@@ -93,7 +102,7 @@ class MapComp extends Component {
                         ? null
                         : (
                             dataPeople.map((data, index) => {
-                                const greenIcon = L.icon({
+                                const icon = L.icon({
                                     iconUrl: process.env.PUBLIC_URL + `/imageProfil/${data.id}/${data.picture}`,
                                     iconSize: [30, 30],
                                 })
@@ -104,13 +113,23 @@ class MapComp extends Component {
                                     position = data.userLocation.split(", ")
                                 }
                                 return (
-                                    <Marker icon={ greenIcon } key={ `dataPeople-${index}` } position={ position }>
-                                        <Popup>
-                                            <span onClick={ () => {
-                                                history.push("/InfosPerson", { dataPerson: data })
-                                            } }>{ data.userName }</span>
-                                        </Popup>
-                                    </Marker>
+                                    (data.userName === userName)
+                                        ? (
+                                            <Marker icon={ icon } key={ `dataPeople-${index}` } position={ center }>
+                                                <Popup>
+                                                    You are here !
+                                                </Popup>
+                                            </Marker>
+                                        )
+                                        : (
+                                            <Marker icon={ icon } key={ `dataPeople-${index}` } position={ position }>
+                                                <Popup>
+                                                    <div style={ { whiteSpace: "pre-wrap" } } onClick={ () => this.onClick(data) }>
+                                                        { `Username: ${data.userName}\nAge: ${data.age}\nBiography: ${data.biography}` }
+                                                    </div>
+                                                </Popup>
+                                            </Marker>
+                                        )
                                 )
                             })
                         )

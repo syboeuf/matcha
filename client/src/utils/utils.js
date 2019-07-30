@@ -11,3 +11,17 @@ export const checkPassword = (password) => {
 export const uniqueId = () => {
     return `${Date.now()}${Math.floor(Math.random() * 10000)}`
 }
+
+// Useless in react
+/*
+const escapeHtml = (text) => {
+    var map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+}
+*/
