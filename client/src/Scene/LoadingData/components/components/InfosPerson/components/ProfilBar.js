@@ -13,11 +13,11 @@ const styles = {
     },
     male: {
         color: '#41A2F8',
-        fontSize: '2em'
+        fontSize: '2.5em'
     },
     female: {
         color: '#F84080',
-        fontSize: '2em'
+        fontSize: '2.5em'
     }
 }
 
@@ -31,8 +31,8 @@ const ProfilBar = ({ userName, age, gender, inline, date }) => {
 
     return (
         <div style={ styles.container }>
-            { iconGender }
-            <div>{ `${gender}, ${userName}, ${age} ans` }</div>
+            {iconGender}
+            <div style={{ fontSize: '1.8em' }}>{ `${userName}, ${age} ans` }</div>
             <div
                 style={
                     {

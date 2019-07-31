@@ -44,8 +44,30 @@ class LikeUser extends Component {
                             <div>
                                 {
                                     (likeUser === 1)
-                                        ? `This user like you`
-                                        : `This user unlike you`
+                                        ?
+                                            <div style={{
+                                                marginTop: 15,
+                                                marginBottom: 15,
+                                                textAlign: 'center',
+                                                backgroundColor: '#4A90E2',
+                                                padding: 15,
+                                                color: 'white',
+                                                borderRadius: 10
+                                            }}>
+                                                This user liked your profile
+                                            </div>
+                                        :
+                                            <div style={{
+                                                marginTop: 15,
+                                                marginBottom: 15,
+                                                textAlign: 'center',
+                                                backgroundColor: 'black',
+                                                padding: 15,
+                                                color: 'white',
+                                                borderRadius: 10
+                                            }}>
+                                                This user unliked your profile
+                                            </div>
                                 }
                             </div>
                         )

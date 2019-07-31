@@ -1,32 +1,41 @@
 import React, { Component } from "react"
 import L from "leaflet"
 import * as ELG from "esri-leaflet-geocoder"
-import { Map, TileLayer } from "react-leaflet"
+import {
+    Map, TileLayer, Marker, Popup,
+} from "react-leaflet"
+import { withRouter } from "react-router-dom"
 
-import { setNewLocation } from "utils/fileProvider"
+import { setNewLocation, getDataPeople, visitProfil } from "utils/fileProvider"
 
+/*
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: "https://unpkg.com/leaflet@1.4.0/dist/images/marker-icon-2x.png",
-    iconUrl: "https://unpkg.com/leaflet@1.4.0/dist/images/marker-icon.png",
+    iconUrl: process.env.PUBLIC_URL + `/imageProfil/128/CD.jpg`,
     shadowUrl: "https://unpkg.com/leaflet@1.4.0/dist/images/marker-shadow.png",
 })
+*/
 
 class MapComp extends Component {
 
     constructor(props) {
         super(props)
-        this.state = { center: [48.866667, 2.33333] }
+        this.state = {
+            center: [48.866667, 2.33333],
+            dataPeople: undefined,
+        }
     }
 
     componentWillMount() {
-        console.log(this.props)
-        this.findLocation(this.props)
+       this.findLocation(this.props)
+       getDataPeople()
+        .then((response) => this.setState({ dataPeople: response.dataPeople }))
+        .catch((error) => console.log(error))
     }
 
     componentDidMount() {
-        const { userName } = this.props
-        const { center } = this.state
+        const { updateDataUser, infosUser } = this.props
         const map = this.leafleMap.leafletElement
         const searchControl = new ELG.Geosearch({
             useMapBounds: false,
@@ -35,25 +44,28 @@ class MapComp extends Component {
             expanded: true,
         }).addTo(map)
         const results = new L.LayerGroup().addTo(map)
-        results.addLayer(L.marker({ lat: center[0], lng: center[1] }))
         searchControl.on("results", (data) => {
             results.clearLayers()
             for (let i = data.results.length - 1; i >= 0; i--) {
-                results.addLayer(L.marker(data.results[i].latlng))
-                setNewLocation(userName, `${data.results[i].latlng.lat}, ${data.results[i].latlng.lng}`, data.results[i].text)
+                this.setState({ center: [data.results[i].latlng.lat, data.results[i].latlng.lng] },
+                    () => {
+                        const userLocation = `${data.results[i].latlng.lat}, ${data.results[i].latlng.lng}`
+                        updateDataUser({ ...infosUser, userLocation })
+                        setNewLocation(infosUser.userName, `${data.results[i].latlng.lat}, ${data.results[i].latlng.lng}`, data.results[i].text)
+                    })
             }
         })
     }
 
     componentWillReceiveProps(nextProps) {
-        const { userLocation, userApproximateCity } = nextProps
-        if (this.props.userLocation !== userLocation || this.props.userApproximateCity !== userApproximateCity) {
+        const { userLocation, userApproximateCity } = nextProps.infosUser
+        if (this.props.infosUser.userLocation !== userLocation || this.props.infosUser.userApproximateCity !== userApproximateCity) {
             this.findLocation(nextProps)
         }
     }
 
     findLocation = (location) => {
-        const { userLocation, userApproximateLocation } = location
+        const { userLocation, userApproximateLocation } = location.infosUser
         let coords
         if (userLocation === null) {
             coords = userApproximateLocation.split(", ")
@@ -63,9 +75,16 @@ class MapComp extends Component {
         this.setState({ center: coords })
     }
 
+    onClick = (data) => {
+        const { history, infosUser } = this.props
+        visitProfil(infosUser.userName, data.userName)
+        history.push("/InfosPerson", { dataPerson: data })
+    }
+
     render() {
-        const { userLocation } = this.props
-        const { center } = this.state
+        const { infosUser } = this.props
+        const { userLocation, userName } = infosUser
+        const { center, dataPeople } = this.state
         return (
             <Map
                 style={ { height: "100%" } }
@@ -78,6 +97,43 @@ class MapComp extends Component {
                     attribution="&copy; <a href='https://osm.org/copyright'>OpenStreetMap</a> contributors"
                     url={ "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" }
                 />
+                {
+                    (dataPeople === undefined)
+                        ? null
+                        : (
+                            dataPeople.map((data, index) => {
+                                const icon = L.icon({
+                                    iconUrl: process.env.PUBLIC_URL + `/imageProfil/${data.id}/${data.picture}`,
+                                    iconSize: [30, 30],
+                                })
+                                let position
+                                if (data.userLocation === null) {
+                                    position = data.userApproximateLocation.split(", ")
+                                } else {
+                                    position = data.userLocation.split(", ")
+                                }
+                                return (
+                                    (data.userName === userName)
+                                        ? (
+                                            <Marker icon={ icon } key={ `dataPeople-${index}` } position={ center }>
+                                                <Popup>
+                                                    You are here !
+                                                </Popup>
+                                            </Marker>
+                                        )
+                                        : (
+                                            <Marker icon={ icon } key={ `dataPeople-${index}` } position={ position }>
+                                                <Popup>
+                                                    <div style={ { whiteSpace: "pre-wrap" } } onClick={ () => this.onClick(data) }>
+                                                        { `Username: ${data.userName}\nAge: ${data.age}\nBiography: ${data.biography}` }
+                                                    </div>
+                                                </Popup>
+                                            </Marker>
+                                        )
+                                )
+                            })
+                        )
+                }
                 <div className="pointer" />
             </Map>
         )
@@ -85,4 +141,4 @@ class MapComp extends Component {
 
 }
 
-export default MapComp
+export default withRouter(MapComp)

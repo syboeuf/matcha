@@ -1,13 +1,11 @@
 import React, { useContext } from "react"
 import { withRouter } from "react-router-dom"
 //import PropTypes from "prop-types"
-
 import Container from "@material-ui/core/Container"
 import Grid from "@material-ui/core/Grid"
 import InfosProfil from "./components/InfosProfil"
 import InfosPersonal from "./components/InfosPersonal"
 import { UserConsumer } from "store/UserProvider"
-
 const EditProfil = () => {
     const user = useContext(UserConsumer)
     if (user.dataUser === undefined) {
@@ -32,9 +30,7 @@ const EditProfil = () => {
         </Container>
     )
 }
-
 EditProfil.propTypes = {
     //dataUser: PropTypes.objectOf().isRequired,
 }
-
 export default withRouter(EditProfil)

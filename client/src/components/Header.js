@@ -17,9 +17,7 @@ import Disconnect from "./Disconnect"
 const styles = {
     header: {
         borderBottom: '1px solid rgba(0, 0, 0, .1)',
-        paddingLeft: 25,
-        paddingRight: 25,
-        paddingTop: 30
+        padding: '25px'
     },
     logo: {
         '&:hover': {
@@ -27,12 +25,12 @@ const styles = {
         }
     },
     headerLinks: {
-        fontSize: '1.3em',
+        fontSize: '1.3em'
     },
     headerLink: {
         marginRight: '1em',
         '&:hover': {
-            borderBottom: '2px solid black',
+            color: '#c31e27',
             cursor: 'pointer'
         }
     },
@@ -121,7 +119,7 @@ class Header extends React.Component {
         const { history, classes } = this.props
         const { dataUser } = this.context
         const { profilePic, notificationsArray } = this.state
-        const stylesGrid = { display: "flex", float: "right"  }
+        const stylesGrid = { display: "flex", float: "right", alignItems: "center" }
         const newNotificationsArray = []
         const newMenuProfil = []
         notificationsArray.forEach((notification) => {
@@ -176,7 +174,7 @@ class Header extends React.Component {
             <div>
                 <Grid container direction="row" style={ styles.header }>
                     <Grid item xs>
-                        <img src={ process.env.PUBLIC_URL + "img/header.png" } onClick={ () => history.push("/") } className={ classes.logo } alt="header" style={ { width: 200 } } />
+                        <img src={ process.env.PUBLIC_URL + "img/header.png" } onClick={ () => history.push("/") } className={ classes.logo } alt="header" style={{ width: 200 }} />
                     </Grid>
                     <Hidden only={ ["xs", "sm"] }>
                         <Grid item xs>

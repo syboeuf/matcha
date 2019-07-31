@@ -1,29 +1,33 @@
 import React, { Component } from "react"
 // import PropTypes from "prop-types"
-
 import Biography from "./components/Biography"
 import ListInterest from "./components/ListInterest"
 import Orientation from "./components/Orientation"
 import Gender from "./components/Gender"
 import Pictures from "./components/Pictures"
 import Map from "./components/Map"
-
+import Modal from "@material-ui/core/Modal"
 import { updateInfosPersonal } from "utils/fileProvider"
-
+const styles = {
+    modal: {
+        position: "absolute",
+        left: "25%",
+        bottom: "25%",
+        top: "25%",
+        right: "25%",
+        margin: "auto",
+        background: "white",
+    },
+}
 class InfosPersonal extends Component {
-
     constructor(props) {
         super(props)
-        this.state = {
-            infosPersonalUser: {},
-        }
+        this.state = { infosPersonalUser: {}, openMap: false }
     }
-
     componentWillMount() {
         const { infosUser } = this.props
         this.setState({ infosPersonalUser: { ...infosUser } })
     }
-
     onChangeValue = (e, option) => {
         this.setState({
             ...this.state,
@@ -33,7 +37,6 @@ class InfosPersonal extends Component {
             },
         })
     }
-
     updateListInterest = (newlistInterest) => {
         this.setState({
             ...this.state,
@@ -43,20 +46,20 @@ class InfosPersonal extends Component {
             },
         })
     }
-
     onClick = (infosPersonalUser, userName) => {
         const { updateDataUser } = this.props
         updateInfosPersonal({ ...infosPersonalUser, userName })
         updateDataUser(infosPersonalUser)
     }
-
+    handleClose = () => {
+        this.setState({ openMap: false })
+    }
     render() {
-        const { infosUser } = this.props
+        const { infosUser, updateDataUser } = this.props
         const { userName, id } = infosUser
-        const { infosPersonalUser } = this.state
+        const { infosPersonalUser, openMap } = this.state
         const {
-            orientation, gender, biography,
-            listInterest, userLocation, userApproximateLocation,
+            orientation, gender, biography, listInterest,
         } = infosPersonalUser
         return (
             <div>
@@ -80,20 +83,24 @@ class InfosPersonal extends Component {
                     userId={ id }
                     userName={ userName }
                 />
-                <div style={ { width: "100%", height: 200 } }>
-                    <Map
-                        userName={ userName }
-                        userLocation={ userLocation }
-                        userApproximateLocation={ userApproximateLocation }
-                    />
-                </div>
+                <button onClick={ () => this.setState({ openMap: true }) }>Open map</button>
+                <Modal
+                    aria-labelledby="modal-map"
+                    aria-describedby="simple-modal-map"
+                    open={ openMap }
+                    onClose={ this.handleClose }
+                >
+                    <div style={ styles.modal }>
+                        <Map
+                            updateDataUser={ updateDataUser }
+                            infosUser={ infosUser }
+                        />
+                    </div>
+                </Modal>
                 <button onClick={ () => this.onClick(infosPersonalUser, userName) }>Save</button>
             </div>
         )
     }
-
 }
-
 // InfosPersonal.propTypes = {}
-
 export default InfosPersonal

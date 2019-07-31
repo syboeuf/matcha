@@ -4,18 +4,41 @@ import Typography from "@material-ui/core/Typography"
 
 import { getImageProfil } from "utils/fileProvider"
 
+import { withStyles } from "@material-ui/core/styles"
+
 const styles = {
+    popularityBar: {
+        width: '90%',
+        backgroundColor: '#ddd',
+        borderRadius: 15,
+        marginTop: 20,
+        marginBottom: 20,
+        marginLeft: 'auto',
+        marginRight: 'auto'
+    },
     popularityProgress: {
+        width: '90%',
         backgroundColor: '#4A90E2',
         borderRadius: 15,
         padding: '5px 0px 5px 10px'
     },
     popularityScore: {
         textAlign: 'right',
-        paddingTop: 20,
-        fontSize: '1.5em',
         color: 'white',
-        paddingRight: '5%'
+        paddingRight: 10
+    },
+    profileBio: {
+        boxShadow: '0px 0px 5px rgba(0, 0, 0, .2)',
+        borderRadius: 10,
+        marginTop: 15,
+        padding: 30,
+        wordBreak: 'break-word'
+    },
+    profilePic: {
+        width: 200,
+        height: 200,
+        borderRadius: '50%',
+        objectFit: 'cover'
     }
 }
 
@@ -37,66 +60,27 @@ class DataPersonal extends React.Component {
     }
     
     render() {
-        const { dataPersonal } = this.props
+        const { classes, dataPersonal } = this.props
         const { biography, populareScore, id } = dataPersonal
         
         return (
-            <div>
+            <div style={{ textAlign: 'center' }}>
                 <img
-                    style={{ width: 200, height: 200, borderRadius: '50%', objectFit: 'cover' }}
+                    className={ classes.profilePic }
                     src={ this.state.profilePic }
                 />
-                <div style={ { ...styles.popularityProgress, width: `${populareScore}%` } }>
-                    <span style={ styles.popularityScore }>{ populareScore }%</span>
+                <div style={ styles.popularityBar }>
+                    <div style={{ ...styles.popularityProgress, ...styles.popularityScore, width: `${populareScore}%` }}>{ populareScore }%</div>
                 </div>
-                <Paper>
-                    <Typography variant="h5" component="h3">
-                        Popular score
-                    </Typography>
-                    <Typography component="p">
-                        { populareScore }
-                    </Typography>
-                </Paper>
                 <Typography variant="h5" component="h3">
-                    A propos
+                    About
                 </Typography>
-                <Paper>
-                    <Typography component="p">
-                        { biography }
-                    </Typography>
-                </Paper>
+                <div style={ styles.profileBio }>
+                    { biography }
+                </div>
             </div>
         )
     }
 }
 
-// const DataPersonal = ({ dataPersonal }) => {
-//     const { biography, populareScore, id } = dataPersonal
-
-//     return (
-//         <div>
-//             <img
-//                 style={{ width: 200, height: 200, borderRadius: '50%', objectFit: 'cover' }}
-//                 src="https://images.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
-//             />
-//             <Paper>
-//                 <Typography variant="h5" component="h3">
-//                     Popular score
-//                 </Typography>
-//                 <Typography component="p">
-//                     { populareScore }
-//                 </Typography>
-//             </Paper>
-//             <Typography variant="h5" component="h3">
-//                 A propos
-//             </Typography>
-//             <Paper>
-//                 <Typography component="p">
-//                     { biography }
-//                 </Typography>
-//             </Paper>
-//         </div>
-//     )
-// }
-
-export default DataPersonal
+export default (withStyles(styles)(DataPersonal))

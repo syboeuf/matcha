@@ -259,7 +259,7 @@ export const setLocation = (userName, dataAddress) => {
 }
 
 export const setNewLocation = (userName, coords, userAddress) => {
-    return fetch("http://localhost:4000/users/getUserLocation", optionsFetch({ userName, coords, userAddress }))
+    fetch("http://localhost:4000/users/getUserLocation", optionsFetch({ userName, coords, userAddress }))
 }
 
 export const getLocation = () => {
@@ -278,7 +278,7 @@ export const getLocation = () => {
 }
 
 export const setLocationToNull = (userName) => {
-    return fetch("http://localhost:4000/users/setLocationToNull", optionsFetch({ userName }))
+    fetch("http://localhost:4000/users/setLocationToNull", optionsFetch({ userName }))
 }
 
 export const getUserApproximateLocation = (userName) => {
@@ -318,15 +318,9 @@ export const getDataFromCookie = () => {
         .catch(error => console.log(error))
 }
 
-/*
-const escapeHtml = (text) => {
-    var map = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
-    };
-    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+export const getDataPeople = () => {
+    return fetch("http://localhost:4000/dataForMap")
+        .then((response) => response.json())
+        .then((responseJson) => responseJson)
+        .catch((error) => console.log(error))
 }
-*/
