@@ -27,6 +27,7 @@ const styles = (theme) => ({
     createAccount: {
         marginTop: '40px',
         padding: '20px',
+        width: "100%",
         backgroundColor: '#c31e27',
         borderRadius: '5px',
         color: 'white',
@@ -41,7 +42,7 @@ const styles = (theme) => ({
     },
     avatar: {
       margin: theme.spacing(1),
-      backgroundColor: theme.palette.secondary.main,
+      backgroundColor: "#c31e27",
     },
   })
 
@@ -117,7 +118,7 @@ class CreateAccount extends Component {
                     >
                         Create your account
                     </div>
-                    <Grid container justify="flex-end">
+                    <Grid container justify="center">
                         <Grid item>
                             <span onClick={ () => showLogIn() } className={ classes.span }>
                                 Already have an account ? Sign in

@@ -1,6 +1,6 @@
 import React, { Component } from "react"
 
-import CarouselProfil from "components/CarouselProfil"
+import CarouselProfil2 from "components/CarouselProfil2"
 
 import { getPicturesUser } from "utils/fileProvider"
 
@@ -38,7 +38,7 @@ class Images extends Component {
         }
         return (
             <div>
-                <CarouselProfil pictureProfil={ imagesArray } />
+                <CarouselProfil2 pictureProfil={ imagesArray } />
             </div>
         )
     }

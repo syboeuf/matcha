@@ -10,12 +10,12 @@ const styles = {
 		margin: "auto",
 	},
 	picture: {
-		width: "100%",
-		height: "100%",
+		width: 200,
+        height: 200,
+        objectFit: "cover",
     	position: "absolute",
     	top: 0,
     	margin: "auto",
-    	zIndex: 100,
     	transition: "transform 1s",
 	},
 	buttonPrevNext: {
@@ -40,13 +40,101 @@ class App extends Component {
 	constructor(props) {
     	super(props)
     	this.state = {
-    		prev: props.pictureProfil.length - 1,
-    		next: 1,
-			active: 0,
-			direction: "",
+            active: 0,
+            direction: "",
+            hide: null,
 		}
-  	}
+    }
 
+    prev = () => {
+        const { pictureProfil } = this.props
+        const { active } = this.state
+        const newPictureActive = (active === 0) ? pictureProfil.length - 1 : active - 1
+        this.setState({ active: newPictureActive, direction: "left", hide: active })
+    }
+
+    next = () => {
+        const { pictureProfil } = this.props
+        const { active } = this.state
+        const newPictureActive = (active === pictureProfil.length - 1) ? 0 : active + 1
+        this.setState({ active: newPictureActive, direction: "right", hide: active })
+    }
+
+    choosePictureFromIndex = (index) => {
+        const { active } = this.state
+        const direction = (active < index) ? "right" : "left"
+        this.setState({ active: index, direction, hide: active })
+    }
+
+    render() {
+        const { pictureProfil } = this.props
+        const { active, direction, hide } = this.state
+        return (
+            <div style={ styles.container }>
+                <div style={ { overflow: "hidden", position: "relative" } }>
+                    {
+                        pictureProfil.map((pictureData, index) => {
+                            if (index === active || index === hide) {
+                                let newStyles = {}
+                                if (index === hide) {
+                                    newStyles = {
+                                        zIndex: 900,
+                                        transform: (direction === "left") ? "translateX(-100%)" : "translateX(100%)",
+                                    }
+                                }
+                                if (index === active) {
+                                    newStyles = {
+                                        zIndex: 900,
+                                        position: "relative",
+                                        transform: (direction === "left") ? "translateX(-100%)" : "translateX(100%)",
+                                    }
+                                }
+                                return (
+                                    <div key={ `picture-${index}` }>
+                                        <img
+                                            src={ process.env.PUBLIC_URL + `/imageProfil/${pictureData.userId}/${pictureData.picture}` }
+                                            alt={ `${index}` }
+                                            style={
+                                                {
+                                                    ...styles.picture,
+                                                    ...newStyles,
+                                                }
+                                            }
+                                        />
+                                    </div>                                    
+                                )
+                            }
+                            return 
+                        })
+                    }
+                </div>
+                <div
+					onClick={ () => this.prev() }
+					style={
+						{
+							...styles.buttonPrevNext,
+							left: 0,
+						}
+					}
+				>
+					<FaAngleLeft />
+				</div>
+				<div
+					onClick={ () => this.next() }
+					style={
+						{
+							...styles.buttonPrevNext,
+							right: 0,
+						}
+					}
+				>
+					<FaAngleRight />
+				</div>
+            </div>
+        )
+    }
+
+    /*
 	next = () => {
 		const { pictureProfil } = this.props
     	const { active } = this.state
@@ -262,7 +350,8 @@ class App extends Component {
 				</div>
 			</div>
 		)
-  	}
+    }
+    */
 
 }
 

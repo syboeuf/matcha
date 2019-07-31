@@ -36,14 +36,13 @@ const styles = (theme) => ({
     },
     span: { color: '#c31e27' },
     paper: {
-        marginTop: theme.spacing(8),
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
     },
     avatar: {
         margin: theme.spacing(1),
-        backgroundColor: theme.palette.secondary.main,
+        backgroundColor: "#c31e27",
     },
 })
 

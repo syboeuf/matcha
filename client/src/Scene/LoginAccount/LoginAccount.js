@@ -37,7 +37,7 @@ const styles = {
     },
     buttonCreateAccount: {
         marginTop: '40px',
-        width: '100%',
+        width: '90%',
         padding: '20px',
         backgroundColor: '#c31e27',
         borderRadius: '5px',
