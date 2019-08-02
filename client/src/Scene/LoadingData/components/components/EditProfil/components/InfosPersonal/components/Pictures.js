@@ -115,37 +115,33 @@ class Pictures extends Component {
             }
         }
         return (
-            <div className={ classes.root }>
-                <GridList cellHeight={ 250 } className={ classes.gridList } cols={ 2 }>
+            <div>
                     {
                         picturesDataArray.map((pictureData, index) => (
-                            <GridListTile key={ `picture-${index}` } cols={ 1 }>
-                                <div>
-                                    {
-                                        (pictureData !== null)
-                                            ? (
-                                                <img
-                                                    alt={ `pictureData-${index}` }
-                                                    src={ process.env.PUBLIC_URL + `/imageProfil/${userId}/${pictureData.picture}` }
-                                                    style={ { width: 200, height: 150 } }
-                                                />
-                                            )
-                                            : <div style={ styles.pictures } />
-                                    }
-                                    <input
-                                        type="file"
-                                        onChange={ (e) => this.handleImageChange(e, index) }
-                                    />
-                                    <button
-                                        onClick={ (e) => this.handleSubmit(e, index) }
-                                    >
-                                        Upload Image
-                                    </button>
-                                </div>
-                            </GridListTile>
+                            <div style={{ display: 'inline-flex'}} key={ `pic-${index}` }>
+                                {
+                                    (pictureData !== null)
+                                        ? (
+                                            <img
+                                                alt={ `pictureData-${index}` }
+                                                src={ process.env.PUBLIC_URL + `/imageProfil/${userId}/${pictureData.picture}` }
+                                                style={ { width: 400, height: 300, objectFit: 'cover' } }
+                                            />
+                                        )
+                                        : <div style={ styles.pictures } />
+                                }
+                                <input
+                                    type="file"
+                                    onChange={ (e) => this.handleImageChange(e, index) }
+                                />
+                                <button
+                                    onClick={ (e) => this.handleSubmit(e, index) }
+                                >
+                                    Upload Image
+                                </button>
+                            </div>
                         ))
                     }
-                </GridList>
             </div>
         )
     }

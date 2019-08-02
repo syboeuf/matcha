@@ -68,7 +68,7 @@ export default function CustomizedMenus(props) {
                             (
                                 props.array.map((data, index) => (
                                     <StyledMenuItem key={ `notification-${index}` }>
-                                    <ListItemText primary={ data } />
+                                        <ListItemText primary={ data } />
                                     </StyledMenuItem>
                                 ))
                             )

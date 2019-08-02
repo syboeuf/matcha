@@ -1,14 +1,50 @@
 import React, { Component } from "react"
 
-import StyledButton from "components/StyledButton"
+import { withStyles } from "@material-ui/core/styles"
 
 import { getPicturesUser, likeOrUnkikeUser } from "utils/fileProvider"
+
+const styles = {
+    blueBtnDisabled: {
+        width: '100%',
+        padding: '20px',
+        backgroundColor: 'transparent',
+        border: '1px solid #4A90E2',
+        borderRadius: '5px',
+        color: '#4A90E2',
+        transition: 'background-color .2s ease-out',
+        marginTop: 10,
+        marginBottom: 10,
+        fontSize: '1em',
+        '&:hover': {
+            cursor: 'pointer'
+        }
+    },
+    blueBtnEnabled: {
+        width: '100%',
+        padding: '20px',
+        backgroundColor: '#4A90E2',
+        border: '1px solid #4A90E2',
+        borderRadius: '5px',
+        color: 'white',
+        transition: 'background-color .2s ease-out',
+        marginTop: 10,
+        marginBottom: 10,
+        fontSize: '1em',
+        '&:hover': {
+            cursor: 'pointer'
+        }
+    }
+}
 
 class LikeUser extends Component {
 
     constructor(props) {
         super(props)
-        this.state = { isLikable: false }
+        this.state = {
+            isLikable: false,
+            like: false
+        }
     }
 
     componentWillMount() {
@@ -33,9 +69,22 @@ class LikeUser extends Component {
             .catch((error) => console.log(error))
     }
 
-    render() {
-        const { likeUser, user, profilName } = this.props
+    toggleLike = () => {
+        const { user, profilName } = this.props
         const { isLikable } = this.state
+
+        this.setState({ like: !this.state.like })
+
+        if (!this.state.like && isLikable) {
+            likeOrUnkikeUser(user, profilName, 1)
+        }
+        else if (this.state.like && isLikable) {
+            likeOrUnkikeUser(user, profilName, -1)
+        }
+    }
+
+    render() {
+        const { classes, likeUser } = this.props
         return (
             <div>
                 {
@@ -73,20 +122,11 @@ class LikeUser extends Component {
                         )
                         : null
                 }
-                <StyledButton
-                    text="Like"
-                    color="primary"
-                    functionOnClick={ (isLikable === true) ? () => likeOrUnkikeUser(user, profilName, 1) : null }
-                />
-                <StyledButton
-                    text="Unlike"
-                    color="primary"
-                    functionOnClick={ (isLikable === true) ? () => likeOrUnkikeUser(user, profilName, -1) : null }
-                />
+                <button className={ this.state.like ? classes.blueBtnEnabled : classes.blueBtnDisabled } onClick={ () => this.toggleLike() }>Like this user</button>
             </div>
         )
     }
 
 }
 
-export default LikeUser
+export default (withStyles(styles)(LikeUser))

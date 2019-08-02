@@ -5,7 +5,7 @@ import {
 } from "react-icons/fa"
 
 const styles = {
-    container: { display: "flex", alignItems: "center" },
+    container: { display: "flex", alignItems: "center", flexWrap: "wrap" },
     inline: {
         width: 10,
         height: 10,

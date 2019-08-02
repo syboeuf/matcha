@@ -188,6 +188,22 @@ app.post("/users/checkLogin", (req, res) => {
 	})
 })
 
+app.post("/users/verifyPassword", (req, res) => {
+	const { name, hashPassword } = req.body
+	const checkLogin = `SELECT p.* FROM profil p INNER JOIN inlineuser i ON p.userName=i.user WHERE (userName, password, confirmKeyOk) IN (('${name}', '${hashPassword}', 1))`
+	connection.query(checkLogin, (error, results) => {
+		if (error) {
+			return res.send(error)
+		} else {
+			if (results.length > 0) {
+				return res.json({ success: 1 })
+			} else {
+				return res.json({ success: 0 })
+			}
+		}
+	})
+})
+
 app.post("/users/ban", (req, res) => {
 	const { username, bantime } = req.body
 	const setBantime = `UPDATE profil SET bantime='${bantime}' WHERE userName='${username}'`

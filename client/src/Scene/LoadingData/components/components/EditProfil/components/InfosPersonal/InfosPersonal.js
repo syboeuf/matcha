@@ -6,7 +6,9 @@ import Orientation from "./components/Orientation"
 import Gender from "./components/Gender"
 import Pictures from "./components/Pictures"
 import Map from "./components/Map"
+import { withStyles } from "@material-ui/core/styles"
 import Modal from "@material-ui/core/Modal"
+import Swal from "sweetalert2"
 import { updateInfosPersonal } from "utils/fileProvider"
 const styles = {
     modal: {
@@ -18,6 +20,24 @@ const styles = {
         margin: "auto",
         background: "white",
     },
+    blueBtn: {
+        padding: '20px',
+        backgroundColor: 'transparent',
+        border: '1px solid #4A90E2',
+        borderRadius: '5px',
+        color: '#4A90E2',
+        transition: 'background-color .2s ease-out',
+        marginTop: 10,
+        marginBottom: 10,
+        fontSize: '1em',
+        textAlign: 'center',
+        '&:hover': {
+            transition: 'background-color .2s ease-in',
+            backgroundColor: '#4A90E2',
+            color: 'white',
+            cursor: 'pointer'
+        }
+    }
 }
 class InfosPersonal extends Component {
     constructor(props) {
@@ -50,12 +70,17 @@ class InfosPersonal extends Component {
         const { updateDataUser } = this.props
         updateInfosPersonal({ ...infosPersonalUser, userName })
         updateDataUser(infosPersonalUser)
+        Swal.fire(
+            'Informations updated',
+            'You succesfully updated your personal informations',
+            'success'
+        )
     }
     handleClose = () => {
         this.setState({ openMap: false })
     }
     render() {
-        const { infosUser, updateDataUser } = this.props
+        const { classes, infosUser, updateDataUser } = this.props
         const { userName, id } = infosUser
         const { infosPersonalUser, openMap } = this.state
         const {
@@ -79,11 +104,12 @@ class InfosPersonal extends Component {
                     onChangeValue={ this.updateListInterest }
                     list={ listInterest }
                 />
+                <button className={ classes.blueBtn } onClick={ () => this.onClick(infosPersonalUser, userName) }>Save</button>
+                <button className={ classes.blueBtn } onClick={ () => this.setState({ openMap: true }) }>Open map</button>
                 <Pictures
                     userId={ id }
                     userName={ userName }
                 />
-                <button onClick={ () => this.setState({ openMap: true }) }>Open map</button>
                 <Modal
                     aria-labelledby="modal-map"
                     aria-describedby="simple-modal-map"
@@ -97,10 +123,9 @@ class InfosPersonal extends Component {
                         />
                     </div>
                 </Modal>
-                <button onClick={ () => this.onClick(infosPersonalUser, userName) }>Save</button>
             </div>
         )
     }
 }
 // InfosPersonal.propTypes = {}
-export default InfosPersonal
+export default (withStyles(styles)(InfosPersonal))

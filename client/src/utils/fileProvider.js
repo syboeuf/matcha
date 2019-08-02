@@ -1,5 +1,7 @@
 import hash from "hash.js"
 
+import Swal from 'sweetalert2'
+
 import { checkEmail, checkPassword } from "utils/utils"
 
 const optionsFetch = (dataBody) => {
@@ -88,6 +90,13 @@ export const checkLogIn = (inputArray) => {
         .catch((error) => console.log(error))
 }
 
+export const verifyPassword = (name, password) => {
+    const hashPassword = hash.sha256().update(password).digest("hex")
+    return fetch("http://localhost:4000/users/verifyPassword", optionsFetch({ name, hashPassword }))
+        .then((response) => response.json())
+        .catch((error) => console.log(error))
+}
+
 export const checkKey = (name, key) => {
     return fetch(`http://localhost:4000/users/confirmIdendity`, optionsFetch({ key, name }))
         .then((response) => response.json())
@@ -160,7 +169,11 @@ export const likeOrUnkikeUser = (user, profilName, valueLike) => {
                         } else if (+res === 1 && valueLike === -1) {
                             fetch("http://localhost:4000/users/deleteMatch", optionsFetch({ user, profilName }))
                         } else {
-                            alert(responseText)
+                            Swal.fire(
+                                'This is a match !',
+                                'You are now able to discuss with this user',
+                                'success'
+                            )
                         }
                     })
                     .catch((error) => console.log(error))

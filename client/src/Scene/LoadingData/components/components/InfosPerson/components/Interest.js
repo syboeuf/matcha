@@ -3,7 +3,7 @@ import React from "react"
 import { withStyles } from "@material-ui/core/styles"
 
 const styles = {
-    container: { display: "flex" },
+    container: { display: "flex", flexWrap: "wrap" },
     tag: {
         color: '#4A90E2',
         borderRadius: 20,

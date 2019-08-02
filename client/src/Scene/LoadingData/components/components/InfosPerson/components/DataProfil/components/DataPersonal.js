@@ -38,7 +38,8 @@ const styles = {
         width: 200,
         height: 200,
         borderRadius: '50%',
-        objectFit: 'cover'
+        objectFit: 'cover',
+        boxShadow: '0px 0px 10px rgba(0, 0, 0, .1)'
     }
 }
 
