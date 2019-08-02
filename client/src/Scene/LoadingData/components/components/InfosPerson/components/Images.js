@@ -37,9 +37,7 @@ class Images extends Component {
             return <div />
         }
         return (
-            <div>
-                <CarouselProfil2 pictureProfil={ imagesArray } />
-            </div>
+            <CarouselProfil2 pictureProfil={ imagesArray } />
         )
     }
 

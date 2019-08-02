@@ -1,38 +1,49 @@
 import React, { Component } from "react"
 
-import { FaAngleLeft, FaAngleRight } from "react-icons/fa"
-
 const styles = {
-	container: {
+	slider: {
 		position: "relative",
-		width: "100%",
-		height: "100%",
-		margin: "auto",
-	},
-	picture: {
 		width: 200,
-        height: 200,
-        objectFit: "cover",
-    	position: "absolute",
-    	top: 0,
-    	margin: "auto",
-    	transition: "transform 1s",
+		margin: "0 auto",
+		height: 200,
+		overflow: "hidden",
+		whiteSpace: "nowrap",
 	},
-	buttonPrevNext: {
-		width: "15%",
-		position: "absolute",
-		zIndex: 100000,
-		top: "50%",
-	},
-	miniButton: {
-		position: "absolute",
-		bottom: 0,
-		zIndex: 1000,
-		display: "flex",
-		justifyContent: "space-around",
+	sliderWrapper: {
+		position: "relative",
+		height: "100%",
 		width: "100%",
 	},
-	customButton: { width: "15%" },
+	slide: {
+		display: "inline-block",
+		height: "100%",
+		width: "100%",
+	},
+	arrow: {
+		height: 50,
+		width: 50,
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		background: "#f9f9f9",
+		borderRadius: "50%",
+		cursor: "pointer",
+		transition: "transform ease-in 0.1s",
+	},
+	nextArrow: {
+		position: "absolute",
+		top: "50%",
+		right: 0,
+		zIndex: 999,
+		color: "#222",
+	},
+	backArrow: {
+		position: "absolute",
+		top: "50%",
+		left: 0,
+		zIndex: 999,
+		color: "#222",
+	},
 }
 
 class App extends Component {
@@ -40,318 +51,138 @@ class App extends Component {
 	constructor(props) {
     	super(props)
     	this.state = {
-            active: 0,
-            direction: "",
-            hide: null,
+			currentIndex: 0,
+			translateValue: 0,
 		}
-    }
-
-    prev = () => {
-        const { pictureProfil } = this.props
-        const { active } = this.state
-        const newPictureActive = (active === 0) ? pictureProfil.length - 1 : active - 1
-        this.setState({ active: newPictureActive, direction: "left", hide: active })
-    }
-
-    next = () => {
-        const { pictureProfil } = this.props
-        const { active } = this.state
-        const newPictureActive = (active === pictureProfil.length - 1) ? 0 : active + 1
-        this.setState({ active: newPictureActive, direction: "right", hide: active })
-    }
-
-    choosePictureFromIndex = (index) => {
-        const { active } = this.state
-        const direction = (active < index) ? "right" : "left"
-        this.setState({ active: index, direction, hide: active })
-    }
-
-    render() {
-        const { pictureProfil } = this.props
-        const { active, direction, hide } = this.state
-        return (
-            <div style={ styles.container }>
-                <div style={ { overflow: "hidden", position: "relative" } }>
-                    {
-                        pictureProfil.map((pictureData, index) => {
-                            if (index === active || index === hide) {
-                                let newStyles = {}
-                                if (index === hide) {
-                                    newStyles = {
-                                        zIndex: 900,
-                                        transform: (direction === "left") ? "translateX(-100%)" : "translateX(100%)",
-                                    }
-                                }
-                                if (index === active) {
-                                    newStyles = {
-                                        zIndex: 900,
-                                        position: "relative",
-                                        transform: (direction === "left") ? "translateX(-100%)" : "translateX(100%)",
-                                    }
-                                }
-                                return (
-                                    <div key={ `picture-${index}` }>
-                                        <img
-                                            src={ process.env.PUBLIC_URL + `/imageProfil/${pictureData.userId}/${pictureData.picture}` }
-                                            alt={ `${index}` }
-                                            style={
-                                                {
-                                                    ...styles.picture,
-                                                    ...newStyles,
-                                                }
-                                            }
-                                        />
-                                    </div>                                    
-                                )
-                            }
-                            return 
-                        })
-                    }
-                </div>
-                <div
-					onClick={ () => this.prev() }
-					style={
-						{
-							...styles.buttonPrevNext,
-							left: 0,
-						}
-					}
-				>
-					<FaAngleLeft />
-				</div>
-				<div
-					onClick={ () => this.next() }
-					style={
-						{
-							...styles.buttonPrevNext,
-							right: 0,
-						}
-					}
-				>
-					<FaAngleRight />
-				</div>
-            </div>
-        )
-    }
-
-    /*
-	next = () => {
-		const { pictureProfil } = this.props
-    	const { active } = this.state
-    	if (active === 0) {
-      		this.setState({
-        		prev: active,
-        		next: active + 2,
-				active: active + 1,
-				direction: "right",
-      		})
-    	} else if (active === pictureProfil.length - 1) {
-      		this.setState({
-        		prev: pictureProfil.length - 1,
-        		next: 1,
-				active: 0,
-				direction: "right",
-      		})
-    	} else {
-      		this.setState({
-        		prev: active,
-        		next: (active + 1 === pictureProfil.length - 1) ? 0 : active + 2,
-				active: active + 1,
-				direction: "right",
-      		})
-    	}
-  	}
-
-  	prev = () => {
-		const { pictureProfil } = this.props
-    	const { active } = this.state
-    	if (active === 0) {
-      		this.setState({
-        		prev: pictureProfil.length - 2,
-        		next: 0,
-				active: pictureProfil.length - 1,
-				direction: "left",
-      		})
-    	} else if (active === pictureProfil.length - 1) {
-      		this.setState({
-        		prev: active - 2,
-        		next: pictureProfil.length - 1,
-				active: pictureProfil.length - 2,
-				direction: "left",
-      		})
-    	} else {
-      		this.setState({
-        		prev: (active - 1 === 0) ? pictureProfil.length - 1 : active - 2,
-        		next: active,
-				active: active - 1,
-				direction: "left",
-      		})
-    	}
+		this.isDrag = false
 	}
-	  
-	goToTheIndex = (index) => {
+
+	goToPrevSlide = () => {
+		const { currentIndex } = this.state
+		if (currentIndex === 0) {
+			return
+		}
+		this.setState((prevState) => ({
+			currentIndex: prevState.currentIndex - 1,
+			translateValue: prevState.translateValue + 200,
+		}))
+	}
+
+	goToNextSlide = () => {
 		const { pictureProfil } = this.props
-		const { active } = this.state
-		if (index === 0) {
-			this.setState({
-				prev: pictureProfil.length - 1,
-        		next: index + 1,
-				active: index,
-				direction: "left",
+		const { currentIndex } = this.state
+		if (currentIndex === pictureProfil.length - 1) {
+			return this.setState({
+				currentIndex: 0,
+				translateValue: 0,
 			})
-		} else if (index === pictureProfil.length - 1) {
-			this.setState({
-				prev: index - 1,
-        		next: 0,
-				active: index,
-				direction: "right",
-			})
+		}
+		this.setState((prevState) => ({
+			currentIndex: prevState.currentIndex + 1,
+			translateValue: prevState.translateValue - 200,
+		}))
+	}
+
+	chooseImageByIndex = (index) => {
+		this.setState((prevState) => ({
+			currentIndex: index,
+			translateValue: (index > prevState.currentIndex) ? prevState.translateValue - (index - prevState.currentIndex) * 200 : prevState.translateValue + (prevState.currentIndex - index) * 200
+		}))
+	}
+
+	mouseMove = (e, startX, startY) => {
+		e.persist()
+		this.isDrag = true
+		const offset = e.target.getBoundingClientRect()
+		if (e.pageX - offset.left < (offset.width / 2)) {
+			console.log("1")
+			this.setState((prevState) => ({
+				currentIndex: prevState.currentIndex,
+				translateValue: prevState.translateValue + (e.pageX - offset.left + (offset.width / 2))
+			}))
 		} else {
-			this.setState({
-				prev: index - 1,
-        		next: index + 1,
-				active: index,
-				direction: (active > index) ? "left" : "right",
-			})
+			console.log("2")
+			this.setState((prevState) => ({
+				currentIndex: prevState.currentIndex,
+				translateValue: prevState.translateValue - (e.pageX - offset.left)
+			}))
 		}
 	}
 
-	pictureComponent = (picture, direction, active) => {
-		let newStyles = {}
-		if (direction === "left" && active === false) {
-			newStyles = {
-				zIndex: 800,
-				transform: "translateX(-100%)",
+	onMouseDown = (e) => {
+		const startX = e.pageX
+		const startY = e.pageY
+		e.target.addEventListener("mousemove", this.mouseMove(e, startX, startY))
+	}
+
+	onMouseUp = (e) => {
+		if (this.isDrag === true) {
+			this.isDrag = false
+			e.target.removeEventListener("mousemove", this.mouseMove)
+		} else {
+			const offset = e.target.getBoundingClientRect()
+			if (e.pageX - offset.left < (offset.width / 2)) {
+				this.goToPrevSlide()
+			} else {
+				this.goToNextSlide()
 			}
 		}
-		if (active === true) {
-			newStyles = {
-				opacity: 1,
-				position: "relative",
-				zIndex: 900,
-			}
-		}
-		if (direction === "right" && active === false) {
-			newStyles = {
-				zIndex: 800,
-				transform: "translateX(100%)",
-			}
+	}
+
+	render() {
+		const { pictureProfil } = this.props
+		const { translateValue } = this.state
+		const arrayButton = []
+		for (let i = 0; i < pictureProfil.length; i++) {
+			arrayButton.push(i)
 		}
 		return (
-			<img
-				src={ process.env.PUBLIC_URL + `/imageProfil/${picture.userId}/${picture.picture}` }
-				alt={ `chut` }
-				style={
-					{
-						...styles.picture,
-						...newStyles,
-					}
-				}
-			/>
-		)
-	}
-
-  	render() {
-	  	const { pictureProfil } = this.props
-		const { prev, active, next, direction } = this.state
-		if (pictureProfil === undefined) {
-			return <div />
-		}
-		const pictureArray = []
-		pictureProfil.forEach((picture, index) => {
-			if (active === index) {
-				if (direction === "left") {
-					pictureArray.push(this.pictureComponent(pictureProfil[prev], direction, false))
-				} else if (direction === "right") {
-					pictureArray.push(this.pictureComponent(pictureProfil[next], direction, false))
-				}
-				pictureArray.push(this.pictureComponent(picture, null, true))
-			}
-		})
-		const arrayButtonIndex = []
-		pictureProfil.forEach((picture, index) => {
-			arrayButtonIndex.push(index)
-		})
-		console.log(pictureArray)
-    	return (
-			<div style={ styles.container }>
-				<div style={ { overflow: "hidden", position: "relative" } }>
-					{
-						pictureProfil.map((picture, index) => {
-							let newStyles = {}
-							if (index === prev) {
-								newStyles = {
-									zIndex: 800,
-									transform: "translateX(-100%)",
-								}
+			<div>
+				<div
+					onMouseDown={ (e) => this.onMouseDown(e) }
+					onMouseUp={ (e) => this.onMouseUp(e) }
+					style={ styles.slider }
+				>
+					<div
+						style={
+							{
+								...styles.sliderWrapper,
+								transform: `translateX(${translateValue}px)`,
+								transition: "transform ease-out 0.45s",
 							}
-							if (index === active) {
-								newStyles = {
-									opacity: 1,
-									position: "relative",
-									zIndex: 900,
-								}
-							}
-							if (index === next) {
-								newStyles = {
-									zIndex: 800,
-									transform: "translateX(100%)",
-								}
-							}
-							return (
-								<div key={ `picture-${index}` }>
-									<img
-										src={ process.env.PUBLIC_URL + `/imageProfil/${picture.userId}/${picture.picture}` }
-										alt={ `${index}` }
-										style={
-											{
-												...styles.picture,
-												...newStyles,
-											}
+						}
+					>
+						{
+							pictureProfil.map((image, index) => (
+								<div
+									key={ `image-${index}` }
+									style={
+										{
+											...styles.slide,
+											backgroundImage: `url(${process.env.PUBLIC_URL}/imageProfil/${image.userId}/${image.picture})`,
+											backgroundSize: "cover",
+											backgroundRepeat: "no-repeat",
+											backgroundPosition: "50% 60%",
 										}
-									/>
-								</div>
-							)
-						})
-					}
-				</div>	
-				<div
-					onClick={ () => this.prev() }
-					style={
-						{
-							...styles.buttonPrevNext,
-							left: 0,
+									}
+								/>
+							))
 						}
-					}
-				>
-					<FaAngleLeft />
+					</div>
 				</div>
-				<div
-					onClick={ () => this.next() }
-					style={
-						{
-							...styles.buttonPrevNext,
-							right: 0,
-						}
-					}
-				>
-					<FaAngleRight />
-				</div>
-				<div style={ styles.miniButton }>
-					{
-						arrayButtonIndex.map((i) => (
-							<button
-								key={ `picture-${i}` }
-								style={ styles.customButton }
-								onClick={ () => this.goToTheIndex(i) }
-							/>
-						))
-					}
-				</div>
+				{
+					arrayButton.map((num) => (
+						<button
+							key={ `image-${num}` }
+							onClick={ () => this.chooseImageByIndex(num) }
+						>
+							{ num }
+						</button>
+					))
+				}
 			</div>
 		)
-    }
-    */
+	}
 
 }
 
