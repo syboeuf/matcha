@@ -90,43 +90,61 @@ class App extends Component {
 		}))
 	}
 
-	mouseMove = (e, startX, startY) => {
-		e.persist()
-		this.isDrag = true
-		const offset = e.target.getBoundingClientRect()
-		if (e.pageX - offset.left < (offset.width / 2)) {
-			console.log("1")
-			this.setState((prevState) => ({
-				currentIndex: prevState.currentIndex,
-				translateValue: prevState.translateValue + (e.pageX - offset.left + (offset.width / 2))
-			}))
-		} else {
-			console.log("2")
-			this.setState((prevState) => ({
-				currentIndex: prevState.currentIndex,
-				translateValue: prevState.translateValue - (e.pageX - offset.left)
-			}))
-		}
-	}
-
 	onMouseDown = (e) => {
-		const startX = e.pageX
-		const startY = e.pageY
-		e.target.addEventListener("mousemove", this.mouseMove(e, startX, startY))
-	}
-
-	onMouseUp = (e) => {
-		if (this.isDrag === true) {
-			this.isDrag = false
-			e.target.removeEventListener("mousemove", this.mouseMove)
-		} else {
-			const offset = e.target.getBoundingClientRect()
-			if (e.pageX - offset.left < (offset.width / 2)) {
-				this.goToPrevSlide()
-			} else {
-				this.goToNextSlide()
+		const startingLeft = e.pageX
+		let distanceTravelled
+		const onMouseMove = (e) => {
+			const { pictureProfil } = this.props
+			const { currentIndex } = this.state
+			distanceTravelled = -(startingLeft - e.clientX)
+			if (distanceTravelled > 5 || distanceTravelled < -5) {
+				this.isDrag = true
+			}
+			if ((currentIndex === 0 && distanceTravelled > 0) || (currentIndex === pictureProfil.length - 1 && distanceTravelled < 0)) {
+				return
+			} else if (distanceTravelled < 180 && distanceTravelled > -180 && this.isDrag === true) {
+				this.setState((prevState) => ({
+					currentIndex: prevState.currentIndex,
+					translateValue: -(prevState.currentIndex * 200) + distanceTravelled,
+				}))
 			}
 		}
+		const onMouseUp = (e) => {
+			document.removeEventListener("mousemove", onMouseMove)
+			document.removeEventListener("mouseup", onMouseUp)
+			if (this.isDrag === true) {
+				this.isDrag = false
+				const { pictureProfil } = this.props
+				const { currentIndex } = this.state
+				if ((currentIndex === 0 && distanceTravelled > 50) || (currentIndex === pictureProfil.length - 1 && distanceTravelled < -50) || (distanceTravelled < 50 && distanceTravelled > -50)) {
+					this.setState((prevState) => ({
+						currentIndex: prevState.currentIndex,
+						translateValue: -(prevState.currentIndex * 200),
+					}))
+				} else {
+					if (distanceTravelled < 0) {
+						this.setState((prevState) => ({
+							currentIndex: (distanceTravelled < 0) ? prevState.currentIndex + 1 : prevState.currentIndex - 1,
+							translateValue: prevState.translateValue - distanceTravelled - 200,
+						}))
+					} else if (distanceTravelled > 0) {
+						this.setState((prevState) => ({
+							currentIndex: (distanceTravelled < 0) ? prevState.currentIndex + 1 : prevState.currentIndex - 1,
+							translateValue: prevState.translateValue - distanceTravelled + 200,
+						}))
+					}
+				}
+			} else {
+				const offset = e.target.getBoundingClientRect()
+				if (e.pageX - offset.left < (offset.width / 2)) {
+					this.goToPrevSlide()
+				} else {
+					this.goToNextSlide()
+				}	
+			}
+		}
+		document.addEventListener("mousemove", onMouseMove)
+    	document.addEventListener("mouseup", onMouseUp)
 	}
 
 	render() {
@@ -140,7 +158,6 @@ class App extends Component {
 			<div>
 				<div
 					onMouseDown={ (e) => this.onMouseDown(e) }
-					onMouseUp={ (e) => this.onMouseUp(e) }
 					style={ styles.slider }
 				>
 					<div

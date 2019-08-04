@@ -32,7 +32,9 @@ class InfosPerson extends Component {
     }
 
     onClick = () => {
-        const { dataPerson, dataUser, getListUser } = this.props
+        const { getListUser } = this.props
+        const { dataPerson } = this.props.location.state
+        const { dataUser } = this.context
         this.setState({ blocked: true }, () => getListUser(dataUser.userName, dataPerson.userName))
     }
 
