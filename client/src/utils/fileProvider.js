@@ -129,13 +129,13 @@ export const recoverPassword = (newPassword, key) => {
     fetch(`http://localhost:4000/users/recoverPassword`, optionsFetch({ passwordHash, key }))
 }
 
-export const updateInfosProfil = (id, previousUserName, inputArray) => {
-    const infosProfilUser = { id, previousUserName, ...transformArrayInObject(inputArray) }
+export const updateInfosProfil = (id, previousUserName, dataArray) => {
+    const infosProfilUser = { id, previousUserName, ...dataArray }
     const { email, newPassword } = infosProfilUser
     if (!checkEmail(email)) {
-        alert("email address is not valid")
+        return new Promise((resolve) => resolve(2))
     } else if (!checkPassword(newPassword)) {
-        alert("Password is not secured.")
+        return new Promise((resolve) => resolve(3))
     } else {
         infosProfilUser.newPassword = hash.sha256().update(newPassword).digest("hex")
         return fetch("http://localhost:4000/users/updateInfosProfil", optionsFetch(infosProfilUser))
@@ -204,10 +204,7 @@ export const getAllOtherDataOfProfil = (userName, profilName) => {
 }
 
 export const blockProfil = (userName, profilBlock) => {
-    return fetch("http://localhost:4000/users/blockProfil", optionsFetch({ userName, profilBlock }))
-        .then((response) => response.json())
-        .then((responseJson) => responseJson)
-        .catch((error) => console.log(error))
+    fetch("http://localhost:4000/users/blockProfil", optionsFetch({ userName, profilBlock }))
 } 
 
 export const deblockUser = (userName, userDeblocked) => {

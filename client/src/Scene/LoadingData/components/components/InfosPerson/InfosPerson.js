@@ -3,14 +3,13 @@ import React, { Component } from "react"
 import Images from "./components/Images"
 import ProfilBar from "./components/ProfilBar"
 import DataProfil from "./components/DataProfil"
-import StyledButton from "components/StyledButton"
 import Interest from "./components/Interest"
 import Container from "@material-ui/core/Container"
 import Grid from "@material-ui/core/Grid"
 
 import { withStyles } from "@material-ui/core/styles"
 
-import { reportingFakeProfil } from "utils/fileProvider"
+import { blockProfil, reportingFakeProfil } from "utils/fileProvider"
 
 import { UserConsumer } from "store/UserProvider"
 
@@ -55,8 +54,10 @@ class InfosPerson extends Component {
     }
 
     onClick = () => {
-        const { dataPerson, dataUser, getListUser } = this.props
-        this.setState({ blocked: true }, () => getListUser(dataUser.userName, dataPerson.userName))
+        const { dataUser } = this.context
+        const { dataPerson } = this.props.location.state
+        blockProfil(dataUser.userName, dataPerson.userName)
+        this.setState({ blocked: true })
     }
 
     render() {
@@ -79,6 +80,7 @@ class InfosPerson extends Component {
         const dataPersonal = {
             biography, listInterest, gender, orientation, populareScore, id,
         }
+        console.log(dataUser, dataPerson)
         const { classes } = this.props
         return (
             <div>

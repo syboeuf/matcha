@@ -167,7 +167,7 @@ app.post("/users/checkLogin", (req, res) => {
 				if (date > results[0].bantime || results[0].bantime === 0) {
 					const token = jwt.sign({ name, hashPassword }, jwtKey, {
 						algorithm: "HS256",
-						expiresIn: "1h",
+						expiresIn: "24h",
 					})
 					res.cookie("token", token)
 					const getDataUser = `SELECT p.*, u.age, u.biography, u.listInterest, u.gender, u.orientation, u.userLocation, u.userAddress, u.userApproximateLocation, u.userApproximateCity, u.populareScore FROM profil p INNER JOIN userinfos u ON p.userName=u.userName WHERE p.userName='${name}'`
@@ -537,13 +537,12 @@ app.post("/users/blockProfil", (req, res) => {
 	const { userName, profilBlock } = req.body
 	let blockProfil = `INSERT INTO listblockprofil (user, blockProfil) VALUES('${userName}', '${profilBlock}');`
 	blockProfil += `DELETE FROM profilmatch WHERE (firstPerson='${userName}' AND secondPerson='${profilBlock}') OR (firstPerson='${profilBlock}' AND secondPerson='${userName}');`
-	blockProfil += `SELECT p.*, u.age, u.biography, u.gender, u.orientation, u.listInterest, u.userAddress, u.userLocation, u.userApproximateLocation, u.populareScore FROM profil p INNER JOIN userinfos u ON p.userName=u.userName WHERE p.userName NOT IN (SELECT blockProfil FROM listblockprofil WHERE user='${userName}') AND p.userName<>'${userName}';`
 	blockProfil += `DELETE FROM likeuser WHERE userName='${userName}' AND profilName='${profilBlock}'`
 	connection.query(blockProfil, (error, results) => {
 		if (error) {
 			return res.send(error)
 		} else {
-			return res.json({ blockList: results[2] })
+			return res.json({success: true})
 		}
 	})
 })

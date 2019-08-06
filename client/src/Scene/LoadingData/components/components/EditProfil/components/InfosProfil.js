@@ -1,9 +1,8 @@
 import React, { Component } from "react"
 // import PropTypes from "prop-types"
 
-import { UserConsumer } from "store/UserProvider"
-
 import { updateInfosProfil, getImageProfil, verifyPassword } from "utils/fileProvider"
+import { checkEmail, checkPassword } from "utils/utils"
 
 import Form from "components/Form"
 import Swal from "sweetalert2"
@@ -67,8 +66,6 @@ const styles = {
 
 class InfosProfil extends Component {
 
-    static contextType = UserConsumer
-
     constructor(props) {
         super(props)
         const {
@@ -88,62 +85,107 @@ class InfosProfil extends Component {
     }
     
     componentWillMount() {
-        getImageProfil(this.context.dataUser.id)
+        getImageProfil(this.props.infosUser.id)
             .then((res) => {
                 this.setState({ profilePic: process.env.PUBLIC_URL + `/imageProfil/${this.context.dataUser.id}/${res.imageProfil[0].picture}` })
             })
             .catch((err) => console.log(err))
     }
 
-    onClick = (id, userName, inputArray) => {
-        const { updateDataUser } = this.props
-        let newDataUser = {}
+    async onClick(id, userName, inputArray) {
+        const { updateDataUser, infosUser } = this.props
+        let newDataUser = { ...infosUser }
+        let check = false
         inputArray.forEach((data) => {
+            if (data.name !== "newPassword" && data.name !== "email" && data.value.toString().trim() === "") {
+                check = true;
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: `${data.name} is empty`,
+                })
+            }
             newDataUser = {
                 ...newDataUser,
                 [data.name]: data.value,
             }
         })
-        updateInfosProfil(id, userName, inputArray)
-            .then((response) => {
-                if (response === 1) {
-                    updateDataUser(newDataUser)
-                    Swal.fire(
-                        'Informations updated',
-                        'You succesfully updated your personal informations',
-                        'success'
-                    )
+          if (!check) {
+            if (checkEmail(newDataUser.email)) {
+                if (checkPassword(newDataUser.newPassword) || newDataUser.newPassword.trim() === '') {
+                    const {value: password} = await Swal.fire({
+                        title: 'Please confirm with your current password',
+                        input: 'password',
+                        inputPlaceholder: 'Enter your password',
+                        inputAttributes: {
+                          autocapitalize: 'off',
+                          autocorrect: 'off'
+                        }
+                      })
+                    
+                    if (password) {
+                        verifyPassword(userName, password)
+                            .then((res) => {
+                                if (res.success) {
+                                    newDataUser = {
+                                        ...newDataUser,
+                                        newPassword: password,
+                                    }
+                                    updateInfosProfil(id, userName, newDataUser)
+                                        .then((response) => {
+                                            if (response === 1) {
+                                                updateDataUser(newDataUser)
+                                                Swal.fire(
+                                                    'Informations updated',
+                                                    'You succesfully updated your personal informations',
+                                                    'success'
+                                                )
+                                            }
+                                            else if (response === 2) {
+                                                Swal.fire({
+                                                    type: 'error',
+                                                    title: 'Oops...',
+                                                    text: 'Email is invalid',
+                                                })
+                                            }
+                                            else if (response === 3) {
+                                                Swal.fire({
+                                                    type: 'error',
+                                                    title: 'Oops...',
+                                                    text: 'Password is not secure',
+                                                })
+                                            }
+                                            else {
+                                                Swal.fire({
+                                                    type: 'error',
+                                                    title: 'Oops...',
+                                                    text: 'Username or email already in use',
+                                                })
+                                            }
+                                        })
+                                        .catch((error) => console.log(error))
+                                    Swal.fire('Informations updated')
+                                }
+                                else {
+                                    Swal.fire('Password invalid')
+                                }
+                            })
+                            .catch((err) => console.log(err))
+                      }
                 } else {
-                    alert("This username or email are already use !")
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: 'Password is not secure',
+                    })
                 }
-            })
-            .catch((error) => console.log(error))
-    }
-
-    async onClickTemp() {
-        const { userName } = this.props.infosUser
-        const {value: password} = await Swal.fire({
-            title: 'Please confirm your password',
-            input: 'password',
-            inputPlaceholder: 'Enter your password',
-            inputAttributes: {
-              autocapitalize: 'off',
-              autocorrect: 'off'
-            }
-          })
-
-          if (password) {
-            verifyPassword(userName, password)
-                .then((res) => {
-                    console.log(res)
-                    if (res.success) {
-                        Swal.fire('Informations updated')
-                    }
-                    else {
-                        Swal.fire('Password invalid')
-                    }
+              } else {
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: 'Email is invalid',
                 })
-                .catch((err) => console.log(err))
+              }
           }
     }
 
@@ -156,12 +198,12 @@ class InfosProfil extends Component {
     render() {
         const { classes } = this.props
         const { id, userName, populareScore } = this.props.infosUser
-        const { inputArray } = this.state
+        const { inputArray, profilePic } = this.state
         return (
             <div style={{ textAlign: 'center' }}>
                 <img
                     className={ classes.profilePic }
-                    src={ this.state.profilePic }
+                    src={ profilePic }
                 />
                 <div style={ styles.popularityBar }>
                     <div style={{ ...styles.popularityProgress, ...styles.popularityScore, width: `${populareScore}%` }}>{ populareScore }%</div>
@@ -173,13 +215,6 @@ class InfosProfil extends Component {
                 >
                     Save
                 </div>
-                <div
-                    className={ classes.blueBtn }
-                    onClick={ () => this.onClickTemp() }
-                >
-                    Save test
-                </div>
-
             </div>
         )
     }
