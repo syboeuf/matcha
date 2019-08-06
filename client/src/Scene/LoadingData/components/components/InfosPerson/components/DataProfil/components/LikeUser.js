@@ -2,7 +2,7 @@ import React, { Component } from "react"
 
 import { withStyles } from "@material-ui/core/styles"
 
-import { getPicturesUser, likeOrUnkikeUser } from "utils/fileProvider"
+import { getPicturesUser, likeOrUnkikeUser, checkLike } from "utils/fileProvider"
 
 const styles = {
     blueBtnDisabled: {
@@ -48,8 +48,12 @@ class LikeUser extends Component {
     }
 
     componentWillMount() {
-        const { id } = this.props
+        const { id, user, profilName } = this.props
         this.getImages(id)
+        checkLike(user, profilName)
+            .then((res) => {
+                if (res.like) { this.setState({ like: true }) }
+            })
     }
 
     componentWillReceiveProps(nextProps) {

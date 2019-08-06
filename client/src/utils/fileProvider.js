@@ -218,6 +218,13 @@ export const getListMatch = (userName) => {
         .catch((error) => console.log(error))
 }
 
+export const checkLike = (currUser, userProfile) => {
+    return fetch("http://localhost:4000/users/checkLike", optionsFetch({ currUser, userProfile }))
+        .then((response) => response.json())
+        .then((responseJson) => responseJson)
+        .catch((error) => console.log(error))
+}
+
 export const sendMessage = (from, to, message) => {
     fetch("http://localhost:4000/users/sendMessage", optionsFetch({ from, to, message }))
 }

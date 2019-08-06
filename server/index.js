@@ -521,6 +521,21 @@ app.post("/users/listBlockProfil", (req, res) => {
 	})
 })
 
+app.post("/users/checkLike", (req, res) => {
+	const { currUser, userProfile } = req.body
+	const checkLike = `SELECT likeUser FROM likeuser WHERE '${currUser}' = userName AND '${userProfile}' = profilName AND likeUser = 1`
+	connection.query(checkLike, (err, results) => {
+		if (err) {
+			return res.send(err)
+		} else {
+			if (results.length !== 0)
+				return res.json({ like: true })
+			else
+				return res.json({ like: false })
+		}
+	})
+})
+
 app.post("/users/getBlockList", (req, res) => {
 	const { userName } = req.body
 	const getBlockList = `SELECT blockProfil FROM listblockprofil WHERE user='${userName}'`

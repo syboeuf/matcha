@@ -38,7 +38,10 @@ const styles = {
         width: 50,
         height: 50,
         borderRadius: '50%',
-        border: '3px solid rgba(0, 0, 0, .1)'
+        border: '3px solid rgba(0, 0, 0, .1)',
+        '&:hover': {
+            cursor: 'pointer'
+        }
     },
     dotBlue: {
         height: 10,
@@ -154,7 +157,7 @@ class Header extends React.Component {
                                     : process.env.PUBLIC_URL + "noImage.png"
                             }
                             alt="picProfile"
-                            style={ styles.profilePic }
+                            className={ classes.profilePic }
                         />
                     }
                     array={ newMenuProfil }

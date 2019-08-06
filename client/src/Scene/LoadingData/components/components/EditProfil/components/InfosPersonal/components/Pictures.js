@@ -94,6 +94,7 @@ class Pictures extends Component {
             picturesFiles[index].file = file
             picturesFiles[index].imagePreviewUrl = reader.result
             this.setState({ ...this.state, picturesFiles })
+            this.handleSubmit(e, index)
         }
         if (file) {
             reader.readAsDataURL(file)
@@ -126,19 +127,22 @@ class Pictures extends Component {
                                                 alt={ `pictureData-${index}` }
                                                 src={ process.env.PUBLIC_URL + `/imageProfil/${userId}/${pictureData.picture}` }
                                                 style={ { width: 400, height: 300, objectFit: 'cover' } }
+                                                onClick={ () => document.getElementById(`pic-${index}`).click() }
                                             />
                                         )
                                         : <div style={ styles.pictures } />
                                 }
                                 <input
+                                    id={ `pic-${index}` }
                                     type="file"
                                     onChange={ (e) => this.handleImageChange(e, index) }
+                                    style={{ display: 'none' }}
                                 />
-                                <button
+                                {/* <button
                                     onClick={ (e) => this.handleSubmit(e, index) }
                                 >
                                     Upload Image
-                                </button>
+                                </button> */}
                             </div>
                         ))
                     }

@@ -14,6 +14,57 @@ const styles = (theme) => ({
         paddingTop: theme.spacing(8),
         paddingBottom: theme.spacing(8),
     },
+    searchBtn: {
+        width: '100%',
+        padding: '20px',
+        backgroundColor: 'transparent',
+        border: '1px solid #4A90E2',
+        borderRadius: '5px',
+        color: '#4A90E2',
+        transition: 'background-color .2s ease-out',
+        marginTop: 10,
+        marginBottom: 10,
+        fontSize: '1em',
+        textAlign: 'center',
+        '&:hover': {
+            transition: 'background-color .2s ease-in',
+            backgroundColor: '#4A90E2',
+            color: 'white',
+            cursor: 'pointer'
+        }
+    },
+    container: { display: "flex", flexWrap: "wrap" },
+    tagDisabled: {
+        color: '#4A90E2',
+        backgroundColor: 'transparent',
+        borderRadius: 20,
+        padding: '5px 10px 5px 10px',
+        border: '1px solid #4A90E2',
+        marginRight: 10,
+        marginBottom: 10,
+        fontSize: '1.3em',
+        fontWeight: 'bold',
+        transition: 'background-color .3s',
+        '&:hover': {
+            backgroundColor: 'rgba(74, 144, 226, .1)',
+            cursor: 'pointer'
+        }
+    },
+    tagEnabled: {
+        color: 'white',
+        backgroundColor: '#4A90E2',
+        borderRadius: 20,
+        padding: '5px 10px 5px 10px',
+        border: '1px solid #4A90E2',
+        marginRight: 10,
+        marginBottom: 10,
+        fontSize: '1.3em',
+        fontWeight: 'bold',
+        transition: 'background-color .3s',
+        '&:hover': {
+            cursor: 'pointer'
+        }
+    }
 })
 
 const listTagArray = [
@@ -227,28 +278,45 @@ class CollectionView extends Component {
         // console.log(searchProfilArray)
         return (
             <div>
-                <div>
+                <div style={{ width: '40%', marginLeft: 'auto', marginRight: 'auto' }}>
                     <input
                         type="text"
                         value={ searchProfilValue }
                         onChange={ (e) => this.onSearchUserChange(e) }
                         placeholder="Seach a profil by the name"
+                        style={{
+                            width: '100%',
+                            boxShadow: '0px 5px 10px rgba(0, 0, 0, .1)',
+                            border: 0,
+                            fontSize: 20,
+                            padding: 20,
+                            marginBottom: 10,
+                        }}
                     />
-                    <Form inputArray={ age } onChangeValue={ this.onChangeAge } />
-                    <Form inputArray={ distance } onChangeValue={ this.onChangeDistance } />
-                    <Form inputArray={ score } onChangeValue={ this.onChangeScore } />
-                    <button onClick={ () => this.filterList(listPerson) }>Filter populare score</button>                    
-                    {
-                        listTagArray.map((tag) => (
-                            <button
-                                key={ `Btn-${tag}` }
-                                onClick={ () => this.chooseTag(tag) }
-                                style={ { marginRight: 5, color: (listTag.indexOf(tag) !== -1) ? "red" : null } }
-                            >
-                                { tag }
-                            </button>
-                        ))
-                    }
+                    <div style={{ display: 'flex' }}>
+                        <Form inputArray={ age } onChangeValue={ this.onChangeAge } />
+                        <Form inputArray={ distance } onChangeValue={ this.onChangeDistance } />
+                        <Form inputArray={ score } onChangeValue={ this.onChangeScore } />
+                    </div>
+                    <button
+                            className={ classes.searchBtn }
+                            onClick={ () => this.filterList(listPerson) }
+                        >
+                            Search
+                    </button>
+                    <div className={ classes.container }>
+                        {
+                            listTagArray.map((tag) => (
+                                <button
+                                    key={ `Btn-${tag}` }
+                                    onClick={ () => this.chooseTag(tag) }
+                                    className={ (listTag.indexOf(tag) !== -1) ? classes.tagEnabled : classes.tagDisabled }
+                                >
+                                    { tag }
+                                </button>
+                            ))
+                        }
+                    </div>
                 </div>
                 <Container className={ classes.cardGrid } maxWidth="lg">
                     <Grid container spacing={ 4 }>

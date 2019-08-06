@@ -9,26 +9,20 @@ import Grid from "@material-ui/core/Grid"
 import Typography from "@material-ui/core/Typography"
 
 const styles = theme => ({
-    icon: { marginRight: theme.spacing(2) },
-    heroContent: {
-        backgroundColor: theme.palette.background.paper,
-        padding: theme.spacing(8, 0, 6),
-    },
-    heroButtons: { marginTop: theme.spacing(4) },
-    cardGrid: {
-        paddingTop: theme.spacing(8),
-        paddingBottom: theme.spacing(8),
-    },
     card: {
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
+        width: 400,
+        height: 300,
+        boxShadow: '0px 5px 10px rgba(0, 0, 0, .1)',
+        transition: 'all .5s ease',
+        '&:hover': {
+            transform: 'scale(1.1)',
+            cursor: 'pointer'
+        }
     },
-    cardMedia: { paddingTop: "56.25%" }, // 16:9
-    cardContent: { flexGrow: 1 },
-    footer: {
-        backgroundColor: theme.palette.background.paper,
-        padding: theme.spacing(6),
+    imageCard: {
+        width: '100%',
+        height: '85%',
+        objectFit: 'cover',
     },
 })
 
@@ -61,17 +55,17 @@ class PreviewProfil extends Component {
         const pathImageProfil = (imageProfil === null) ? "noImage.png" : `/imageProfil/${data.id}/${imageProfil}`
         return (
             <Grid item xs={ 12 } sm={ 6 } md={ 4 }>
-                <Card className={ classes.card }>
-                    <CardMedia
+                <div className={ classes.card }>
+                    <img
                         onClick={ () => chooseDataPerson(data) }
-                        className={ classes.cardMedia }
-                        image={ process.env.PUBLIC_URL + pathImageProfil }
+                        src={ process.env.PUBLIC_URL + pathImageProfil }
+                        className={ classes.imageCard}
                         title="Image profile"
                     />
-                    <Typography style={ { textAlign: "center" } } gutterBottom variant="h5" component="h2">
+                    <div style={ { textAlign: "center" } }>
                         { userName }
-                    </Typography>
-                </Card>
+                    </div>
+                </div>
             </Grid>
         )
     }

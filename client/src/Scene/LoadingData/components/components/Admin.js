@@ -4,6 +4,20 @@ import { banUser, getAllProfilName } from "utils/fileProvider"
 
 import Form from "components/Form"
 
+import { withStyles } from "@material-ui/core/styles"
+
+const styles = {
+    searchBarResult: {
+        borderBottom: '1px solid rgba(0, 0, 0, .05)',
+        transition: 'all .6s ease',
+        padding: 15,
+        '&:hover': {
+            backgroundColor: 'rgba(0, 0, 0, .05)',
+            cursor: 'pointer'
+        }
+    }
+}
+
 class Admin extends Component {
 
     constructor(props) {
@@ -34,7 +48,10 @@ class Admin extends Component {
     onSearchUserChange = (e) => {
         let { searchUser, arrayProfilName, matchProfilName } = this.state
         searchUser = e.target.value
-        matchProfilName = arrayProfilName.filter(name => name.userName.toLowerCase().startsWith(searchUser.toLowerCase()))
+        if (searchUser.trim() !== '')
+            matchProfilName = arrayProfilName.filter(name => name.userName.toLowerCase().startsWith(searchUser.toLowerCase()))
+        else
+            matchProfilName = []
         this.setState({ searchUser, matchProfilName })
     }
 
@@ -55,32 +72,50 @@ class Admin extends Component {
     }
 
     render() {
+        const { classes } = this.props
         const { banForm, searchUser, matchProfilName } = this.state
         return(
-            <div>
+            <div style={{ paddingLeft: '10%', paddingRight: '10%', paddingTop: '5%' }}>
                 <h1>Admin Panel</h1>
                 <Form inputArray={ banForm } onChangeValue={ this.onChangeValue } />
                 <button onClick={ () => this.banUser() }>Ban</button>
                 <br />
+                {/* <button onClick={ () => this.findUser() }>Find</button> */}
+                <div
+                    style={{
+                        width: '100%',
+                        maxHeight: 200,
+                        overflowY: 'auto',
+                        boxShadow: '0px 5px 10px rgba(0, 0, 0, .1)',
+                        overflowX: 'hidden'
+                    }}
+                >
                 <input
                     type="text"
                     placeholder="Enter username"
                     value={ searchUser }
                     onChange={ (e) => this.onSearchUserChange(e) }
+                    style={{
+                        width: '100%',
+                        boxShadow: '0px 5px 10px rgba(0, 0, 0, .1)',
+                        border: 0,
+                        fontSize: 20,
+                        padding: 20
+                    }}
                 />
-                <button onClick={ () => this.findUser() }>Find</button>
                 {
                     (matchProfilName.length > 0)
                         ? (
                             matchProfilName.map((name) => (
-                                <p onClick={ () => console.log(name.userName) } key={ `name-${name.userName}` }>{ name.userName }</p>
+                                <div className={ classes.searchBarResult } onClick={ () => this.setState({ searchUser: name.userName.trim() }) } key={ `name-${name.userName}` }>{ name.userName }</div>
                             ))
                         )
                         : null
                 }
+                </div>
             </div>
         )
     }
 }
 
-export default Admin
+export default (withStyles(styles)(Admin))

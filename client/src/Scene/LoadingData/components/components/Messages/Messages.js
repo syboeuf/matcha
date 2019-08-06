@@ -5,6 +5,7 @@ import Container from "@material-ui/core/Container"
 import Grid from "@material-ui/core/Grid"
 import ChatWithUser from "./components/ChatWithUser"
 import Avatar from "@material-ui/core/Avatar"
+import { withStyles } from "@material-ui/core/styles"
 
 import { getListMatch } from "utils/fileProvider"
 import { UserConsumer } from "store/UserProvider"
@@ -14,6 +15,14 @@ const styles = {
         width: 60,
         height: 60,
     },
+    match: {
+        padding: 20,
+        transition: 'all .6s ease',
+        '&:hover': {
+            backgroundColor: 'rgba(0, 0, 0, .05)',
+            cursor: 'pointer'
+        }
+    }
 }
 
 class Messages extends Component {
@@ -38,6 +47,7 @@ class Messages extends Component {
     render() {
         const { listMatch, profilYourMatch } = this.state
         const { dataUser } = this.context
+        const { classes } = this.props
         if (listMatch === null) {
             return <div />
         }
@@ -45,15 +55,15 @@ class Messages extends Component {
             return <div />
         }
         return (
-            <Container maxWidth="lg">
-                <Grid container spacing={ 4 }>
+            <Container maxWidth="xl">
+                <Grid container style={{ marginTop: 20 }}>
                     <Grid item xs={ 12 } sm={ 4 }>
-                        <Grid direction="row" container spacing={ 4 }>
+                        <Grid direction="column" container style={{ boxShadow: '0px 5px 10px rgba(0, 0, 0, .1)' }}>
                             {
                                 listMatch.map((match) => (
-                                    <Grid item key={ `match-${match.person}` } xs={ 12 } sm={ 6 }>
+                                    <Grid item key={ `match-${match.person}` } xs={ 12 } sm={ 6 } className={ classes.match } onClick={ () => this.setState({ profilYourMatch: match.person }) }>
                                         <Avatar alt={ `avatar${match.person}` } style={ styles.avatar } src={ process.env.PUBLIC_URL + `/imageProfil/${match.id}/${match.picture}` } />
-                                        <button onClick={ () => this.setState({ profilYourMatch: match.person }) }>{ match.person }</button>
+                                        { match.person }
                                     </Grid>
                                 ))
                             }
@@ -78,4 +88,4 @@ class Messages extends Component {
 
 }
 
-export default withRouter(Messages)
+export default withRouter(withStyles(styles)(Messages))

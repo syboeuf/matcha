@@ -40,7 +40,8 @@ class ListProfilBlock extends Component {
         return (
             <div>
                 {
-                    list.map((nameProfilBlock) => (
+                    list.length > 0
+                    ? list.map((nameProfilBlock) => (
                         <div key={ `name-${nameProfilBlock.blockProfil}` }>
                             <p>{ nameProfilBlock.blockProfil }</p>
                             <button
@@ -56,6 +57,7 @@ class ListProfilBlock extends Component {
                             </button>
                         </div>
                     ))
+                    : <div>No results</div>
                 }
             </div>
         )
