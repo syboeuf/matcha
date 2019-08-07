@@ -603,8 +603,8 @@ app.post("/users/getAllOtherDataOfProfil", (req, res) => {
 
 app.post("/users/getListMatch", (req, res) => {
 	const { userName } = req.body
-	let getList = `SELECT p.id, m.secondPerson AS person, u.picture FROM profilmatch m INNER JOIN profil p ON m.secondPerson=p.userName INNER JOIN picturesusers u ON p.id=u.userId WHERE m.firstPerson='${userName}' GROUP BY (m.secondPerson);`
-	getList += `SELECT p.id, m.firstPerson AS person, u.picture FROM profilmatch m INNER JOIN profil p ON m.firstPerson=p.userName INNER JOIN picturesusers u ON p.id=u.userId WHERE m.secondPerson='${userName}' GROUP BY (m.firstPerson);`
+	let getList = `SELECT p.id, m.secondPerson AS person, u.picture, userinfos.age FROM profilmatch m INNER JOIN profil p ON m.secondPerson=p.userName INNER JOIN picturesusers u ON p.id=u.userId INNER JOIN userinfos ON p.userName=userinfos.userName WHERE m.firstPerson='${userName}' GROUP BY (m.secondPerson);`
+	getList += `SELECT p.id, m.firstPerson AS person, u.picture, userinfos.age FROM profilmatch m INNER JOIN profil p ON m.firstPerson=p.userName INNER JOIN picturesusers u ON p.id=u.userId INNER JOIN userinfos ON p.userName=userinfos.userName WHERE m.secondPerson='${userName}' GROUP BY (m.firstPerson);`
 	getList += `SELECT blockProfil FROM listblockprofil WHERE user='${userName}'`
 	connection.query(getList, (error, results) => {
 		if (error) {

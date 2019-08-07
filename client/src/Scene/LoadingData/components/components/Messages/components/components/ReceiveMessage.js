@@ -62,7 +62,10 @@ class ReceiveMessage extends Component {
                             container
                             justify={ (data.fromUser === userName) ? "flex-end" : "flex-start" }
                         >
-                            <div
+                            <Grid
+                                item
+                                xs={ 12 }
+                                sm={ 6 }
                                 style={
                                     {
                                         ...styles.messages,
@@ -75,7 +78,7 @@ class ReceiveMessage extends Component {
                             >
                                 <p>{ `${data.message}` }</p>
                                 <p>{ `Send ${data.date}` }</p>
-                            </div>
+                            </Grid>
                         </Grid>
                     ))
                 }

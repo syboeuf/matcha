@@ -2,6 +2,7 @@ import React, { Component } from "react"
 
 import PreviewProfil from "./components/PreviewProfil"
 import Form from "components/Form"
+import SearchBar from "components/SearchBar"
 
 import { calculDistance } from "utils/fileProvider"
 
@@ -279,20 +280,30 @@ class CollectionView extends Component {
         return (
             <div>
                 <div style={{ width: '40%', marginLeft: 'auto', marginRight: 'auto' }}>
-                    <input
-                        type="text"
-                        value={ searchProfilValue }
-                        onChange={ (e) => this.onSearchUserChange(e) }
-                        placeholder="Seach a profil by the name"
-                        style={{
-                            width: '100%',
-                            boxShadow: '0px 5px 10px rgba(0, 0, 0, .1)',
-                            border: 0,
-                            fontSize: 20,
-                            padding: 20,
-                            marginBottom: 10,
-                        }}
-                    />
+                    {/* <div className="searchBar" style={{ width: 900 }}>
+                        <input
+                            type="text"
+                            value={ searchProfilValue }
+                            onChange={ (e) => this.onSearchUserChange(e) }
+                            placeholder="Seach a profil by the name"
+                            style={{
+                                width: '100%',
+                                boxShadow: '0px 5px 10px rgba(0, 0, 0, .1)',
+                                border: 0,
+                                fontSize: 20,
+                                padding: 20,
+                                marginBottom: 10,
+                            }}
+                        />
+                        <div className="searchBar-collapse col">
+                        {
+                            searchProfilArray.map((profil) => (
+                                <span className="searchBar-result">{ profil.userName }</span>
+                            ))
+                        }
+                        </div>
+                    </div> */}
+                    <SearchBar />
                     <div style={{ display: 'flex' }}>
                         <Form inputArray={ age } onChangeValue={ this.onChangeAge } />
                         <Form inputArray={ distance } onChangeValue={ this.onChangeDistance } />
