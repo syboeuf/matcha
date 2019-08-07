@@ -19,26 +19,18 @@ const styles = {
     }
 }
 
-class Interest extends React.Component {
 
-    constructor(props) {
-        super(props)
-    }
-
-    render() {
-        const { classes, listInterest } = this.props
-        const arrayTag = listInterest ? listInterest.split("#") : []
-
-        return (
-            <div style={ styles.container }>
-                {
-                    arrayTag.map((tag) => (
-                        <div className={ classes.tag } key={ `tag-${tag}` }># { tag }</div>
-                    ))
-                }
-            </div>
-        )
-    }
+const Interest = ({ classes, listInterest }) => {
+    const arrayTag = listInterest ? listInterest.split("#") : []
+    return (
+        <div style={ styles.container }>
+            {
+                arrayTag.map((tag) => (
+                    <div className={ classes.tag } key={ `tag-${tag}` }># { tag }</div>
+                ))
+            }
+        </div>
+    )
 }
 
 export default (withStyles(styles)(Interest))

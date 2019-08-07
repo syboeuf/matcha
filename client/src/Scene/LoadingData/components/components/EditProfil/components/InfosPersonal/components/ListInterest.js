@@ -1,7 +1,5 @@
 import React from "react"
 
-import StyledButton from "components/StyledButton"
-
 import { withStyles } from "@material-ui/core/styles"
 
 const ListInterestArray = [
@@ -76,20 +74,5 @@ const ListInterest = ({ list, onChangeValue, classes }) => {
         </div>
     )
 }
-{/* <div style={ styles.container }>
-{
-    ListInterestArray.map((tag) => {
-        const checkInterest = (list !== null) ? list.indexOf(tag) : -1
-        return (
-            <div
-                key={ `tag-${tag}` }
-                onClick={ () => ((checkInterest !== -1)) ? onChangeValue(list.replace(tag, "")) : onChangeValue((list === null) ? "" :  list + `${tag}`) }
-                className={ classes.tag }
-                text={ tag }
-            />
-        )
-    })
-}
-</div> */}
 
 export default (withStyles(styles)(ListInterest))

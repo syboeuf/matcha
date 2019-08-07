@@ -19,8 +19,7 @@ class LoadingData extends Component {
         super(props)
         this.state = {
             loadGeolocalistationSuccess: false,
-            loadGeolocalistationApproximateSuccess: false,
-            dataUser: false,
+            loadGeolocalistationApproximateSuccess: false
         }
     }
 
@@ -31,7 +30,7 @@ class LoadingData extends Component {
                 if (Object.keys(data).length === 0) {
                     history.push("/LoginAccount")
                 } else {
-                    this.context.setNewDataUser({ ...data.dataUser[0] })
+                    this.context.setNewDataUser({ pictures: [ ...data.dataUser[1] ], ...data.dataUser[0][0] })
                     getLocation()
                         .then((response) => {
                             ELG.reverseGeocode()

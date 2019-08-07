@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 // import PropTypes from "prop-types"
 
-import { updateInfosProfil, getImageProfil, verifyPassword } from "utils/fileProvider"
+import { updateInfosProfil, verifyPassword } from "utils/fileProvider"
 import { checkEmail, checkPassword } from "utils/utils"
 
 import Form from "components/Form"
@@ -82,14 +82,6 @@ class InfosProfil extends Component {
             ],
             profilePic: 'noImage.png'
         }
-    }
-    
-    componentWillMount() {
-        getImageProfil(this.props.infosUser.id)
-            .then((res) => {
-                this.setState({ profilePic: process.env.PUBLIC_URL + `/imageProfil/${this.context.dataUser.id}/${res.imageProfil[0].picture}` })
-            })
-            .catch((err) => console.log(err))
     }
 
     async onClick(id, userName, inputArray) {
@@ -197,13 +189,14 @@ class InfosProfil extends Component {
 
     render() {
         const { classes } = this.props
-        const { id, userName, populareScore } = this.props.infosUser
-        const { inputArray, profilePic } = this.state
+        const { id, userName, populareScore, pictures } = this.props.infosUser
+        const { inputArray } = this.state
         return (
             <div style={{ textAlign: 'center' }}>
                 <img
                     className={ classes.profilePic }
-                    src={ profilePic }
+                    alt="imgProfil"
+                    src={ (pictures.length === 0) ? process.env.PUBLIC_URL + "noImage.png" : process.env.PUBLIC_URL + `/imageProfil/${pictures[0].userId}/${pictures[0].picture}` }
                 />
                 <div style={ styles.popularityBar }>
                     <div style={{ ...styles.popularityProgress, ...styles.popularityScore, width: `${populareScore}%` }}>{ populareScore }%</div>

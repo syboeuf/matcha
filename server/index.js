@@ -116,18 +116,19 @@ app.get("/cookieDataUser", (req, res) => {
 	}
     // Finally, return the welcome message to the user, along with their
     // username given in the token
-	const sql = `SELECT p.*, u.age, u.biography, u.listInterest, u.gender, u.orientation, u.userLocation, u.userAddress, u.userApproximateLocation, u.userApproximateCity, u.populareScore FROM profil p INNER JOIN userinfos u ON p.userName=u.userName WHERE p.userName='${payload.name}'`
-	connection.query(sql, (error, results) => {
-		if (error) {
-			return res.send(error)
-		} else {
-			if (results.length > 0) {
-				return res.json({ dataUser: results })
+		let sql = `SELECT p.*, u.age, u.biography, u.listInterest, u.gender, u.orientation, u.userLocation, u.userAddress, u.userApproximateLocation, u.userApproximateCity, u.populareScore FROM profil p INNER JOIN userinfos u ON p.userName=u.userName WHERE p.userName='${payload.name}';`
+		sql += `SELECT p.id, p.userId, p.picture FROM picturesusers p INNER JOIN profil ON p.userId=profil.id WHERE profil.userName='${payload.name}'`
+		connection.query(sql, (error, results) => {
+			if (error) {
+				return res.send(error)
 			} else {
+				if (results.length > 0) {
+					return res.json({ dataUser: results })
+				} else {
 				return res.json({ dataUser: 0 })
+				}
 			}
-		}
-	})
+		})
 })
 
 app.post("/users", (req, res) => {
@@ -648,8 +649,8 @@ app.post("/users/getAllMessages", (req, res) => {
 })
 
 app.post("/users/getNotificationsNoRead", (req, res) => {
-	const { userName } = req.body
-	const getNotificationsNoRead = `SELECT id, notificationType FROM notifications WHERE notificationUser='${userName}' AND notificationRead=0 ORDER BY id DESC`
+	const { userName, limit } = req.body
+	const getNotificationsNoRead = `SELECT id, notificationType FROM notifications WHERE notificationUser='${userName}' AND notificationRead=0 ORDER BY id DESC LIMIT ${limit}`
 	connection.query(getNotificationsNoRead, (error, results) => {
 		if (error) {
 			return res.send(error)

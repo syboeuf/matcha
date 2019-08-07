@@ -53,6 +53,13 @@ export const getPicturesUser = (userId) => {
         .catch((error) => console.log(error))
 }
 
+export const getImageProfil = (id) => {
+    return fetch("http://localhost:4000/users/getImageProfil", optionsFetch({ id }))
+        .then((response) => response.json())
+        .then((responseJson) => responseJson)
+        .catch((error) => console.log(error))
+}
+
 export const addNewUser = (newUser) => {
     const userData = { ...transformArrayInObject(newUser) }
     checkUserAlreadyExist(userData)
@@ -149,13 +156,6 @@ export const updateInfosPersonal = (infosPersonal) => {
     fetch("http://localhost:4000/users/updateInfosPersonal", optionsFetch(infosPersonal))
 }
 
-export const getImageProfil = (id) => {
-    return fetch("http://localhost:4000/users/getImageProfil", optionsFetch({ id }))
-        .then((response) => response.json())
-        .then((responseJson) => responseJson)
-        .catch((error) => console.log(error))
-}
-
 export const likeOrUnkikeUser = (user, profilName, valueLike) => {
     fetch("http://localhost:4000/users/likeOrUnlikeProfil", optionsFetch({ user, profilName, valueLike }))
         .then((response) => response.text())
@@ -236,8 +236,8 @@ export const getAllMessages = (userName, profilMatchName) => {
         .catch((error) => error)
 }
 
-export const getNotificationsNoRead = (userName) => {
-    return fetch("http://localhost:4000/users/getNotificationsNoRead", optionsFetch({ userName }))
+export const getNotificationsNoRead = (userName, limit) => {
+    return fetch("http://localhost:4000/users/getNotificationsNoRead", optionsFetch({ userName, limit }))
         .then((response) => response.json())
         .then((responseJson) => responseJson)
         .catch((error) => console.log(error))

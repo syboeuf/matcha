@@ -1,11 +1,7 @@
 import React, { Component } from "react"
-//import PropTypes from "prop-types"
+import { UserConsumer } from "store/UserProvider"
 
 import { withStyles } from "@material-ui/core/styles"
-import GridList from "@material-ui/core/GridList"
-import GridListTile from "@material-ui/core/GridListTile"
-
-import { getPicturesUser } from "utils/fileProvider"
 
 const styles = (theme) => ({
     root: {
@@ -27,6 +23,8 @@ const styles = (theme) => ({
 
 class Pictures extends Component {
 
+    static contextType = UserConsumer
+
     constructor(props) {
         super(props)
         this.state = {
@@ -42,19 +40,8 @@ class Pictures extends Component {
     }
 
     componentWillMount() {
-        const { userId } = this.props
-        this.getPictures(userId)
-    }
-
-    getPictures = (userId) => {
-        getPicturesUser(userId)
-            .then((response) => {
-                this.setState({
-                    ...this.state,
-                    picturesArray: response.pictures,
-                })
-            })
-            .catch((error) => console.log(error))
+        const { dataUser } = this.context
+        this.setState({ picturesArray: { ...dataUser.pictures } })
     }
 
     handleSubmit = (e, index) => {
@@ -67,6 +54,15 @@ class Pictures extends Component {
             return
         }
         if (picturesFiles[index].imagePreviewUrl) {
+            let newPicturesArray = picturesArray
+            newPicturesArray = {
+                ...newPicturesArray,
+                [index]: {
+                    id: (picturesArray.length >= 5 || picturesArray[index]) ? picturesArray[index].id : null,
+                    userId,
+                    picture: picturesFiles[index].file.name,
+                },
+            }
             fetch("http://localhost:4000/users/editProfil/sendPictures", {
                 headers: {
                     Accept: "application/json",
@@ -81,7 +77,13 @@ class Pictures extends Component {
                     namePicture: picturesFiles[index].file.name,
                     userName,
                 })
-            }).then(() => this.getPictures(userId)).catch((error) => console.log(error))
+            })
+            .then(() => {
+                const { dataUser, setNewDataUser } = this.context
+                setNewDataUser({ ...dataUser, pictures: newPicturesArray })
+                this.setState({ picturesArray: { ...newPicturesArray } })
+            })
+            .catch((error) => console.log(error))
         }
     }
 
@@ -125,7 +127,7 @@ class Pictures extends Component {
                                         ? (
                                             <img
                                                 alt={ `pictureData-${index}` }
-                                                src={ process.env.PUBLIC_URL + `/imageProfil/${userId}/${pictureData.picture}` }
+                                                src={ process.env.PUBLIC_URL + `/imageProfil/${pictureData.userId}/${pictureData.picture}` }
                                                 style={ { width: 400, height: 300, objectFit: 'cover' } }
                                                 onClick={ () => document.getElementById(`pic-${index}`).click() }
                                             />
@@ -138,11 +140,6 @@ class Pictures extends Component {
                                     onChange={ (e) => this.handleImageChange(e, index) }
                                     style={{ display: 'none' }}
                                 />
-                                {/* <button
-                                    onClick={ (e) => this.handleSubmit(e, index) }
-                                >
-                                    Upload Image
-                                </button> */}
                             </div>
                         ))
                     }

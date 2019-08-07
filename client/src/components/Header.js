@@ -10,7 +10,7 @@ import Hidden from '@material-ui/core/Hidden'
 import Grid from '@material-ui/core/Grid'
 import Menu from "./Menu"
 
-import { getNotificationsNoRead, getImageProfil } from "utils/fileProvider"
+import { getNotificationsNoRead } from "utils/fileProvider"
 
 import Disconnect from "./Disconnect"
 
@@ -69,6 +69,8 @@ const pagesArray = [
 
 const menuProfil = ["EditProfil", "ListProfilBlock"]
 
+const limitNotificationNumber = 20
+
 class Header extends React.Component {
 
     static contextType = UserConsumer
@@ -77,22 +79,11 @@ class Header extends React.Component {
         super(props)
         this.state = {
             isOpen: false,
-            profilePic: "",
             openDropDown: false,
             notificationsArray: [],
+            maxNotification: limitNotificationNumber,
         }
         this.mounted = true
-    }
-
-    componentWillMount() {
-        const { dataUser } = this.context
-        getImageProfil(dataUser.id)
-            .then((response) => {
-                if (response.imageProfil.length > 0) {
-                    this.setState({ profilePic: response.imageProfil[0].picture })
-                }
-            })
-            .catch((error) => console.error(error))
     }
 
     componentDidMount() {
@@ -105,11 +96,12 @@ class Header extends React.Component {
     }
 
     showNotifications = () => {
+        const { maxNotification } = this.state
         const { dataUser } = this.context
         if (dataUser === undefined) {
             return
         }
-        getNotificationsNoRead(dataUser.userName)
+        getNotificationsNoRead(dataUser.userName, maxNotification)
             .then((notificationsArray) => {
                 if (this.mounted === true) {
                     this.setState({ notificationsArray: notificationsArray.notifications })
@@ -118,10 +110,14 @@ class Header extends React.Component {
             .catch((error) => console.log(error))
     }
 
+    moreNotification = () => {
+        this.setState({ maxNotification: this.state.maxNotification + limitNotificationNumber })
+    }
+
     pageComponent = (highResolution) => {
         const { history, classes } = this.props
         const { dataUser } = this.context
-        const { profilePic, notificationsArray } = this.state
+        const { notificationsArray } = this.state
         const stylesGrid = { display: "flex", float: "right", alignItems: "center" }
         const newNotificationsArray = []
         const newMenuProfil = []
@@ -152,16 +148,17 @@ class Header extends React.Component {
                     title={
                         <img
                             src={
-                                (profilePic !== "")
-                                    ? process.env.PUBLIC_URL + `/imageProfil/${dataUser.id}/${profilePic}`
-                                    : process.env.PUBLIC_URL + "noImage.png"
+                                (dataUser.pictures.length === 0)
+                                ? process.env.PUBLIC_URL + "noImage.png"
+                                : process.env.PUBLIC_URL + `/imageProfil/${dataUser.pictures[0].userId}/${dataUser.pictures[0].picture}`
                             }
                             alt="picProfile"
                             className={ classes.profilePic }
                         />
                     }
                     array={ newMenuProfil }
-                />            
+                />
+                <button onClick={ () => this.moreNotification() }>Test notification</button>
             </div>
         )
     }
