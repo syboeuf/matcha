@@ -14,6 +14,8 @@ const styles = theme => ({
         height: 300,
         boxShadow: '0px 5px 10px rgba(0, 0, 0, .1)',
         transition: 'all .5s ease',
+        backgroundColor: 'white',
+        marginBottom: 30,
         '&:hover': {
             transform: 'scale(1.1)',
             cursor: 'pointer'
@@ -54,7 +56,7 @@ class PreviewProfil extends Component {
         const { imageProfil } = this.state
         const pathImageProfil = (imageProfil === null) ? "noImage.png" : `/imageProfil/${data.id}/${imageProfil}`
         return (
-            <Grid item xs={ 12 } sm={ 6 } md={ 4 }>
+            <div style={{ display: 'flex', flexWrap: 'wrap', marginLeft: 'auto', marginRight: 'auto' }}>
                 <div className={ classes.card }>
                     <img
                         onClick={ () => chooseDataPerson(data) }
@@ -66,7 +68,7 @@ class PreviewProfil extends Component {
                         { userName }
                     </div>
                 </div>
-            </Grid>
+            </div>
         )
     }
 

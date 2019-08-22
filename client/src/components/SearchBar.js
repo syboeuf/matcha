@@ -38,7 +38,7 @@ class SearchBar extends React.Component {
 					type="text"
 					value={ searchUser }
 					onChange={ (e) => this.onSearchUserChange(e) }
-					placeholder="Seach a profil by the name"
+					placeholder="Search profile"
 					className="searchBar"
 				/>
 				<div className="searchBar-collapse">

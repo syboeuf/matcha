@@ -3,6 +3,7 @@ import React, { Component } from "react"
 import PreviewProfil from "./components/PreviewProfil"
 import Form from "components/Form"
 import SearchBar from "components/SearchBar"
+import RangeSlider from "components/RangeSlider"
 
 import { calculDistance } from "utils/fileProvider"
 
@@ -16,7 +17,6 @@ const styles = (theme) => ({
         paddingBottom: theme.spacing(8),
     },
     searchBtn: {
-        width: '100%',
         padding: '20px',
         backgroundColor: 'transparent',
         border: '1px solid #4A90E2',
@@ -279,7 +279,20 @@ class CollectionView extends Component {
         // console.log(searchProfilArray)
         return (
             <div>
-                <div style={{ width: '40%', marginLeft: 'auto', marginRight: 'auto' }}>
+                <SearchBar />
+                <div style={{ display: 'flex', flexWrap: 'wrap', width: '40%', marginLeft: 'auto', marginRight: 'auto' }}>
+                    <div style={{ display: 'flex', width: '100%' }}>
+                        <div style={{ display: 'flex', marginLeft: 'auto', marginRight: 'auto', marginTop: 50, flexWrap: 'wrap' }}>
+                            <div style={{ marginLeft: 20, marginRight: 20 }}><RangeSlider name={'Age'} firstVal={18} secVal={30} min={18} max={150} /></div>
+                            <div style={{ marginLeft: 20, marginRight: 20 }}><RangeSlider name={'Distance'} firstVal={0} secVal={30} min={0} max={100} /></div>
+                            <div style={{ marginLeft: 20, marginRight: 20 }}><RangeSlider name={'Score'} firstVal={0} secVal={100} min={0} max={100} /></div>
+                        </div>
+                    </div>
+                {/* <div style={{ display: 'flex' }}>
+                    <Form inputArray={ age } onChangeValue={ this.onChangeAge } />
+                    <Form inputArray={ distance } onChangeValue={ this.onChangeDistance } />
+                    <Form inputArray={ score } onChangeValue={ this.onChangeScore } />
+                </div> */}
                     {/* <div className="searchBar" style={{ width: 900 }}>
                         <input
                             type="text"
@@ -303,19 +316,7 @@ class CollectionView extends Component {
                         }
                         </div>
                     </div> */}
-                    <SearchBar />
-                    <div style={{ display: 'flex' }}>
-                        <Form inputArray={ age } onChangeValue={ this.onChangeAge } />
-                        <Form inputArray={ distance } onChangeValue={ this.onChangeDistance } />
-                        <Form inputArray={ score } onChangeValue={ this.onChangeScore } />
-                    </div>
-                    <button
-                            className={ classes.searchBtn }
-                            onClick={ () => this.filterList(listPerson) }
-                        >
-                            Search
-                    </button>
-                    <div className={ classes.container }>
+                    <div className={ classes.container } style={{ width: '100%' }}>
                         {
                             listTagArray.map((tag) => (
                                 <button
@@ -328,6 +329,13 @@ class CollectionView extends Component {
                             ))
                         }
                     </div>
+                    <button
+                            className={ classes.searchBtn }
+                            onClick={ () => this.filterList(listPerson) }
+                            style={{ width: '100%' }}
+                        >
+                            Search
+                    </button>
                 </div>
                 <Container className={ classes.cardGrid } maxWidth="lg">
                     <Grid container spacing={ 4 }>

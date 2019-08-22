@@ -118,10 +118,10 @@ class Pictures extends Component {
             }
         }
         return (
-            <div>
+            <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap' }}>
                     {
                         picturesDataArray.map((pictureData, index) => (
-                            <div style={{ display: 'inline-flex'}} key={ `pic-${index}` }>
+                            <div key={ `pic-${index}` }>
                                 {
                                     (pictureData !== null)
                                         ? (

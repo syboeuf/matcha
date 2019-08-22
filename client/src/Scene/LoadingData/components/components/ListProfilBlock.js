@@ -42,22 +42,17 @@ class ListProfilBlock extends Component {
                 {
                     list.length > 0
                     ? list.map((nameProfilBlock) => (
-                        <div key={ `name-${nameProfilBlock.blockProfil}` }>
-                            <p>{ nameProfilBlock.blockProfil }</p>
+                        <div className="blocked-list center" key={ `name-${nameProfilBlock.blockProfil}` }>
+                            <p className="blocked-person">{ nameProfilBlock.blockProfil }</p>
                             <button
                                 onClick={ () => this.getNewListBlockProfil(dataUser.userName, nameProfilBlock.blockProfil) }
-                                style={{
-                                    padding: '20px',
-                                    backgroundColor: '#c31e27',
-                                    borderRadius: '5px',
-                                    color: 'white'
-                                }}
+                                className="red-btn"
                             >
-                                Delete of block list
+                                Unblock
                             </button>
                         </div>
                     ))
-                    : <div>No results</div>
+                    : <div className="no-results">No results</div>
                 }
             </div>
         )

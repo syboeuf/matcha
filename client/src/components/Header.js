@@ -14,6 +14,8 @@ import { getNotificationsNoRead } from "utils/fileProvider"
 
 import Disconnect from "./Disconnect"
 
+import DropdownMenu from "components/DropdownMenu"
+
 const styles = {
     header: {
         borderBottom: '1px solid rgba(0, 0, 0, .1)',
@@ -82,6 +84,7 @@ class Header extends React.Component {
             openDropDown: false,
             notificationsArray: [],
             maxNotification: limitNotificationNumber,
+            openMenu: false
         }
         this.mounted = true
     }
@@ -144,6 +147,7 @@ class Header extends React.Component {
                             )
                         ))
                 }
+                <DropdownMenu items={ [{ title: 'Edit profile', link: '42.fr' }, { title: 'Block list', link: '42.fr' }, { title: 'Logout', link: '42.fr' }] } />
                 <Menu
                     title={
                         <img

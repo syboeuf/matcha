@@ -25,6 +25,60 @@ body {
 	margin-right: auto;
 }
 
+.no-results {
+  text-align: center;
+  font-size: 15em;
+  color: lightgray;
+  margin-top: 25vh;
+}
+
+.menu {
+  position: absolute;
+  word-break: break-all;
+  margin-right: 10px;
+  background-color: white;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, .1);
+  z-index: 9999;
+}
+.menu-icon:hover {
+  cursor: pointer;
+}
+.menu-item {
+  padding: 20px;
+  font-size: .8em;
+  transition: .25s background-color;
+}
+.menu-item:hover {
+  cursor: pointer;
+	background-color: rgb(230, 230, 230);
+}
+
+.blocked-list {
+  width: 50%;
+}
+.blocked-person {
+  font-size: 2em;
+  transition: .25s background-color;
+	border-bottom: 1px solid rgba(0, 0, 0, .1);
+	background-color: white;
+	padding: 20px;
+}
+.blocked-person:hover {
+  cursor: pointer;
+	background-color: rgb(230, 230, 230);
+}
+
+.red-btn {
+  border: 0px;
+  padding: 20px;
+  background-color: #c31e27;
+  border-radius: 5px;
+  color: white;
+}
+.red-btn:hover {
+  cursor: pointer;
+}
+
 /* Large desktops and laptops */
 @media (min-width: 1200px) {
 

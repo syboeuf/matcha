@@ -73,7 +73,7 @@ const uniqueId = () => {
 	return `${Date.now()}${Math.floor(Math.random() * 10000)}`
 }
 
-const jwtKey = 'my_secret_key'
+const jwtKey = 'my_secret_key' // Secure key required
 const jwtExpirySeconds = 300
 
 connection.connect(err => {

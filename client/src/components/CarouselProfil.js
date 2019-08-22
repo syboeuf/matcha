@@ -3,11 +3,12 @@ import React, { Component } from "react"
 const styles = {
 	slider: {
 		position: "relative",
-		width: 200,
+		width: 1000,
+		height: 800,
 		margin: "0 auto",
-		height: 200,
 		overflow: "hidden",
 		whiteSpace: "nowrap",
+		marginTop: 20
 	},
 	sliderWrapper: {
 		position: "relative",
@@ -21,7 +22,7 @@ const styles = {
 	},
 	indexButtons: {
 		position: "absolute",
-		bottom: 0,
+		bottom: 10,
 		display: "flex",
 		width: "100%",
 		justifyContent: "center",
@@ -46,7 +47,7 @@ class App extends Component {
 		}
 		this.setState((prevState) => ({
 			currentIndex: prevState.currentIndex - 1,
-			translateValue: prevState.translateValue + 200,
+			translateValue: prevState.translateValue + 1000,
 		}))
 	}
 
@@ -61,14 +62,14 @@ class App extends Component {
 		}
 		this.setState((prevState) => ({
 			currentIndex: prevState.currentIndex + 1,
-			translateValue: prevState.translateValue - 200,
+			translateValue: prevState.translateValue - 1000,
 		}))
 	}
 
 	chooseImageByIndex = (index) => {
 		this.setState((prevState) => ({
 			currentIndex: index,
-			translateValue: (index > prevState.currentIndex) ? prevState.translateValue - (index - prevState.currentIndex) * 200 : prevState.translateValue + (prevState.currentIndex - index) * 200
+			translateValue: (index > prevState.currentIndex) ? prevState.translateValue - (index - prevState.currentIndex) * 1000 : prevState.translateValue + (prevState.currentIndex - index) * 1000
 		}))
 	}
 
@@ -83,10 +84,10 @@ class App extends Component {
 				this.isDrag = true
 				if ((currentIndex === 0 && distanceTravelled > 0) || (currentIndex === pictureProfil.length - 1 && distanceTravelled < 0)) {
 					return
-				} else if (distanceTravelled < 180 && distanceTravelled > -180 && this.isDrag === true) {
+				} else if (distanceTravelled < 900 && distanceTravelled > -900 && this.isDrag === true) {
 					this.setState((prevState) => ({
 						currentIndex: prevState.currentIndex,
-						translateValue: -(prevState.currentIndex * 200) + distanceTravelled,
+						translateValue: -(prevState.currentIndex * 1000) + distanceTravelled,
 					}))
 				}
 			}
@@ -101,24 +102,24 @@ class App extends Component {
 				if ((currentIndex === 0 && distanceTravelled > 50) || (currentIndex === pictureProfil.length - 1 && distanceTravelled < -50) || (distanceTravelled < 50 && distanceTravelled > -50)) {
 					this.setState((prevState) => ({
 						currentIndex: prevState.currentIndex,
-						translateValue: -(prevState.currentIndex * 200),
+						translateValue: -(prevState.currentIndex * 1000),
 					}))
 				} else {
-					if (distanceTravelled >= 180 || distanceTravelled <= -180) {
+					if (distanceTravelled >= 900 || distanceTravelled <= -900) {
 						const { translateValue, currentIndex } = this.state
-						if (-(currentIndex * 200) - distanceTravelled !== -(currentIndex * 200)) {
-							distanceTravelled = translateValue + (currentIndex * 200)
+						if (-(currentIndex * 1000) - distanceTravelled !== -(currentIndex * 1000)) {
+							distanceTravelled = translateValue + (currentIndex * 1000)
 						}
 					}
 					if (distanceTravelled < 0) {
 						this.setState((prevState) => ({
 							currentIndex: prevState.currentIndex + 1,
-							translateValue: prevState.translateValue - distanceTravelled - 200,
+							translateValue: prevState.translateValue - distanceTravelled - 1000,
 						}))
 					} else if (distanceTravelled > 0) {
 						this.setState((prevState) => ({
 							currentIndex: prevState.currentIndex - 1,
-							translateValue: prevState.translateValue - distanceTravelled + 200,
+							translateValue: prevState.translateValue - distanceTravelled + 1000,
 						}))
 					}
 				}
@@ -167,7 +168,7 @@ class App extends Component {
 											backgroundImage: `url(${process.env.PUBLIC_URL}/imageProfil/${image.userId}/${image.picture})`,
 											backgroundSize: "cover",
 											backgroundRepeat: "no-repeat",
-											backgroundPosition: "50% 60%",
+											backgroundPosition: "50% 60%"
 										}
 									}
 								/>
@@ -180,8 +181,8 @@ class App extends Component {
 								<button
 									key={ `image-${num}` }
 									onClick={ () => this.chooseImageByIndex(num) }
+									style={{ backgroundColor: 'white', border: '0px', borderRadius: '50%', width: 20, height: 20, margin: 5, boxShadow: '0px 5px 10px rgba(0, 0, 0, .5)' }}
 								>
-									{ num }
 								</button>
 							))
 						}

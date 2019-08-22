@@ -3,7 +3,11 @@
 	border: 0px;
 	font-size: 20px;
 	padding: 20px;
+	transition: .4s ease all;
 	box-shadow: 0px 5px 10px rgba(0, 0, 0, .1);
+}
+.searchBar:focus {
+	box-shadow: 0px 5px 10px rgba(0, 0, 0, .2);
 }
 
 .searchBar-collapse {
