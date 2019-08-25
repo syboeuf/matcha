@@ -1,4 +1,5 @@
 import React, { Component } from "react"
+import { UserConsumer } from "store/UserProvider"
 
 import { withStyles } from "@material-ui/core/styles"
 
@@ -39,6 +40,8 @@ const styles = {
 
 class LikeUser extends Component {
 
+    static contextType = UserConsumer
+
     constructor(props) {
         super(props)
         this.state = {
@@ -49,11 +52,14 @@ class LikeUser extends Component {
 
     componentWillMount() {
         const { id, user, profilName } = this.props
+        const { socket } = this.context
+        socket.on("SEND_LIKE", this.sendLike)
         this.getImages(id)
         checkLike(user, profilName)
             .then((res) => {
                 if (res.like) { this.setState({ like: true }) }
             })
+            .catch((error) => console.log(error))
     }
 
     componentWillReceiveProps(nextProps) {
@@ -61,6 +67,15 @@ class LikeUser extends Component {
         if (this.props.id !== id) {
             this.getImages(id)
         }
+    }
+
+    componentWillUnmount() {
+        const { socket } = this.context
+        socket.off("SEND_LIKE")
+    }
+
+    sendLike = (response) => {
+        console.log(response)
     }
 
     getImages = (id) => {
@@ -75,15 +90,19 @@ class LikeUser extends Component {
 
     toggleLike = () => {
         const { user, profilName } = this.props
-        const { isLikable } = this.state
-
+        const { socket } = this.context
+        const { isLikable, like } = this.state
         this.setState({ like: !this.state.like })
 
-        if (!this.state.like && isLikable) {
-            likeOrUnkikeUser(user, profilName, 1)
+        if (!like && isLikable) {
+            socket.emit("SEND_LIKE", { reciever: profilName, sender: user, valueLike: 1 })
+            socket.emit("NOTIFICATIONS_SENT", { reciever: profilName, notification: `${user} like you` })
+            //likeOrUnkikeUser(user, profilName, 1)
         }
-        else if (this.state.like && isLikable) {
-            likeOrUnkikeUser(user, profilName, -1)
+        else if (like && isLikable) {
+            socket.emit("SEND_LIKE", { reciever: profilName, sender: user, valueLike: -1 })
+            socket.emit("NOTIFICATIONS_SENT", { reciever: profilName, notification: `${user} unlike you` })
+            //likeOrUnkikeUser(user, profilName, -1)
         }
     }
 

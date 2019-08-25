@@ -3,6 +3,7 @@ const cors = require("cors")
 const mysql = require("mysql")
 const nodemailer = require("nodemailer")
 const fs = require("fs")
+const cookieParser = require("cookie-parser")
 
 const app = express()
 const bodyParser = require("body-parser")
@@ -13,13 +14,17 @@ const jwt = require('jsonwebtoken')
 const connection = mysql.createConnection({
 	host: "localhost",
 	user: "root",
-	password: "tpompon",
+	password: "",
 	database: "matcha",
-	port: "3307",
 	multipleStatements: true,
 })
 
 fs.existsSync("../client/public/imageProfil") || fs.mkdirSync("../client/public/imageProfil", 0777)
+
+const server = require("http").Server(app)
+const io = module.exports.io = require("socket.io")(server)
+const SocketManager = require("./SocketManager")
+io.on(("connection"), SocketManager)
 
 const sendMail = (mail, text, subject) => {
 	let transporter = nodemailer.createTransport({
@@ -73,7 +78,7 @@ const uniqueId = () => {
 	return `${Date.now()}${Math.floor(Math.random() * 10000)}`
 }
 
-const jwtKey = 'my_secret_key' // Secure key required
+const jwtKey = 'my_secret_key'
 const jwtExpirySeconds = 300
 
 connection.connect(err => {
@@ -85,20 +90,25 @@ connection.connect(err => {
 app.use(cors({ credentials: true, origin: "http://localhost:3000" }))
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json({ limit: "50mb" }))
+app.use(cookieParser())
 
 app.get("/", (req, res) => {
 	res.send("hello from the products server")
 })
-
+0
 app.get("/cookieDataUser", (req, res) => {
 	// We can obtain the session token from the requests cookies, which come with every request
-	let array = req.headers.cookie
-	// if the cookie is not set, return an unauthorized error
-    if (array === undefined) {
+	let cookiesArray = req.headers.cookie
+	let list = {}
+	if (cookiesArray === undefined) {
 		return res.json({ dataUser: undefined })
 	}
-	array = array.split("=")
-	const token = array[1]
+	cookiesArray.split(";").forEach((cookie) => {
+		const parts = cookie.split("=")
+		list[parts.shift().trim()] = decodeURI(parts.join('='))
+	})
+	// if the cookie is not set, return an unauthorized error
+	const token = list.token
     let payload
     try {
       // Parse the JWT string and store the result in `payload`.
@@ -131,6 +141,11 @@ app.get("/cookieDataUser", (req, res) => {
 		})
 })
 
+app.get("/deleteCookie", (req, res) => {
+	res.clearCookie("token")
+	return res.send("")
+})
+
 app.post("/users", (req, res) => {
 	const { userName } = req.body
 	const selectAllProfil = `SELECT p.*, u.age, u.biography, u.listInterest, u.gender, u.orientation, u.userLocation, u.userAddress, u.userApproximateLocation, u.userApproximateCity, u.populareScore FROM profil p INNER JOIN userinfos u ON p.userName=u.userName WHERE p.userName=${userName}`
@@ -158,7 +173,7 @@ app.get("/dataForMap", (req, res) => {
 
 app.post("/users/checkLogin", (req, res) => {
 	const { name, hashPassword } = req.body
-	const checkLogin = `SELECT p.* FROM profil p INNER JOIN inlineuser i ON p.userName=i.user WHERE (userName, password, confirmKeyOk) IN (('${name}', '${hashPassword}', 1)) AND i.inline=0`
+	const checkLogin = `SELECT * FROM profil WHERE (userName, password, confirmKeyOk) IN (('${name}', '${hashPassword}', 1))`
 	connection.query(checkLogin, (error, results) => {
 		if (error) {
 			return res.send(error)
@@ -174,6 +189,7 @@ app.post("/users/checkLogin", (req, res) => {
 					const getDataUser = `SELECT p.*, u.age, u.biography, u.listInterest, u.gender, u.orientation, u.userLocation, u.userAddress, u.userApproximateLocation, u.userApproximateCity, u.populareScore FROM profil p INNER JOIN userinfos u ON p.userName=u.userName WHERE p.userName='${name}'`
 					connection.query(getDataUser, (error, results) => {
 						if (error) {
+							console.log(error)
 							return res.send(error)
 						} else {
 							return res.json({ dataUser: results })
@@ -191,7 +207,7 @@ app.post("/users/checkLogin", (req, res) => {
 
 app.post("/users/verifyPassword", (req, res) => {
 	const { name, hashPassword } = req.body
-	const checkLogin = `SELECT p.* FROM profil p INNER JOIN inlineuser i ON p.userName=i.user WHERE (userName, password, confirmKeyOk) IN (('${name}', '${hashPassword}', 1))`
+	const checkLogin = `SELECT p FROM profil WHERE (userName, password, confirmKeyOk) IN (('${name}', '${hashPassword}', 1))`
 	connection.query(checkLogin, (error, results) => {
 		if (error) {
 			return res.send(error)
@@ -342,7 +358,6 @@ app.post("/users/confirmIdendity", (req, res) => {
 		} else {
 			if (results.length > 0) {
 				let updateConfirmKeyOk = `UPDATE profil SET confirmKeyOk=1 WHERE (userName, confirmKey) IN (('${name}', ${key}));`
-				updateConfirmKeyOk += `INSERT INTO inlineuser (user, inline, date) VALUES ('${name}', 1, NOW());`
 				updateConfirmKeyOk += `SELECT p.*, u.age, u.biography, u.gender, u.orientation, u.listInterest, u.userAddress, u.populareScore FROM profil p INNER JOIN userinfos u ON p.userName=u.userName WHERE p.userName='${name}'`
 				connection.query(updateConfirmKeyOk, (error, results) => {
 					if (error) {
@@ -385,7 +400,6 @@ app.post("/users/updateInfosProfil", (req, res) => {
 				updateDataUser += `UPDATE listblockprofil SET user='${userName}' WHERE user='${previousUserName}';`
 				updateDataUser += `UPDATE likeuser SET userName='${userName}' WHERE userName='${previousUserName}';`
 				updateDataUser += `UPDATE likeuser SET profilName='${userName}' WHERE profilName='${previousUserName}';`
-				updateDataUser += `UPDATE inlineUser SET user='${userName}' WHERE user='${previousUserName}';`
 				updateDataUser += `UPDATE fakeuser SET fakeUser='${userName}' WHERE fakeUser='${previousUserName}';`
 				connection.query(updateDataUser, (error, results) => {
 					if (error) {
@@ -467,7 +481,7 @@ app.post("/users/likeOrUnlikeProfil", (req, res) => {
 
 app.post("/users/profilmatch", (req, res) => {
 	const { user, profilName } = req.body
-	const verifyIfMatchExist = `SELECT CONCAT(firstPerson, " ", secondPerson) AS name FROM profilMatch WHERE firstPerson='${user}' OR secondPerson='${user}'`
+	const verifyIfMatchExist = `SELECT CONCAT(firstPerson, " ", secondPerson), chatId AS name FROM profilMatch WHERE firstPerson='${user}' OR secondPerson='${user}'`
 	connection.query(verifyIfMatchExist, (error, results) => {
 		if (error) {
 			return res.send(error)
@@ -483,7 +497,7 @@ app.post("/users/profilmatch", (req, res) => {
 			if (matchAlreadyExist === 1)  {
 				return res.send("1")
 			} else {
-				let isAMatch = `INSERT INTO profilmatch (firstPerson, secondPerson) VALUES ('${user}', '${profilName}');`
+				let isAMatch = `INSERT INTO profilmatch (firstPerson, secondPerson, chatId) VALUES ('${user}', '${profilName}', '${uniqueId()}');`
 				isAMatch += addNotification(user, profilName, `${user} send you a like and you're like him before so this is a match`)
 				connection.query(isAMatch, (error, results) => {
 					if (error) {
@@ -580,7 +594,6 @@ app.post("/users/getAllOtherDataOfProfil", (req, res) => {
 	let sql = `SELECT p.*, u.age, u.biography, u.gender, u.orientation, u.listInterest, u.userAddress, u.populareScore FROM profil p INNER JOIN userinfos u ON p.userName=u.userName WHERE p.userName='${profilName}';`
 	sql += `SELECT likeUser FROM likeuser WHERE (userName, profilName) IN (('${profilName}', '${userName}'));`
 	sql += `SELECT fakeUser FROM fakeuser WHERE fakeUser='${profilName}';`
-	sql += `SELECT inline, DATE_FORMAT(date, "%m-%d-%y %H:%i:%s") as date FROM inlineuser WHERE user='${profilName}'`
 	connection.query(sql, (error, results) => {
 		if (error) {
 			return res.send(error)
@@ -603,8 +616,8 @@ app.post("/users/getAllOtherDataOfProfil", (req, res) => {
 
 app.post("/users/getListMatch", (req, res) => {
 	const { userName } = req.body
-	let getList = `SELECT p.id, m.secondPerson AS person, u.picture, userinfos.age FROM profilmatch m INNER JOIN profil p ON m.secondPerson=p.userName INNER JOIN picturesusers u ON p.id=u.userId INNER JOIN userinfos ON p.userName=userinfos.userName WHERE m.firstPerson='${userName}' GROUP BY (m.secondPerson);`
-	getList += `SELECT p.id, m.firstPerson AS person, u.picture, userinfos.age FROM profilmatch m INNER JOIN profil p ON m.firstPerson=p.userName INNER JOIN picturesusers u ON p.id=u.userId INNER JOIN userinfos ON p.userName=userinfos.userName WHERE m.secondPerson='${userName}' GROUP BY (m.firstPerson);`
+	let getList = `SELECT p.id, m.secondPerson AS person, m.chatId, u.picture, userinfos.age FROM profilmatch m INNER JOIN profil p ON m.secondPerson=p.userName INNER JOIN picturesusers u ON p.id=u.userId INNER JOIN userinfos ON p.userName=userinfos.userName WHERE m.firstPerson='${userName}' GROUP BY (m.secondPerson);`
+	getList += `SELECT p.id, m.firstPerson AS person, m.chatId, u.picture, userinfos.age FROM profilmatch m INNER JOIN profil p ON m.firstPerson=p.userName INNER JOIN picturesusers u ON p.id=u.userId INNER JOIN userinfos ON p.userName=userinfos.userName WHERE m.secondPerson='${userName}' GROUP BY (m.firstPerson);`
 	getList += `SELECT blockProfil FROM listblockprofil WHERE user='${userName}'`
 	connection.query(getList, (error, results) => {
 		if (error) {
@@ -684,31 +697,6 @@ app.post("/users/visitProfil", (req, res) => {
 			return res.send(error)
 		} else {
 			return res.send("send notification")
-		}
-	})
-})
-
-app.post("/users/userIsLog", (req, res) => {
-	const { userName } = req.body
-	const setUserIsLog = `UPDATE inlineuser SET inline=1 WHERE user='${userName}'`
-	connection.query(setUserIsLog, (error, results) => {
-		if (error) {
-			return res.send(error)
-		} else {
-			return res.send(`${userName} is log`)
-		}
-	})
-})
-
-app.post("/users/userIsDelog", (req, res) => {
-	const { userName } = req.body
-	res.clearCookie("token")
-	const setUserIsDelog = `UPDATE inlineuser SET inline=0, date=NOW() WHERE user='${userName}'`
-	connection.query(setUserIsDelog, (error, results) => {
-		if (error) {
-			return res.send(error)
-		} else {
-			return res.send(`${userName} is delog`)
 		}
 	})
 })
@@ -831,6 +819,6 @@ const populareScore = (profilName, like) => {
 	})
 }
 
-app.listen(4000, () => {
+server.listen(4000, () => {
 	console.log(`Server is launch on port 4000`)
 })

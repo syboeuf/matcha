@@ -1,7 +1,6 @@
 import React, { Component } from "react"
 
 import PreviewProfil from "./components/PreviewProfil"
-import Form from "components/Form"
 import SearchBar from "components/SearchBar"
 import RangeSlider from "components/RangeSlider"
 
@@ -273,10 +272,7 @@ class CollectionView extends Component {
 
     render() {
         const { chooseDataPerson, listPerson, classes } = this.props
-        const {
-            listProfil, listTag, age, distance, score, searchProfilArray, searchProfilValue,
-        } = this.state
-        // console.log(searchProfilArray)
+        const { listProfil, listTag } = this.state
         return (
             <div>
                 <SearchBar />

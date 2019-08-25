@@ -2,19 +2,17 @@ import React, { useContext } from "react"
 import { withRouter } from "react-router-dom"
 import { UserConsumer } from "store/UserProvider"
 
-import { userIsDeLog } from "utils/fileProvider"
+import { deleteCookie } from "utils/fileProvider"
 
-const Disconnect = ({ history }) => {
+const Disconnect = ({ history, logout }) => {
     const user = useContext(UserConsumer)
     return (
         <div
             onClick={ () => {
-                userIsDeLog(user.dataUser.userName)
-                    .then(() => {
-                        user.setNewDataUser(undefined)
-                        history.push("/LoginAccount")
-                    })
-                    .catch((error) => console.log(error))
+                deleteCookie()
+                logout()
+                user.setNewDataUser(undefined)
+                history.push("/LoginAccount")
             } }
         >
             Disconnect

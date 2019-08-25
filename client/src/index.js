@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import UserProvider from "store/UserProvider"
 import * as serviceWorker from './serviceWorker';
 import "leaflet/dist/leaflet.css";
 import "esri-leaflet-geocoder/dist/esri-leaflet-geocoder.css";
@@ -9,7 +10,12 @@ import "esri-leaflet-geocoder/dist/esri-leaflet-geocoder.css";
 import "leaflet/dist/leaflet.js";
 import "esri-leaflet-geocoder/dist/esri-leaflet-geocoder.js";
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(
+    <UserProvider>
+        <App />
+    </UserProvider>,
+    document.getElementById('root')
+);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

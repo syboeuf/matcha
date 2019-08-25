@@ -10,8 +10,6 @@ import Hidden from '@material-ui/core/Hidden'
 import Grid from '@material-ui/core/Grid'
 import Menu from "./Menu"
 
-import { getNotificationsNoRead } from "utils/fileProvider"
-
 import Disconnect from "./Disconnect"
 
 import DropdownMenu from "components/DropdownMenu"
@@ -82,35 +80,44 @@ class Header extends React.Component {
         this.state = {
             isOpen: false,
             openDropDown: false,
-            notificationsArray: [],
+            notificationsArray: null,
             maxNotification: limitNotificationNumber,
             openMenu: false
         }
-        this.mounted = true
     }
 
-    componentDidMount() {
-        this.timeout = setInterval(() => this.showNotifications(), 1000)
+    componentWillMount() {
+        const { dataUser, socket } = this.context
+        const { notificationsArray } = this.state
+        socket.on("GET_NOTIFICATIONS", this.addNotifications)
+        socket.emit("GET_NOTIFICATIONS", { reciever: dataUser.userName, activeNotifications: notificationsArray })
     }
 
     componentWillUnmount() {
-        this.mounted = false
-        clearInterval(this.timeout)
+        const { socket, dataUser } = this.context
+        socket.off(`NOTIFICATION_RECIEVED-${dataUser.userName}`)
+        socket.off("GET_NOTIFICATIONS")
     }
 
-    showNotifications = () => {
-        const { maxNotification } = this.state
-        const { dataUser } = this.context
-        if (dataUser === undefined) {
-            return
+    addNotifications = (notificationsArray) => {
+        const { socket, dataUser } = this.context
+        this.setState({ notificationsArray, activeNotifications: notificationsArray })
+        socket.on(`NOTIFICATION_RECIEVED-${dataUser.userName}`, this.insertNotificationsToArray(notificationsArray.id))
+    }
+
+    insertNotificationsToArray = (notifId) => {
+        return notification => {
+            const { notificationsArray } = this.state
+            if (notificationsArray.id === notifId) {
+                notificationsArray.notificationArray = [notification, ...notificationsArray.notificationArray]
+            }
+            this.setState({ notificationsArray })
         }
-        getNotificationsNoRead(dataUser.userName, maxNotification)
-            .then((notificationsArray) => {
-                if (this.mounted === true) {
-                    this.setState({ notificationsArray: notificationsArray.notifications })
-                }
-            })
-            .catch((error) => console.log(error))
+    }
+
+    logout = () => {
+        const { socket } = this.context
+        socket.emit("LOGOUT")
     }
 
     moreNotification = () => {
@@ -124,7 +131,10 @@ class Header extends React.Component {
         const stylesGrid = { display: "flex", float: "right", alignItems: "center" }
         const newNotificationsArray = []
         const newMenuProfil = []
-        notificationsArray.forEach((notification) => {
+        if (notificationsArray === null) {
+            return <div />
+        }
+        notificationsArray.notificationArray.forEach((notification) => {
             newNotificationsArray.push(<p>{ notification }</p>)
         })
         if (dataUser.admin === 1) {
@@ -133,13 +143,13 @@ class Header extends React.Component {
         menuProfil.forEach((menu) => {
             newMenuProfil.push(<p onClick={ () => { history.push(`/${menu}`) } }>{ menu }</p>)
         })
-        newMenuProfil.push(<Disconnect />)
+        newMenuProfil.push(<Disconnect logout={ this.logout } />)
         return (
             <div style={ (highResolution === true) ? { ...stylesGrid, ...styles.headerLinks } : null }>
                 {
                     pagesArray.map((dataPage) => (
                         (dataPage.page === "Notifications")
-                            ? <div style={{ display: 'flex' }} className={ classes.headerLink } key={ `page-${dataPage.page}` }><Menu title={ notificationsArray.length > 0 ? dataPage.iconUnread : dataPage.icon } array={ notificationsArray } /></div>
+                            ? <div style={ { display: 'flex' } } className={ classes.headerLink } key={ `page-${dataPage.page}` }><Menu title={ newNotificationsArray.length > 0 ? dataPage.iconUnread : dataPage.icon } array={ newNotificationsArray } /></div>
                             : (
                                 <div className={ classes.headerLink } key={ `page-${dataPage.page}` } onClick={ () => { history.push(`/${dataPage.page}`) } }>
                                     { dataPage.icon } { dataPage.page }

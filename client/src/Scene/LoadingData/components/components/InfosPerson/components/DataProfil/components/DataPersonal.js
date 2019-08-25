@@ -1,5 +1,4 @@
 import React from "react"
-import Paper from "@material-ui/core/Paper"
 import Typography from "@material-ui/core/Typography"
 
 import { getImageProfil } from "utils/fileProvider"
@@ -62,13 +61,14 @@ class DataPersonal extends React.Component {
     
     render() {
         const { classes, dataPersonal } = this.props
-        const { biography, populareScore, id } = dataPersonal
+        const { biography, populareScore } = dataPersonal
         
         return (
             <div style={{ textAlign: 'center' }}>
                 <img
                     className={ classes.profilePic }
                     src={ this.state.profilePic }
+                    alt="profilePic"
                 />
                 <div style={ styles.popularityBar }>
                     <div style={{ ...styles.popularityProgress, ...styles.popularityScore, width: `${populareScore}%` }}>{ populareScore }%</div>

@@ -251,14 +251,6 @@ export const visitProfil = (userName, profilName) => {
     fetch("http://localhost:4000/users/visitProfil", optionsFetch({ userName, profilName }))
 }
 
-export const userIsLog = (userName) => {
-    fetch("http://localhost:4000/users/userIsLog", optionsFetch({ userName }))
-}
-
-export const userIsDeLog = (userName) => {
-    return fetch("http://localhost:4000/users/userIsDelog", optionsFetch({ userName }))
-}
-
 export const reportingFakeProfil = (profilName) => {
     fetch("http://localhost:4000/users/reportingFakeProfil", optionsFetch({ profilName }))
 }
@@ -340,4 +332,11 @@ export const getDataPeople = () => {
         .then((response) => response.json())
         .then((responseJson) => responseJson)
         .catch((error) => console.log(error))
+}
+
+export const deleteCookie = () => {
+    fetch("http://localhost:4000/deleteCookie", {
+        credentials: "include",
+        method: "GET",
+    })
 }

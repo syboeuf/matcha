@@ -21,10 +21,21 @@ class Discover extends Component {
     }
 
     componentWillMount() {
-        const { dataUser } = this.context
+        const { dataUser, socket } = this.context
+        socket.on("INLINE_USER_CONNECTED", this.inlineUserConnected)
+        socket.emit("INLINE_USER_CONNECTED")
         blockList(dataUser.userName)
             .then((response) => this.setState({ listPerson: response.blockList }))
             .catch((error) => console.log(error))
+    }
+
+    componentWillUnmount() {
+        const { socket } = this.context
+        socket.off("INLINE_USER_CONNECTED")
+    }
+
+    inlineUserConnected = (inlineUsers) => {
+        this.setState({ inlineUsers })
     }
 
     getListUser = (userName, profilName) => {
@@ -35,10 +46,15 @@ class Discover extends Component {
 
     chooseDataPerson = (dataPerson) => {
         const { history } = this.props
-        const { dataUser } = this.context
+        const { dataUser, socket } = this.context
+        socket.emit("NOTIFICATIONS_SENT", { reciever: dataPerson.userName, notification: `${dataUser.userName} visit you're profil` })
         visitProfil(dataUser.userName, dataPerson.userName)
         getAllOtherDataOfProfil(dataUser.userName, dataPerson.userName)
-            .then((response) => history.push("/InfosPerson", { dataPerson: response.otherData }))
+        .then((response) => {
+            const { inlineUsers } = this.state
+            const inline = inlineUsers.find(name => name === response.otherData.userName)
+            return history.push("/InfosPerson", { dataPerson: { ...response.otherData, inline: (inline === undefined) ? 0 : 1 } })
+        })
             .catch((error) => console.log(error))
     }
 

@@ -5,7 +5,7 @@ import * as ELG from "esri-leaflet-geocoder"
 
 import {
     getDataFromCookie, getLocation, getUserApproximateLocation, setLocationToNull,
-    setLocation,
+    setLocation, deleteCookie,
 } from "utils/fileProvider"
 
 import Loader from "components/Loader"
@@ -27,10 +27,13 @@ class LoadingData extends Component {
         getDataFromCookie()
             .then((data) => {
                 const { history } = this.props
+                const { setNewDataUser, socket } = this.context
                 if (Object.keys(data).length === 0) {
                     history.push("/LoginAccount")
                 } else {
-                    this.context.setNewDataUser({ pictures: [ ...data.dataUser[1] ], ...data.dataUser[0][0] })
+                    socket.on("USER_ALREAY_CONNECTED", this.userAlreadyConnect)
+                    setNewDataUser({ pictures: [...data.dataUser[1]], ...data.dataUser[0][0] })
+                    socket.emit("VERIFY_USER", data.dataUser[0][0].userName, this.verifyIfUserIsConnected)
                     getLocation()
                         .then((response) => {
                             ELG.reverseGeocode()
@@ -74,6 +77,35 @@ class LoadingData extends Component {
                     }
             })
             .catch((error) => console.log(error))
+    }
+
+    componentWillUnmount() {
+        const { socket } = this.context
+        socket.off("USER_ALREAY_CONNECTED")
+    }
+
+    userAlreadyConnect = (userConnected) => {
+        const { history } = this.props
+        if (userConnected === true) {
+            deleteCookie()
+            history.push("/LoginAccount")
+        } else {
+            console.log("user connect")
+        }
+    }
+
+    setUser = (user) => {
+        const { socket } = this.context
+        socket.emit("USER_CONNECTED", user)
+    }
+
+    verifyIfUserIsConnected = ({ user, isUser }) => {
+        const { socket } = this.context
+        if (isUser) {
+            socket.emit("CHECK_IF_USER_CONNECTED", user)
+        } else {
+            this.setUser(user)
+        }
     }
 
     render() {

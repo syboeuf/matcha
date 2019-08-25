@@ -11,7 +11,7 @@ import Typography from "@material-ui/core/Typography"
 import { withStyles } from "@material-ui/core/styles"
 import Container from "@material-ui/core/Container"
 
-import { checkLogIn, userIsLog } from "utils/fileProvider"
+import { checkLogIn } from "utils/fileProvider"
 
 import Form from "components/Form"
 import ForgetPassword from "./components/ForgetPassword"
@@ -69,12 +69,12 @@ class LogIn extends Component {
 
     checkIfUserExist = () => {
         const { history } = this.props
+        const { setNewDataUser } = this.context
         const { inputArray } = this.state
         checkLogIn(inputArray)
             .then((response) => {
                 if (response !== undefined) {
-                    userIsLog(response.userName)
-                    this.context.setNewDataUser(response)
+                    setNewDataUser(response)
                     history.push("/", { dataUser: { ...response } })
                 } else {
                     alert("Wrong userName or password or the user is already log !!!")

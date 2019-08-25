@@ -6,6 +6,8 @@ class UserProvider extends Component {
 
     state = {
         dataUser: undefined,
+        socket: null,
+        setSocket: (socket) => this.setState({ socket }),
         setNewDataUser: (dataUser) => this.setState({ dataUser }),
     }
     

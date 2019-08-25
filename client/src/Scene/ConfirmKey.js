@@ -5,7 +5,7 @@ import { UserConsumer } from "store/UserProvider"
 import Form from "components/Form"
 import StyledButton from "components/StyledButton"
 
-import { checkKey, userIsLog } from "utils/fileProvider"
+import { checkKey } from "utils/fileProvider"
 
 class ConfirmKey extends Component {
 
@@ -35,7 +35,6 @@ class ConfirmKey extends Component {
         checkKey(userName, Number(valueKey))
             .then((response) => {
                 if (response.dataUser !== undefined && response.dataUser.userName === userName) {
-                    userIsLog(userName)
                     this.context.setNewDataUser(response.dataUser)
                     history.push("/", { dataUser: { ...response.dataUser } })
                 } else if (response.results === false) {

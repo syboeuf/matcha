@@ -108,7 +108,6 @@ class Pictures extends Component {
         if (picturesArray === undefined) {
             return <div />
         }
-        const { userId, classes } = this.props
         const picturesDataArray = []
         for (let i = 0; i < 5; i++) {
             if (picturesArray[i] === undefined) {

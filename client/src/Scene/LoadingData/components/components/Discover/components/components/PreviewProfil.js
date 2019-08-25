@@ -3,12 +3,8 @@ import React, { Component } from "react"
 import { getImageProfil } from "utils/fileProvider"
 
 import { withStyles } from "@material-ui/core/styles"
-import Card from "@material-ui/core/Card"
-import CardMedia from "@material-ui/core/CardMedia"
-import Grid from "@material-ui/core/Grid"
-import Typography from "@material-ui/core/Typography"
 
-const styles = theme => ({
+const styles = () => ({
     card: {
         width: 400,
         height: 300,
@@ -63,6 +59,7 @@ class PreviewProfil extends Component {
                         src={ process.env.PUBLIC_URL + pathImageProfil }
                         className={ classes.imageCard}
                         title="Image profile"
+                        alt="ProfilPic"
                     />
                     <div style={ { textAlign: "center" } }>
                         { userName }
