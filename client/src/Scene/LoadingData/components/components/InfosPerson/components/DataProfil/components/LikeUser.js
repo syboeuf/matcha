@@ -1,9 +1,12 @@
 import React, { Component } from "react"
 import { UserConsumer } from "store/UserProvider"
+import Swal from 'sweetalert2'
 
 import { withStyles } from "@material-ui/core/styles"
 
-import { getPicturesUser, likeOrUnkikeUser, checkLike } from "utils/fileProvider"
+import {
+    getPicturesUser, checkLike, deleteMatch, insertMatch,
+} from "utils/fileProvider"
 
 const styles = {
     blueBtnDisabled: {
@@ -75,7 +78,19 @@ class LikeUser extends Component {
     }
 
     sendLike = (response) => {
-        console.log(response)
+        const { user, profilName } = this.props
+        const { socket } = this.context
+        if (response === 1) {
+            insertMatch(user, profilName)
+            Swal.fire(
+                'This is a match !',
+                'You are now able to discuss with this user',
+                'success'
+            )
+            socket.emit("NOTIFICATIONS_SENT", { reciever: profilName, notification: `${user} like you and you like hit so this is a match !!!` })
+        } else if (response === -1) {
+            deleteMatch(user, profilName)
+        }
     }
 
     getImages = (id) => {
@@ -97,12 +112,10 @@ class LikeUser extends Component {
         if (!like && isLikable) {
             socket.emit("SEND_LIKE", { reciever: profilName, sender: user, valueLike: 1 })
             socket.emit("NOTIFICATIONS_SENT", { reciever: profilName, notification: `${user} like you` })
-            //likeOrUnkikeUser(user, profilName, 1)
         }
         else if (like && isLikable) {
             socket.emit("SEND_LIKE", { reciever: profilName, sender: user, valueLike: -1 })
             socket.emit("NOTIFICATIONS_SENT", { reciever: profilName, notification: `${user} unlike you` })
-            //likeOrUnkikeUser(user, profilName, -1)
         }
     }
 

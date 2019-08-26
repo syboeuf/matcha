@@ -3,7 +3,7 @@ const mysql = require("mysql")
 const connection = mysql.createConnection({
 	host: "localhost",
 	user: "root",
-	password: "",
+	password: "input305",
 	database: "matcha",
 	multipleStatements: true,
 })
@@ -149,12 +149,12 @@ module.exports = (socket) => {
                     if (error) {
                         return
                     } else {
-                        console.log(results[1].length, results[1][0].likeUser === 1)
-                        socket.emit("SEND_LIKE", results[1][0].likeUser)
-                        if (results[1].length > 0 && results[1][0].likeUser === 1) {
-                            console.log("match")
+                        if (results[1].length > 0 && results[1][0].likeUser === 1 && valueLike === 1) {
+                            socket.emit("SEND_LIKE", 1)
+                        } else if (valueLike === -1) {
+                            socket.emit("SEND_LIKE", -1)
                         } else {
-                            console.log("like")
+                            socket.emit("SEND_LIKE", 0)
                         }
                     }
                 })

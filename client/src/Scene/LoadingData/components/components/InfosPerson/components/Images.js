@@ -38,7 +38,7 @@ class Images extends Component {
         }
         return (
             <div>
-                <CarouselProfil pictureProfil={ imagesArray } />
+                <CarouselProfil pictureProfil={ imagesArray } widthPicture={ "100%" } />
             </div>
         )
     }

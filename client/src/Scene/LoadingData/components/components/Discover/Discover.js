@@ -3,9 +3,7 @@ import { withRouter } from "react-router-dom"
 
 import CollectionView from "./components/CollectionView"
 
-import {
-    blockList, getAllOtherDataOfProfil, visitProfil, blockProfil,
-} from "utils/fileProvider"
+import { blockList, getAllOtherDataOfProfil, blockProfil } from "utils/fileProvider"
 import { UserConsumer } from "store/UserProvider"
 
 class Discover extends Component {
@@ -48,7 +46,6 @@ class Discover extends Component {
         const { history } = this.props
         const { dataUser, socket } = this.context
         socket.emit("NOTIFICATIONS_SENT", { reciever: dataPerson.userName, notification: `${dataUser.userName} visit you're profil` })
-        visitProfil(dataUser.userName, dataPerson.userName)
         getAllOtherDataOfProfil(dataUser.userName, dataPerson.userName)
         .then((response) => {
             const { inlineUsers } = this.state

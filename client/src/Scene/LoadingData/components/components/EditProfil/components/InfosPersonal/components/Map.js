@@ -5,8 +5,9 @@ import {
     Map, TileLayer, Marker, Popup,
 } from "react-leaflet"
 import { withRouter } from "react-router-dom"
+import { UserConsumer } from "store/UserProvider"
 
-import { setNewLocation, getDataPeople, visitProfil } from "utils/fileProvider"
+import { setNewLocation, getDataPeople } from "utils/fileProvider"
 
 /*
 delete L.Icon.Default.prototype._getIconUrl
@@ -18,6 +19,8 @@ L.Icon.Default.mergeOptions({
 */
 
 class MapComp extends Component {
+
+    static contextType = UserConsumer
 
     constructor(props) {
         super(props)
@@ -77,7 +80,8 @@ class MapComp extends Component {
 
     onClick = (data) => {
         const { history, infosUser } = this.props
-        visitProfil(infosUser.userName, data.userName)
+        const { socket } = this.context
+        socket.emit("NOTIFICATIONS_SENT", { reciever: data.userName, notification: `${infosUser.userName} visit you're profil` })
         history.push("/InfosPerson", { dataPerson: data })
     }
 

@@ -1,7 +1,5 @@
 import hash from "hash.js"
 
-import Swal from 'sweetalert2'
-
 import { checkEmail, checkPassword } from "utils/utils"
 
 const optionsFetch = (dataBody) => {
@@ -156,30 +154,12 @@ export const updateInfosPersonal = (infosPersonal) => {
     fetch("http://localhost:4000/users/updateInfosPersonal", optionsFetch(infosPersonal))
 }
 
-export const likeOrUnkikeUser = (user, profilName, valueLike) => {
-    fetch("http://localhost:4000/users/likeOrUnlikeProfil", optionsFetch({ user, profilName, valueLike }))
-        .then((response) => response.text())
-        .then((responseText) => {
-            if (responseText === "match") {
-                fetch("http://localhost:4000/users/profilMatch", optionsFetch({ user, profilName }))
-                    .then((response) => response.text())
-                    .then((res) => {
-                        if (+res === 1 && valueLike === 1) {
-                            alert("You are already matched with this person")
-                        } else if (+res === 1 && valueLike === -1) {
-                            fetch("http://localhost:4000/users/deleteMatch", optionsFetch({ user, profilName }))
-                        } else {
-                            Swal.fire(
-                                'This is a match !',
-                                'You are now able to discuss with this user',
-                                'success'
-                            )
-                        }
-                    })
-                    .catch((error) => console.log(error))
-            }
-        })
-        .catch((error) => console.log(error))
+export const insertMatch = (user, profilName) => {
+    fetch("http://localhost:4000/users/profilMatch", optionsFetch({ user, profilName }))
+}
+
+export const deleteMatch = (user, profilName) => {
+    fetch("http://localhost:4000/users/deleteMatch", optionsFetch({ user, profilName }))
 }
 
 export const blockList = (userName) => {
@@ -225,10 +205,6 @@ export const checkLike = (currUser, userProfile) => {
         .catch((error) => console.log(error))
 }
 
-export const sendMessage = (from, to, message) => {
-    fetch("http://localhost:4000/users/sendMessage", optionsFetch({ from, to, message }))
-}
-
 export const getAllMessages = (userName, profilMatchName) => {
     return fetch("http://localhost:4000/users/getAllMessages", optionsFetch({ userName, profilMatchName }))
         .then((response) => response.json())
@@ -245,10 +221,6 @@ export const getNotificationsNoRead = (userName, limit) => {
 
 export const updateNotificationsToRead = (userName) => {
     fetch("http://localhost:4000/users/updateNotificationsToRead", optionsFetch({ userName }))
-}
-
-export const visitProfil = (userName, profilName) => {
-    fetch("http://localhost:4000/users/visitProfil", optionsFetch({ userName, profilName }))
 }
 
 export const reportingFakeProfil = (profilName) => {

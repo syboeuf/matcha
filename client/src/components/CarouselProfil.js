@@ -3,8 +3,8 @@ import React, { Component } from "react"
 const styles = {
 	slider: {
 		position: "relative",
-		width: 1000,
-		height: 800,
+		//width: 1000,
+		//height: 800,
 		margin: "0 auto",
 		overflow: "hidden",
 		whiteSpace: "nowrap",
@@ -137,17 +137,22 @@ class App extends Component {
 	}
 
 	render() {
-		const { pictureProfil } = this.props
+		const { pictureProfil, widthPicture } = this.props
 		const { translateValue } = this.state
 		const arrayButton = []
 		for (let i = 0; i < pictureProfil.length; i++) {
 			arrayButton.push(i)
 		}
 		return (
-			<div>
+			<div ref={ this.selector }>
 				<div
 					onMouseDown={ (e) => this.onMouseDown(e) }
-					style={ styles.slider }
+					style={
+						{
+							...styles.slider,
+							width: widthPicture
+						}
+					}
 				>
 					<div
 						style={
@@ -160,15 +165,17 @@ class App extends Component {
 					>
 						{
 							pictureProfil.map((image, index) => (
-								<div
+								<img
 									key={ `image-${index}` }
+									alt={ `pic-${index}` }
+									src={ `${process.env.PUBLIC_URL}/imageProfil/${image.userId}/${image.picture}` }
 									style={
 										{
 											...styles.slide,
-											backgroundImage: `url(${process.env.PUBLIC_URL}/imageProfil/${image.userId}/${image.picture})`,
-											backgroundSize: "cover",
-											backgroundRepeat: "no-repeat",
-											backgroundPosition: "50% 60%"
+											//backgroundImage: `url(${process.env.PUBLIC_URL}/imageProfil/${image.userId}/${image.picture})`,
+											//backgroundSize: "cover",
+											//backgroundRepeat: "no-repeat",
+											//backgroundPosition: "50% 60%"
 										}
 									}
 								/>
