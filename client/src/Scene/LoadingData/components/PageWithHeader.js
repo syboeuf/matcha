@@ -15,7 +15,7 @@ const PageWithHeader = () => {
         <div>
             <Header />
             <main>
-                <Route path="/Home" component={ Home } />
+                <Route exact path="/" component={ Home } />
                 <Route path="/Messages" component={ Messages } />
                 <Route path="/EditProfil" component={ EditProfil } />
                 <Route path="/Discover" component={ Discover } />

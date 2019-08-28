@@ -1,6 +1,4 @@
-import React, { Component } from "react"
-
-import { getImageProfil } from "utils/fileProvider"
+import React from "react"
 
 import { withStyles } from "@material-ui/core/styles"
 
@@ -24,51 +22,21 @@ const styles = () => ({
     },
 })
 
-class PreviewProfil extends Component {
-
-    constructor(props) {
-        super(props)
-        this.state = {
-            imageProfil: null,
-        }
-    }
-
-    componentWillMount() {
-        const { id } = this.props.data
-        getImageProfil(id)
-            .then((response) => {
-                if (response.imageProfil.length > 0) {
-                    if (response.imageProfil[0].picture.length > 0) {
-                        this.setState({ imageProfil: response.imageProfil[0].picture })
-                    }
-                }
-            })
-            .catch((error) => console.log(error))
-    }
-
-    render() {
-        const { data, chooseDataPerson, classes } = this.props
-        const { userName } = data
-        const { imageProfil } = this.state
-        const pathImageProfil = (imageProfil === null) ? "noImage.png" : `/imageProfil/${data.id}/${imageProfil}`
-        return (
-            <div style={{ display: 'flex', flexWrap: 'wrap', marginLeft: 'auto', marginRight: 'auto' }}>
-                <div className={ classes.card }>
-                    <img
-                        onClick={ () => chooseDataPerson(data) }
-                        src={ process.env.PUBLIC_URL + pathImageProfil }
-                        className={ classes.imageCard}
-                        title="Image profile"
-                        alt="ProfilPic"
-                    />
-                    <div style={ { textAlign: "center" } }>
-                        { userName }
-                    </div>
-                </div>
+const PreviewProfil = ({ data, chooseDataPerson, classes }) => (
+    <div style={{ display: 'flex', flexWrap: 'wrap', marginLeft: 'auto', marginRight: 'auto' }}>
+        <div className={ classes.card }>
+            <img
+                onClick={ () => chooseDataPerson(data) }
+                src={ process.env.PUBLIC_URL + `/imageProfil/${data.id}/${data.picture}` }
+                className={ classes.imageCard }
+                title="Image profile"
+                alt="ProfilPic"
+            />
+            <div style={ { textAlign: "center" } }>
+                { data.userName }
             </div>
-        )
-    }
-
-}
+        </div>
+    </div>
+)
 
 export default withStyles(styles)(PreviewProfil)

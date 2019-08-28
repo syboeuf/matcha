@@ -58,6 +58,22 @@ class Header extends React.Component {
         )
     }
 
+    toggleDropdownLowRes = () => {
+        const dropdownLowRes = document.getElementsByClassName('dropdown-lowres')[0];
+        if (dropdownLowRes) {
+            if (dropdownLowRes.style.display === 'block')
+                dropdownLowRes.style.display = 'none';
+            else
+                dropdownLowRes.style.display = 'block';
+        }
+    }
+    toggleDropdownItem = (e) => {
+        const active = document.getElementsByClassName('dropdown-lowres-item-active')[0];
+        if (active)
+            active.classList.remove('dropdown-lowres-item-active');
+        e.target.classList.add('dropdown-lowres-item-active');
+    }
+
     render() {
         const { history, classes } = this.props
         const { isOpen } = this.state
@@ -66,7 +82,7 @@ class Header extends React.Component {
             return <div />
         }
         return (
-            <div style={{marginBottom: 20}}>
+            <div>
                 <Grid container direction="row" style={ styles.header }>
                     <Grid item xs>
                         <img src={ process.env.PUBLIC_URL + "img/header.png" } onClick={ () => history.push("/") } className={ classes.logo } alt="header" style={{ width: 200 }} />

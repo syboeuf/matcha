@@ -462,7 +462,7 @@ app.post("/users/deleteMatch", (req, res) => {
 
 app.post("/users/listBlockProfil", (req, res) => {
 	const { userName } = req.body
-	const listBlock = `SELECT p.*, u.age, u.biography, u.gender, u.orientation, u.listInterest, u.userAddress, u.userLocation, u.userApproximateLocation, u.populareScore FROM profil p INNER JOIN userinfos u ON p.userName=u.userName WHERE p.userName NOT IN (SELECT blockProfil FROM listblockprofil WHERE user='${userName}') AND p.userName<>'${userName}'`
+	const listBlock = `SELECT p.*, u.age, u.biography, u.gender, u.orientation, u.listInterest, u.userAddress, u.userLocation, u.userApproximateLocation, u.populareScore, picturesusers.picture FROM profil p INNER JOIN userinfos u ON p.userName=u.userName INNER JOIN picturesusers ON picturesusers.userId=p.id WHERE p.userName NOT IN (SELECT blockProfil FROM listblockprofil WHERE user='${userName}') AND p.userName<>'${userName}' GROUP BY p.id`
 	connection.query(listBlock, (error, results) => {
 		if (error) {
 			return res.send(error)
