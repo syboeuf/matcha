@@ -88,7 +88,7 @@ class InfosPersonal extends Component {
         } = infosPersonalUser
         return (
             <div>
-                <div style={{ display: 'flex', float: 'right' }}>
+                <div className="row">
                     <Orientation
                         onChangeValue={ this.onChangeValue }
                         optionChecked={ orientation }
@@ -101,13 +101,15 @@ class InfosPersonal extends Component {
                         onChangeValue={ this.onChangeValue }
                         value={ biography }
                     />
-                    <button className={ classes.blueBtn } onClick={ () => this.onClick(infosPersonalUser, userName) }>Save</button>
-                    <button className={ classes.blueBtn } onClick={ () => this.setState({ openMap: true }) }>Open map</button>
                 </div>
-                <ListInterest
-                    onChangeValue={ this.updateListInterest }
-                    list={ listInterest }
-                />
+                <div className="row" style={{marginBottom: 10}}>
+                    <ListInterest
+                        onChangeValue={ this.updateListInterest }
+                        list={ listInterest }
+                    />
+                </div>
+                <button className={ classes.blueBtn } style={{marginRight: 10}} onClick={ () => this.onClick(infosPersonalUser, userName) }>Save</button>
+                <button className={ classes.blueBtn } onClick={ () => this.setState({ openMap: true }) }>Open map</button>
                 <Pictures
                     userId={ id }
                     userName={ userName }

@@ -8,7 +8,9 @@ class Images extends Component {
 
     constructor(props) {
         super(props)
-        this.state = { imagesArray: null }
+        this.state = { imagesArray: null, width: 0, resizeOn: false }
+        this.selector = React.createRef()
+        this.doit = null
     }
 
     componentWillMount() {
@@ -16,11 +18,30 @@ class Images extends Component {
         this.getImages(id)
     }
 
+    componentDidMount() {
+        this.getWidth()
+        window.addEventListener("resize", this.getWidth)
+    }
+
     componentWillReceiveProps(nextProps) {
         const { id } = nextProps
         if (this.props.id !== id) {
             this.getImages(id)
         }
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.getWidth)
+    }
+
+    getWidth = () => {
+        clearTimeout(this.doit);
+        this.doit = setTimeout(() => { this.resizeEnd() }, 200);
+        this.setState({ width: this.selector.current.getBoundingClientRect().width, resizeOn: true })
+    }
+
+    resizeEnd = () => {
+        this.setState({ resizeOn: false })
     }
 
     getImages = (id) => {
@@ -32,13 +53,10 @@ class Images extends Component {
     }
 
     render() {
-        const { imagesArray } = this.state
-        if (imagesArray === null) {
-            return <div />
-        }
+        const { imagesArray, width, resizeOn } = this.state
         return (
-            <div>
-                <CarouselProfil pictureProfil={ imagesArray } widthPicture={ "100%" } />
+            <div ref={ this.selector }>
+                <CarouselProfil pictureProfil={ imagesArray } widthPicture={ width } resize={ resizeOn } />
             </div>
         )
     }

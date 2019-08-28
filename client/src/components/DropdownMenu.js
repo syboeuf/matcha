@@ -4,33 +4,41 @@ class DropdownMenu extends React.Component {
 
 	constructor(props) {
 		super(props)
-		this.state = {
-			isOpen: false,
-			menuItems: []
+		this.state = { isOpen: false }
+		this.selector = React.createRef()
+	}
+
+	componentDidMount() {
+		window.addEventListener("mousedown", this.closeDropDown)
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener("mousedown", this.closeDropDown)
+	}
+
+	closeDropDown = (e) => {
+		if (this.selector.current && !this.selector.current.contains(e.target)) {
+			this.setState({ isOpen: false })
 		}
 	}
 
-	componentWillMount() {
-		const { items } = this.props;
-		this.setState({ menuItems: items });
-	}
-
 	render() {
-		const { menuItems } = this.state;
-
+		const { title, items } = this.props
 		return (
-			<div onClick={ () => this.setState({ isOpen: !this.state.isOpen }) }>
-				<span className="menu-icon">Test</span>
+			<div
+				ref={ this.selector }
+			>
+				<span onClick={ () => this.setState({ isOpen: !this.state.isOpen }) } className="menu-icon">{ title }</span>
 				{
 					(this.state.isOpen)
 					? (
-						<div className="menu">
+						<div style={{overflowY: "auto", height: "60%"}} className="menu">
 						{
-							menuItems.map((item, index) => {
-								return (
-									<div className="menu-item" onClick={ () => alert(item.link) }>{ item.title }</div>
-								)
-							})
+							items.map((item, index) => (
+								<div key={ `Menu-${index}` } className="menu-item">
+									{ item }
+								</div>
+							))
 						}
 						</div>
 					)

@@ -62,7 +62,7 @@ class InfosPerson extends Component {
         // Recup la liste des utilisateurs bloqués par l'user connecté, pour savoir si il bloque une personne deja bloquee ou non
         this.setState({ blocked: true })
         Swal.fire(
-            'Informations updated',
+            'User blocked',
             'You succesfully blocked this profile',
             'success'
         )
@@ -92,42 +92,74 @@ class InfosPerson extends Component {
         return (
             <div>
                 {
-                    (blocked === false)
-                        ? (
-                            <Container maxWidth="xl">
-                                <Grid container direction="row" style={{ marginTop: 100 }}>
-                                    <Grid item xs={ 12 } sm={ 2 }>
-                                        <DataProfil
-                                            dataProfil={ dataProfil }
-                                            dataPersonal={ dataPersonal }
-                                            id={ id }
-                                            date={ date }
-                                            likeUser={ likeUser }
-                                            user={ dataUser.userName }
-                                            profilName={ userName }
-                                        />
-                                        <button className={ classes.redBtn } onClick={ () => this.onClick() }>Block this user</button>
-                                        {
-                                            (fakeUser !== undefined || fake === true)
-                                                ? <p>This profil is potentially a fake Profil</p>
-                                                : (<button className={ classes.redBtn } onClick={ () => this.setState({ fake: true }, () => reportingFakeProfil(userName)) }>Report as fake profile</button>)
-                                        }
-                                    </Grid>
-                                    <Grid item xs={ 12 } sm={ 8 } style={{ marginLeft: 50, marginRight: 50, boxShadow: '0px 0px 5px rgba(0, 0, 0, .2)', borderRadius: '10px 10px 0px 0px', padding: 30, minHeight: '90vh' }}>
-                                        <ProfilBar
-                                            userName={ userName }
-                                            age={ age }
-                                            date={ date }
-                                            gender={ gender }
-                                            inline={ inline }
-                                        />
-                                        <Interest listInterest={ listInterest } />
+                (!blocked)
+                    ? (
+                        <div>
+                            <div className="center infos-person" style={{width: '70%', marginTop: 80}}>
+                                <div className="col" style={{width: '25%', boxShadow: "0px 5px 15px rgba(0,0,0,.2)", borderRadius: 10, padding: 50}}>
+                                    <DataProfil
+                                        dataProfil={ dataProfil }
+                                        dataPersonal={ dataPersonal }
+                                        id={ id }
+                                        date={ date }
+                                        likeUser={ likeUser }
+                                        user={ dataUser.userName }
+                                        profilName={ userName }
+                                    />
+                                    <button className={ classes.redBtn } onClick={ () => this.onClick() }>Block this user</button>
+                                    {
+                                        (fakeUser !== undefined || fake === true)
+                                        ? <p>This profil is potentially a fake Profil</p>
+                                        : (<button className={ classes.redBtn } onClick={ () => this.setState({ fake: true }, () => reportingFakeProfil(userName)) }>Report as fake profile</button>)
+                                    }
+                                </div>
+                                <div className="col" style={{width: '75%', boxShadow: "0px 5px 15px rgba(0,0,0,.2)", borderRadius: 10, padding: 50, margin: 20}}>
+                                    <ProfilBar
+                                        userName={ userName }
+                                        age={ age }
+                                        date={ date }
+                                        gender={ gender }
+                                        inline={ inline }
+                                    />
+                                    <Interest listInterest={ listInterest } />
+                                    <div className="center" style={{width: '80%'}}>
                                         <Images id={ id } />
-                                    </Grid>
-                                </Grid>
-                            </Container>
-                        )
-                        : "The profil is block"
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="infos-person-lowres" style={{paddingLeft: '10%', paddingRight: '10%'}}>
+                                <div style={{width: '100%'}}>
+                                    <DataProfil
+                                        dataProfil={ dataProfil }
+                                        dataPersonal={ dataPersonal }
+                                        id={ id }
+                                        date={ date }
+                                        likeUser={ likeUser }
+                                        user={ dataUser.userName }
+                                        profilName={ userName }
+                                    />
+                                    <button className={ classes.redBtn } onClick={ () => this.onClick() }>Block this user</button>
+                                    {
+                                        (fakeUser !== undefined || fake === true)
+                                        ? <p>This profil is potentially a fake Profil</p>
+                                        : (<button className={ classes.redBtn } onClick={ () => this.setState({ fake: true }, () => reportingFakeProfil(userName)) }>Report as fake profile</button>)
+                                    }
+                                </div>
+                                <div style={{width: '100%'}}>
+                                    <ProfilBar
+                                        userName={ userName }
+                                        age={ age }
+                                        date={ date }
+                                        gender={ gender }
+                                        inline={ inline }
+                                    />
+                                    <Interest listInterest={ listInterest } />
+                                    <Images id={ id } />
+                                </div>
+                            </div>
+                        </div>
+                    )
+                    : <div className="no-results">Utilisateur bloqué</div>
                 }
             </div>
         )

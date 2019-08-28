@@ -72,7 +72,7 @@ const listTagArray = [
     "#Manga",
     "#Sport",
     "#NigthParty",
-    "#data processing",
+    "#Data processing",
 ]
 
 const defaultAgeMin = 10
@@ -91,18 +91,9 @@ class CollectionView extends Component {
             listTag: "",
             searchProfilValue: "",
             searchProfilArray: [],
-            age: [
-                { name: "ageMin", type: "number", placeholder: "ageMin", value: defaultAgeMin },
-                { name: "ageMax", type: "number", placeholder: "ageMax", value: defaultAgeMax },
-            ],
-            distance: [
-                { name: "distanceMin", type: "number", placeholder: "distanceMin", value: defaultDistanceMin },
-                { name: "distanceMax", type: "number", placeholder: "distanceMax", value: defaultDistanceMax },
-            ],
-            score: [
-                { name: "populareScoreMin", type: "number", placeholder: "Score Min", value: defaultPopulareScoreMin },
-                { name: "populareScoreMax", type: "number", placeholder: "Score Max", value: defaultPopulareScoreMax },
-            ],
+            age: [defaultAgeMin, defaultAgeMax],
+            distance: [defaultDistanceMin, defaultDistanceMax],
+            score: [defaultPopulareScoreMin, defaultPopulareScoreMax],
         }
     }
 
@@ -143,8 +134,8 @@ class CollectionView extends Component {
 
     filterAge = (array) => {
         const { age } = this.state
-        const ageMin = (age.find((x) => x.name === "ageMin")).value
-        const ageMax = (age.find((x) => x.name === "ageMax")).value
+        const ageMin = age[0]
+        const ageMax = age[1]
         if (ageMin <= 0 || ageMax <= 0) {
             return array
         }
@@ -160,8 +151,8 @@ class CollectionView extends Component {
     filterLocation = (array) => {
         const { userLocation, userApproximateLocation } = this.props.dataUser
         const { distance } = this.state
-        const distanceMin = (distance.find((x) => x.name === "distanceMin")).value
-        const distanceMax = (distance.find((x) => x.name === "distanceMax")).value
+        const distanceMin = distance[0]
+        const distanceMax = distance[1]
         if (distanceMin <= 0 || distanceMax <= 0) {
             return array
         }   
@@ -213,8 +204,8 @@ class CollectionView extends Component {
 
     filterPopularScore = (array) => {
         const { score } = this.state
-        const populareScoreMin = (score.find((x) => x.name === "populareScoreMin")).value
-        const populareScoreMax = (score.find((x) => x.name === "populareScoreMax")).value
+        const populareScoreMin = score[0]
+        const populareScoreMax = score[1]
         if (populareScoreMin <= 0 || populareScoreMax <= 0) {
             return array
         }
@@ -270,48 +261,32 @@ class CollectionView extends Component {
         this.setState({ searchProfilValue, searchProfilArray })
     }
 
+    handleChange = (name, newValue) => {
+        this.setState({ [name]: newValue }, () => this.filterList(this.props.listPerson)) // Made in real time
+    }
+
     render() {
         const { chooseDataPerson, listPerson, classes } = this.props
-        const { listProfil, listTag } = this.state
+        const {
+            listProfil, listTag, age, distance, score,
+        } = this.state
         return (
             <div>
                 <SearchBar />
-                <div style={{ display: 'flex', flexWrap: 'wrap', width: '40%', marginLeft: 'auto', marginRight: 'auto' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', width: '100%', padding: 10, marginLeft: 'auto', marginRight: 'auto' }}>
                     <div style={{ display: 'flex', width: '100%' }}>
-                        <div style={{ display: 'flex', marginLeft: 'auto', marginRight: 'auto', marginTop: 50, flexWrap: 'wrap' }}>
-                            <div style={{ marginLeft: 20, marginRight: 20 }}><RangeSlider name={'Age'} firstVal={18} secVal={30} min={18} max={150} /></div>
-                            <div style={{ marginLeft: 20, marginRight: 20 }}><RangeSlider name={'Distance'} firstVal={0} secVal={30} min={0} max={100} /></div>
-                            <div style={{ marginLeft: 20, marginRight: 20 }}><RangeSlider name={'Score'} firstVal={0} secVal={100} min={0} max={100} /></div>
+                        <div style={{ display: 'flex', width: '100%', marginLeft: 'auto', marginRight: 'auto', marginTop: 50, flexWrap: 'wrap', justifyContent: "space-around" }}>
+                            <div style={{ width: "20%" }}>
+                                <RangeSlider name={'Age'} value={ age } min={18} max={150} handleChange={ this.handleChange } />
+                            </div>
+                            <div style={{ width: "30%", marginLeft: 20, marginRight: 20 }}>
+                                <RangeSlider name={'Distance'} value={ distance } min={0} max={100} handleChange={ this.handleChange } />
+                            </div>
+                            <div style={{ width: "30%", marginLeft: 20, marginRight: 20 }}>
+                                <RangeSlider name={'Score'} value={ score } min={0} max={100} handleChange={ this.handleChange } />
+                            </div>
                         </div>
                     </div>
-                {/* <div style={{ display: 'flex' }}>
-                    <Form inputArray={ age } onChangeValue={ this.onChangeAge } />
-                    <Form inputArray={ distance } onChangeValue={ this.onChangeDistance } />
-                    <Form inputArray={ score } onChangeValue={ this.onChangeScore } />
-                </div> */}
-                    {/* <div className="searchBar" style={{ width: 900 }}>
-                        <input
-                            type="text"
-                            value={ searchProfilValue }
-                            onChange={ (e) => this.onSearchUserChange(e) }
-                            placeholder="Seach a profil by the name"
-                            style={{
-                                width: '100%',
-                                boxShadow: '0px 5px 10px rgba(0, 0, 0, .1)',
-                                border: 0,
-                                fontSize: 20,
-                                padding: 20,
-                                marginBottom: 10,
-                            }}
-                        />
-                        <div className="searchBar-collapse col">
-                        {
-                            searchProfilArray.map((profil) => (
-                                <span className="searchBar-result">{ profil.userName }</span>
-                            ))
-                        }
-                        </div>
-                    </div> */}
                     <div className={ classes.container } style={{ width: '100%' }}>
                         {
                             listTagArray.map((tag) => (

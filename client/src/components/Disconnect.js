@@ -4,8 +4,13 @@ import { UserConsumer } from "store/UserProvider"
 
 import { deleteCookie } from "utils/fileProvider"
 
-const Disconnect = ({ history, logout }) => {
+const Disconnect = ({ history }) => {
     const user = useContext(UserConsumer)
+
+    const logout = () => {
+        user.socket.emit("LOGOUT")
+    }
+
     return (
         <div
             onClick={ () => {

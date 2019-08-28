@@ -5,6 +5,8 @@ import { UserConsumer } from "store/UserProvider"
 
 import './Messages.css'
 
+const limits = 20
+
 class Messages extends Component {
 
     static contextType = UserConsumer
@@ -19,8 +21,12 @@ class Messages extends Component {
             listMessages: null,
             loadingMatch: false,
             messageValue: "",
+            limitMessages: limits,
             dataProfilPersonal: [],
         }
+        this.selector = React.createRef()
+        this.valueScroll = 0
+        this.scrollOn = false
     }
 
     componentWillMount() {
@@ -28,7 +34,7 @@ class Messages extends Component {
         socket.on("PRIVATE_MESSAGE", this.addChat)
         getListMatch(dataUser.userName)
             .then((list) => {
-                const { activeChat } = this.state
+                const { activeChat, limitMessages } = this.state
                 const dataProfilPersonal = []
                 list.listMatch.forEach((match) => {
                     socket.emit("PRIVATE_MESSAGE", {
@@ -36,6 +42,8 @@ class Messages extends Component {
                         sender: dataUser.userName,
                         activeChat,
                         chatId: match.chatId,
+                        limitMessages,
+                        loadMoreMessages: false,
                     })
                     dataProfilPersonal.push({ age: match.age, pictureProfil: match.picture, profilId: match.id })
                 })
@@ -45,14 +53,27 @@ class Messages extends Component {
     }
 
     componentWillUnmount() {
-        const { socket } = this.context
+        const { socket, dataUser } = this.context
         socket.off("PRIVATE_MESSAGE")
+        getListMatch(dataUser.userName)
+            .then((list) => {
+                list.listMatch.forEach((match) => {
+                    socket.off(`MESSAGE_RECIEVED-${match.chatId}`)
+                })
+            })
+            .catch((error) => console.log(error))
     }
 
     sendOpenPrivateMessage = (reciever) => {
         const { socket, dataUser } = this.context
-        const { activeChat } = this.state
-        socket.emit("PRIVATE_MESSAGE", { reciever, sender: dataUser.userName, activeChat })
+        const { activeChat, limitMessages } = this.state
+        socket.emit("PRIVATE_MESSAGE", {
+            reciever,
+            sender: dataUser.userName,
+            activeChat,
+            limitMessages,
+            loadMoreMessages: false,
+        })
         this.setState({ profilYourMatch: reciever })
     }
 
@@ -63,8 +84,18 @@ class Messages extends Component {
     addChat = (chat, reset = false) => {
         const { socket } = this.context
         const { chats } = this.state
-        const newChats  = reset ? [chat] : [...chats, chat]
-        this.setState({ chats: newChats })
+        const index = chats.findIndex(u => u.id === chat.id)
+        let newChats
+        if (index !== -1) {
+            newChats = chats
+            newChats[index] = chat
+            this.setState({ chats: newChats, activeChat: chat }, () => {
+                this.selector.current.scrollTop = this.selector.current.scrollHeight - this.valueScroll
+            })
+        } else {
+            newChats  = reset ? [chat] : [...chats, chat]
+            this.setState({ chats: newChats })
+        }
         //const typingEvent = `TYPING-${chat.id}`
         //socket.on(typingEvent, this.updateTypingInChat(chat.id))
         socket.on(`MESSAGE_RECIEVED-${chat.id}`, this.addMessageToChat(chat.id))
@@ -110,7 +141,7 @@ class Messages extends Component {
         const { socket, dataUser } = this.context
         const { profilYourMatch } = this.state
         if (message.trim() !== "") {
-            socket.emit("NOTIFICATIONS_SENT", { reciever: profilYourMatch, notification: `${dataUser.userName} send you a message` })
+            socket.emit("NOTIFICATIONS_SENT", {reciever: profilYourMatch, notification: `${dataUser.userName} send you a message` })
             socket.emit("MESSAGE_SENT", { chatId, message, reciever: profilYourMatch })
             this.setState({ messageValue: "" })
         }
@@ -119,6 +150,24 @@ class Messages extends Component {
     sendTyping = (chatId, isTyping) => {
         const { socket } = this.context
         socket.emit("TYPING", { chatId, isTyping })
+    }
+
+    handleScroll = (e) => {
+        const { activeChat, profilYourMatch } = this.state
+        const { socket, dataUser } = this.context
+        if (e.target.scrollTop === 0 && this.scrollOn === true) {
+            this.scrollOn = false
+            this.valueScroll = e.target.scrollHeight
+            e.target.scrollTop = 3120
+            socket.emit("PRIVATE_MESSAGE", {
+                reciever: profilYourMatch,
+                sender: dataUser.userName,
+                activeChat,
+                limitMessages: this.state.limitMessages + limits,
+                loadMoreMessages: true,
+            })
+            this.setState({ limitMessages: this.state.limitMessages + limits })
+        }
     }
 
     render() {
@@ -137,7 +186,7 @@ class Messages extends Component {
                 <div className="discussions-chat-container row">
                     <div className="discussions-container col">
                         <span className="title row">Last Messages</span>
-                        {
+                        { 
                             chats.map((chat, index) => {
                                 if (chat.name) {
                                     const lastMessage = chat.messages[chat.messages.length - 1]
@@ -158,7 +207,7 @@ class Messages extends Component {
                                         </div>
                                     )
                                 }
-                                return <div style={ { width: 100, height: 100, backgroundColor: "red" } } />
+                                return <div key={ index } style={ { width: 100, height: 100, backgroundColor: "red" } } />
                             })
                         }
                     </div>
@@ -166,7 +215,7 @@ class Messages extends Component {
                         {
                             (activeChat !== null)
                                 ? (
-                                    <div className="chat-sub-container col">
+                                    <div ref={ this.selector } className="chat-sub-container col" onMouseDown={ () => { this.scrollOn = true } } onScroll={ (e) => this.handleScroll(e) }>
                                         <span className="title row">Chat { activeChat.name }</span>
                                         {
                                             activeChat.messages.map((message, index) => (

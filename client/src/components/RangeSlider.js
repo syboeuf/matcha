@@ -3,9 +3,10 @@ import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Slider from '@material-ui/core/Slider';
 
+
 const useStyles = makeStyles({
   root: {
-    width: 300,
+    width: "100%"
   },
 });
 
@@ -13,28 +14,24 @@ function valuetext(value) {
   return `${value}`;
 }
 
-export default function RangeSlider(props) {
-  const classes = useStyles();
-  const [value, setValue] = React.useState([props.firstVal, props.secVal]);
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
+const RangeSlider = (props) => {
+  const classes = useStyles()
   return (
     <div className={classes.root}>
       <Typography id="range-slider" gutterBottom>
-	  	{props.name}
+        {props.name}
       </Typography>
       <Slider
-        value={value}
+        value={props.value}
         min={props.min}
         max={props.max}
-        onChange={handleChange}
+        onChange={ (event, newValue) => props.handleChange(props.name.toLowerCase(), newValue)}
         valueLabelDisplay="auto"
         aria-labelledby="range-slider"
         getAriaValueText={valuetext}
       />
     </div>
-  );
+  )
 }
+
+export default RangeSlider

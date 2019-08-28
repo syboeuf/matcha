@@ -3,7 +3,8 @@ const mysql = require("mysql")
 const connection = mysql.createConnection({
 	host: "localhost",
 	user: "root",
-	password: "input305",
+	password: "tpompon",
+	port: 3307,
 	database: "matcha",
 	multipleStatements: true,
 })
@@ -26,12 +27,9 @@ let allChat = []
 
 module.exports = (socket) => {
 
-    console.log("connect")
-
     let sendMessageToChatFromUser
     let sendNotificationToUser
 
-    // Verifiy if user is inline or not
     socket.on("VERIFY_USER", (userName, callback) => {
         if (isUser(connectedUsers, userName)) {
             callback({ isUser: true, user: userName })
@@ -47,16 +45,12 @@ module.exports = (socket) => {
         sendMessageToChatFromUser = sendMessageToChat(user.name)
         sendNotificationToUser = sendNotification(user.name)
         io.emit("USER_CONNECTED", connectedUsers)
-        //console.log(connectedUsers, " user connected")
     })
 
     socket.on("CHECK_IF_USER_CONNECTED", (userName) => {
         const recieverSocket = connectedUsers[userName].socketId
-        //console.log(socket.user, recieverSocket, " 1")
-        //socket.user.socketId = newSocketId
         connectedUsers[userName].socketId = socket.id
         socket.user = connectedUsers[userName]
-        //console.log(connectedUsers[userName], socket.user, " 2")
         socket.to(recieverSocket).emit("USER_ALREAY_CONNECTED", true)
     })
 
@@ -64,7 +58,6 @@ module.exports = (socket) => {
         if ("user" in socket) {
             connectedUsers = removeUser(connectedUsers, socket.user.name)
             io.emit("USER_DISCONNECTED", connectedUsers)
-            //console.log(connectedUsers, " disconnect")
         }
     })
 
@@ -82,12 +75,12 @@ module.exports = (socket) => {
         socket.emit("INLINE_USER_CONNECTED", inlineUsers)
     })
 
-    socket.on("PRIVATE_MESSAGE", ({ reciever, sender, activeChat, chatId }) => {
+    socket.on("PRIVATE_MESSAGE", ({ reciever, sender, activeChat, chatId, loadMoreMessages, limitMessages }) => {
         if (activeChat === null) {
             const id = checkChatId(chatId)
             let newChat
             if (id === false) {
-                const getAllMessages = `SELECT *, DATE_FORMAT(date, "%m-%d-%y %H:%i:%s") as date FROM messages WHERE (fromUser='${reciever}' OR fromUser='${sender}') AND (toUser='${sender}' OR toUser='${reciever}')`
+                const getAllMessages = `SELECT *, DATE_FORMAT(date, "%m-%d-%y %H:%i:%s") as date FROM (SELECT * FROM messages WHERE (fromUser='${reciever}' OR fromUser='${sender}') AND (toUser='${sender}' OR toUser='${reciever}') ORDER BY id DESC LIMIT ${limitMessages}) sub ORDER BY id ASC`
                 connection.query(getAllMessages, (error, results) => {
                     if (error) {
                         return error
@@ -102,6 +95,18 @@ module.exports = (socket) => {
                 socket.emit("PRIVATE_MESSAGE", newChat)
             }
         } else {
+            if (loadMoreMessages === true) {
+                const getMoreMessages = `SELECT *, DATE_FORMAT(date, "%m-%d-%y %H:%i:%s") as date FROM (SELECT * FROM messages WHERE (fromUser='${reciever}' OR fromUser='${sender}') AND (toUser='${sender}' OR toUser='${reciever}') ORDER BY id DESC LIMIT ${limitMessages}) sub ORDER BY id ASC`
+                connection.query(getMoreMessages, (error, results) => {
+                    if (error) {
+                        return error
+                    } else {
+                        let chatWithMoreMessages = activeChat
+                        chatWithMoreMessages.messages = results
+                        socket.emit("PRIVATE_MESSAGE", chatWithMoreMessages)
+                    }
+                })
+            }
             if (reciever in connectedUsers) {
                 const recieverSocket = connectedUsers[reciever].socketId
                 socket.to(recieverSocket).emit("PRIVATE_MESSAGE", activeChat)
@@ -109,9 +114,9 @@ module.exports = (socket) => {
         }
     })
 
-    socket.on("GET_NOTIFICATIONS", ({ reciever, activeNotifications }) => {
-        if (activeNotifications === null) {
-            const getAllNotifications = `SELECT notificationType FROM notifications WHERE notificationUser='${reciever}' AND notificationRead=0 ORDER BY id DESC`
+    socket.on("GET_NOTIFICATIONS", ({ reciever, activeNotifications, maxNotifications, loadMoreNotifications }) => {
+        if (activeNotifications === null || loadMoreNotifications === true) {
+            const getAllNotifications = `SELECT notificationType FROM notifications WHERE notificationUser='${reciever}' AND notificationRead=0 ORDER BY id DESC LIMIT ${maxNotifications}`
             connection.query(getAllNotifications, (error, results) => {
                 if (error) {
                     return error
@@ -195,7 +200,7 @@ const sendNotification = () => {
             if (error) {
                 return error
             } else {
-                console.log("notification send")
+                return
             }
         })
     }
@@ -258,8 +263,4 @@ const createMessage = ({ message = "", sender = "" } = {}) => ({
 
 const getNotifications = ({ notificationArray = [] } = {}) => ({
     id: uniqueId() + uniqueId() + uniqueId(), notificationArray, 
-})
-
-const createNotification = ({ notification = "" } = {}) => ({
-    id: uniqueId() + uniqueId() + uniqueId(), notification,
 })

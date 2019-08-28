@@ -3,11 +3,11 @@ import React from "react"
 import { withStyles } from "@material-ui/core/styles"
 
 const ListInterestArray = [
-    "# Movie",
-    "# Manga",
-    "# Sport",
-    "# NightParty",
-    "# Data Processing",
+    "#Movie",
+    "#Manga",
+    "#Sport",
+    "#NightParty",
+    "#Data Processing",
 ]
 
 const styles = {
@@ -47,11 +47,9 @@ const ListInterest = ({ list, onChangeValue, classes }) => {
 
     const toggleTag = (checkInterest, interest) => {
         if (checkInterest !== -1) {
-            return onChangeValue(list.replace(interest, ""))
-        } else if (!list) {
-            return onChangeValue("")
+            onChangeValue(list.replace(interest, ""))
         } else {
-            return onChangeValue(list + `${interest}`)
+            onChangeValue(list + `${interest}`)
         }
     }
 
@@ -62,7 +60,7 @@ const ListInterest = ({ list, onChangeValue, classes }) => {
                 const checkInterest = (list !== null) ? list.indexOf(interest) : -1
                 return (
                     <div
-                        className={ (checkInterest !== -1) ? classes.tagDisabled : classes.tagEnabled }
+                        className={ (checkInterest === -1) ? classes.tagDisabled : classes.tagEnabled }
                         key={ `interest-${interest}` }
                         onClick={ () => toggleTag(checkInterest, interest) }
                     >

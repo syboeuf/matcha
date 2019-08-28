@@ -1,7 +1,7 @@
 import React from "react"
 import { Route } from "react-router-dom"
 
-import Header from "components/Header"
+import Header from "./components/Header"
 import Home from "./components/Home"
 import Messages from "./components/Messages"
 import ListProfilBlock from "./components/ListProfilBlock"

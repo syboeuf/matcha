@@ -84,7 +84,7 @@ class InfosProfil extends Component {
         }
     }
 
-    async onClick(id, userName, inputArray) {
+    onClick = async(id, userName, inputArray) => {
         const { updateDataUser, infosUser } = this.props
         let newDataUser = { ...infosUser }
         let check = false

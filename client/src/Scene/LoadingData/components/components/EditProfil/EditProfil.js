@@ -13,22 +13,38 @@ const EditProfil = () => {
         return <div />
     }
     return (
-        <Container maxWidth="xl">
-            <Grid container style={{ marginTop: 100 }}>
-                <Grid item xs={ 12 } sm={ 2 }>
+        <div>
+            <div className="edit-profil">
+                <div className="row center" style={{width: '70%', marginTop: 80}}>
+                    <div className="col" style={{width: '25%', boxShadow: "0px 5px 15px rgba(0,0,0,.2)", borderRadius: 10, padding: 50}}>
+                        <InfosProfil
+                            infosUser={ user.dataUser }
+                            updateDataUser={ user.setNewDataUser }
+                        />
+                    </div>
+                    <div className="col" style={{width: '75%', boxShadow: "0px 5px 15px rgba(0,0,0,.2)", borderRadius: 10, padding: 50, margin: 20}}>
+                        <InfosPersonal
+                            infosUser={ user.dataUser }
+                            updateDataUser={ user.setNewDataUser }
+                        />
+                    </div>
+                </div>
+            </div>
+            <div className="edit-profil-lowres">
+                <div className="row" style={{width: '100%'}}>
                     <InfosProfil
                         infosUser={ user.dataUser }
                         updateDataUser={ user.setNewDataUser }
                     />
-                </Grid>
-                <Grid item xs={ 12 } sm={ 8 } style={{ marginLeft: 50, marginRight: 50, boxShadow: '0px 0px 5px rgba(0, 0, 0, .2)', borderRadius: '10px 10px 0px 0px', padding: 30, minHeight: '90vh' }}>
+                </div>
+                <div className="row" style={{width: '100%'}}>
                     <InfosPersonal
                         infosUser={ user.dataUser }
                         updateDataUser={ user.setNewDataUser }
                     />
-                </Grid>
-            </Grid>
-        </Container>
+                </div>
+            </div>
+        </div>
     )
 }
 EditProfil.propTypes = {

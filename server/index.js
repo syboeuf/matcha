@@ -14,7 +14,8 @@ const jwt = require('jsonwebtoken')
 const connection = mysql.createConnection({
 	host: "localhost",
 	user: "root",
-	password: "input305",
+	password: "tpompon",
+	port: 3307,
 	database: "matcha",
 	multipleStatements: true,
 })
@@ -201,7 +202,7 @@ app.post("/users/checkLogin", (req, res) => {
 
 app.post("/users/verifyPassword", (req, res) => {
 	const { name, hashPassword } = req.body
-	const checkLogin = `SELECT p FROM profil WHERE (userName, password, confirmKeyOk) IN (('${name}', '${hashPassword}', 1))`
+	const checkLogin = `SELECT * FROM profil WHERE (userName, password, confirmKeyOk) IN (('${name}', '${hashPassword}', 1))`
 	connection.query(checkLogin, (error, results) => {
 		if (error) {
 			return res.send(error)

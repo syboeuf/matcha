@@ -127,7 +127,7 @@ class Pictures extends Component {
                                             <img
                                                 alt={ `pictureData-${index}` }
                                                 src={ process.env.PUBLIC_URL + `/imageProfil/${pictureData.userId}/${pictureData.picture}` }
-                                                style={ { width: 400, height: 300, objectFit: 'cover' } }
+                                                style={{ width: 400, height: 300, objectFit: 'cover' }}
                                                 onClick={ () => document.getElementById(`pic-${index}`).click() }
                                             />
                                         )
