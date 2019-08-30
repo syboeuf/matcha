@@ -9,6 +9,8 @@ import Swal from "sweetalert2"
 
 import { withStyles } from "@material-ui/core/styles"
 
+import { UserConsumer } from "store/UserProvider";
+
 const styles = {
     profilePic: {
         width: 200,
@@ -66,6 +68,8 @@ const styles = {
 
 class InfosProfil extends Component {
 
+    static contextType = UserConsumer
+
     constructor(props) {
         super(props)
         const {
@@ -114,7 +118,6 @@ class InfosProfil extends Component {
                           autocorrect: 'off'
                         }
                       })
-                    
                     if (password) {
                         verifyPassword(userName, password)
                             .then((res) => {
@@ -126,6 +129,8 @@ class InfosProfil extends Component {
                                     updateInfosProfil(id, userName, newDataUser)
                                         .then((response) => {
                                             if (response === 1) {
+                                                const { socket } = this.context
+                                                socket.emit("USERNAME_UPDATED", { newUserName: newDataUser.userName })
                                                 updateDataUser(newDataUser)
                                                 Swal.fire(
                                                     'Informations updated',

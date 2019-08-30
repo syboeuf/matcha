@@ -1,13 +1,17 @@
 import React, { Component } from "react"
 import L from "leaflet"
+import Control from "react-leaflet-control"
 import * as ELG from "esri-leaflet-geocoder"
 import {
     Map, TileLayer, Marker, Popup,
 } from "react-leaflet"
 import { withRouter } from "react-router-dom"
 import { UserConsumer } from "store/UserProvider"
+import { IoMdLocate } from "react-icons/io"
 
-import { setNewLocation, getDataPeople } from "utils/fileProvider"
+import {
+    setNewLocation, getDataPeople, getLocation, setLocation, getUserApproximateLocation,
+} from "utils/fileProvider"
 
 /*
 delete L.Icon.Default.prototype._getIconUrl
@@ -31,10 +35,10 @@ class MapComp extends Component {
     }
 
     componentWillMount() {
-       this.findLocation(this.props)
-       getDataPeople()
-        .then((response) => this.setState({ dataPeople: response.dataPeople }))
-        .catch((error) => console.log(error))
+        this.findLocation(this.props)
+        getDataPeople()
+            .then((response) => this.setState({ dataPeople: response.dataPeople }))
+            .catch((error) => console.log(error))
     }
 
     componentDidMount() {
@@ -71,7 +75,7 @@ class MapComp extends Component {
         const { userLocation, userApproximateLocation } = location.infosUser
         let coords
         if (userLocation === null) {
-            coords = userApproximateLocation.split(", ")
+            coords = userApproximateLocation.split(",")
         } else {
             coords = userLocation.split(", ")
         }
@@ -83,6 +87,48 @@ class MapComp extends Component {
         const { socket } = this.context
         socket.emit("NOTIFICATIONS_SENT", { reciever: data.userName, notification: `${infosUser.userName} visit you're profil` })
         history.push("/InfosPerson", { dataPerson: data })
+    }
+
+    geolocate = () => {
+        getLocation()
+            .then((response) => {
+                ELG.reverseGeocode()
+                    .latlng([response.coords.latitude, response.coords.longitude])
+                    .run((error, results) => {
+                        if (error) {
+                            return error
+                        } else {
+                            const { dataUser } = this.context
+                            const dataAddress = {
+                                coords: `${results.latlng.lat} , ${results.latlng.lng}`,
+                                address: results.address.LongLabel,
+                            }
+                            setLocation(dataUser.userName, dataAddress)
+                                .then(() => {
+                                    this.context.setNewDataUser({
+                                        ...this.context.dataUser,
+                                        userLocation: dataAddress.coords,
+                                        userAddress: dataAddress.address,
+                                    })
+                                    this.setState({ center: dataAddress.coords.split(",") })
+                                })
+                                .catch((error) => console.log(error))
+                        }
+                    })
+            })
+            .catch(() => {
+                const { dataUser, setNewDataUser } = this.context
+                getUserApproximateLocation(dataUser.userName)
+                    .then((response) => {
+                        setNewDataUser({
+                            ...this.context.dataUser,
+                            userApproximateLocation: response.approximateLocation,
+                            userApproximateCity: response.userApproximateCity,
+                        })
+                        console.log(response.approximateLocation)
+                        this.setState({ center: response.approximateLocation.split(",") })
+                    })
+            })
     }
 
     render() {
@@ -138,7 +184,9 @@ class MapComp extends Component {
                             })
                         )
                 }
-                <div className="pointer" />
+                <Control position="bottomright">
+                    <button onClick={ () => this.geolocate() }><IoMdLocate /></button>
+                </Control>
             </Map>
         )
     }

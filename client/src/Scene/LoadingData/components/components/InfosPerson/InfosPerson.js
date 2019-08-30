@@ -4,12 +4,10 @@ import Images from "./components/Images"
 import ProfilBar from "./components/ProfilBar"
 import DataProfil from "./components/DataProfil"
 import Interest from "./components/Interest"
-import Container from "@material-ui/core/Container"
-import Grid from "@material-ui/core/Grid"
 
 import { withStyles } from "@material-ui/core/styles"
 
-import { blockProfil, reportingFakeProfil } from "utils/fileProvider"
+import { blockProfil, checkBlock, reportingFakeProfil } from "utils/fileProvider"
 
 import { UserConsumer } from "store/UserProvider"
 
@@ -48,11 +46,18 @@ class InfosPerson extends Component {
         }
     }
     
-    componentWillReceiveProps(nextProps) {
-        const { dataPerson } = nextProps
-        if (this.props.dataPerson !== dataPerson) {
-            this.setState({ blocked: false, fake: false })
-        }
+    componentWillMount() {
+        const { dataUser } = this.context
+        console.log(dataUser)
+        this.checkBlock()
+    }
+
+    checkBlock = () => {
+        const { dataUser } = this.context
+        const { dataPerson } = this.props.location.state
+        checkBlock(dataUser.userName, dataPerson.userName)
+            .then((res) => this.setState({ blocked: res.blocked }))
+            .catch((error) => console.log(error))
     }
 
     onClick = () => {
@@ -60,7 +65,7 @@ class InfosPerson extends Component {
         const { dataPerson } = this.props.location.state
         blockProfil(dataUser.userName, dataPerson.userName)
         // Recup la liste des utilisateurs bloqués par l'user connecté, pour savoir si il bloque une personne deja bloquee ou non
-        this.setState({ blocked: true })
+        this.checkBlock()
         Swal.fire(
             'User blocked',
             'You succesfully blocked this profile',

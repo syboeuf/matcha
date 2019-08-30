@@ -8,7 +8,6 @@ const cookieParser = require("cookie-parser")
 const app = express()
 const bodyParser = require("body-parser")
 const ipInfo = require("ipinfo")
-const cities = require("all-the-cities")
 const jwt = require('jsonwebtoken')
 
 const connection = mysql.createConnection({
@@ -172,8 +171,10 @@ app.post("/users/checkLogin", (req, res) => {
 	const checkLogin = `SELECT * FROM profil WHERE (userName, password, confirmKeyOk) IN (('${name}', '${hashPassword}', 1))`
 	connection.query(checkLogin, (error, results) => {
 		if (error) {
+			console.log(error)
 			return res.send(error)
 		} else {
+			console.log(results)
 			const date = Math.floor(Date.now() / 1000)
 			if (results.length > 0) {
 				if (date > results[0].bantime || results[0].bantime === 0) {
@@ -377,12 +378,13 @@ app.post("/users/updateInfosProfil", (req, res) => {
 	const {
 		id, userName, newPassword, email, firstName, lastName, previousUserName,
 	} = req.body
-	const checkIfUserAlreadyExist = `SELECT * FROM profil WHERE id <> ${id} AND (userName='${userName}' OR email='${email}')`
+	const checkIfUserAlreadyExist = `SELECT * FROM profil WHERE id<>${id} AND (userName='${userName}' OR email='${email}')`
 	connection.query(checkIfUserAlreadyExist, (error, results) => {
 		if (error) {
 			return res.send(error)
 		} else {
 			if (results.length > 0) {
+				console.log(results)
 				return res.send("0")
 			} else {
 				let updateDataUser = `UPDATE profil SET userName='${userName}', password='${newPassword}', email='${email}', firstName='${firstName}', lastName='${lastName}' WHERE id=${id};`
@@ -400,6 +402,46 @@ app.post("/users/updateInfosProfil", (req, res) => {
 					if (error) {
 						return res.send(error)
 					} else {
+						res.clearCookie("token")
+						const token = jwt.sign({ name: userName, hashPassword: newPassword }, jwtKey, {
+							algorithm: "HS256",
+							expiresIn: "24h",
+						})
+						res.cookie("token", token)
+						/*
+						const getDataUser = `SELECT p.*, u.age, u.biography, u.listInterest, u.gender, u.orientation, u.userLocation, u.userAddress, u.userApproximateLocation, u.userApproximateCity, u.populareScore FROM profil p INNER JOIN userinfos u ON p.userName=u.userName WHERE p.userName='${userName}'`
+						connection.query(getDataUser, (error, results) => {
+							if (error) {
+								return res.send(error)
+							} else {
+								return res.json({ dataUser: results })
+							}
+						})
+						*/
+						/*// Beginning
+						const date = Math.floor(Date.now() / 1000)
+						if (results.length > 0) {
+							if (date > results[0].bantime || results[0].bantime === 0) {
+								const token = jwt.sign({ name, hashPassword }, jwtKey, {
+									algorithm: "HS256",
+									expiresIn: "24h",
+								})
+								res.cookie("token", token)
+								const getDataUser = `SELECT p.*, u.age, u.biography, u.listInterest, u.gender, u.orientation, u.userLocation, u.userAddress, u.userApproximateLocation, u.userApproximateCity, u.populareScore FROM profil p INNER JOIN userinfos u ON p.userName=u.userName WHERE p.userName='${name}'`
+								connection.query(getDataUser, (error, results) => {
+									if (error) {
+										return res.send(error)
+									} else {
+										return res.json({ dataUser: results })
+									}
+								})
+							} else {
+								return res.send("nop")
+							}
+						} else {
+							return res.send("nop")
+						}
+						// end*/
 						return res.send("1")
 					}
 				})
@@ -495,6 +537,23 @@ app.post("/users/getBlockList", (req, res) => {
 			return res.send(error)
 		} else {
 			return res.json({ blockList: results })
+		}
+	})
+})
+
+app.post("/users/checkBlock", (req, res) => {
+	const { firstUser, scndUser } = req.body
+	const query = `SELECT * FROM listblockprofil WHERE user='${firstUser}' AND blockProfil='${scndUser}'`
+	connection.query(query, (error, results) => {
+		if (error) {
+			return res.send(error)
+		} else {
+			console.log(results)
+			if (results.length === 0) {
+				return res.json({blocked: false })
+			} else {
+				return res.json({blocked: true})
+			}
 		}
 	})
 })
@@ -613,17 +672,12 @@ app.post("/users/getUserApproximateLocation", (req, res) => {
 		if (error) {
 			return error
 		} else {
-			const city = cities.filter(city => {
-				if (city.name.startsWith(cLoc.city) !== -1 && city.country === cLoc.country) {
-					return city.name.match(cLoc.city)
-				}
-			})
-			const insertApproximateLocation = `UPDATE userinfos SET userApproximateLocation='${city[0].lat}, ${city[0].lon}', userApproximateCity='${city[0].name}' WHERE userName='${userName}'`
+			const insertApproximateLocation = `UPDATE userinfos SET userApproximateLocation='${cLoc.loc}', userApproximateCity='${cLoc.city}' WHERE userName='${userName}'`
 			connection.query(insertApproximateLocation, (error, results) => {
 				if (error) {
 					return res.send(error)
 				} else {
-					return res.json({ approximateLocation: `${city[0].lat}, ${city[0].lon}`, userApproximateCity: `${city[0].name}` })
+					return res.json({ approximateLocation: `${cLoc.loc}`, userApproximateCity: `${cLoc.city}` })
 				}
 			})
 		}

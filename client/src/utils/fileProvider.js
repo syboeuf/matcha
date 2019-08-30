@@ -187,6 +187,14 @@ export const blockProfil = (userName, profilBlock) => {
     fetch("http://localhost:4000/users/blockProfil", optionsFetch({ userName, profilBlock }))
 } 
 
+export const checkBlock = (firstUser, scndUser) => {
+    console.log(firstUser, scndUser)
+    return fetch("http://localhost:4000/users/checkBlock", optionsFetch({ firstUser, scndUser }))
+        .then((res) => res.json())
+        .then((resJson) => resJson)
+        .catch((error) => console.log(error))
+}
+
 export const deblockUser = (userName, userDeblocked) => {
     return fetch("http://localhost:4000/users/deblockUser", optionsFetch({ userName, userDeblocked }))
 }
@@ -259,7 +267,7 @@ export const getLocation = () => {
 }
 
 export const setLocationToNull = (userName) => {
-    fetch("http://localhost:4000/users/setLocationToNull", optionsFetch({ userName }))
+    return fetch("http://localhost:4000/users/setLocationToNull", optionsFetch({ userName }))
 }
 
 export const getUserApproximateLocation = (userName) => {

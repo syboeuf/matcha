@@ -4,7 +4,7 @@ import { withRouter } from "react-router-dom"
 import Disconnect from "components/Disconnect"
 import { UserConsumer } from "store/UserProvider"
 
-const menuProfil = ["EditProfil", "ListProfilBlock"]
+const menuProfil = [{ route: "EditProfil", name: "Edit profile" }, { route: "ListProfilBlock", name: "Block list" }]
 
 class Menu extends Component {
 
@@ -33,14 +33,6 @@ class Menu extends Component {
 	render() {
         const { history } = this.props
         const { dataUser } = this.context
-        const newMenuProfil = []
-        if (dataUser.admin === 1) {
-            newMenuProfil.push(<p onClick={ () => { history.push("/Admin") } }>Admin</p>)
-        }
-        menuProfil.forEach((menu) => {
-            newMenuProfil.push(<p onClick={ () => { history.push(`/${menu}`) } }>{ menu }</p>)
-        })
-        newMenuProfil.push(<Disconnect logout={ this.logout } />)
         return (
 			<div ref={ this.selector }>
 				<span
@@ -60,14 +52,26 @@ class Menu extends Component {
 				{
 					(this.state.isOpen)
 					? (
-						<div className="menu">
+						<div className="menu" style={{ position: 'absolute', right: 0, marginTop: 10 }} >
 						{
-							newMenuProfil.map((option, index) => (
-								<div key={ `Menu-${index}` } className="menu-item">
-									{ option }
+							(dataUser.admin === 1)
+								? (
+									<div onClick={ () => history.push("/Admin") } className="menu-item">
+										Admin
+									</div>
+								)
+								: null
+						}
+						{
+							menuProfil.map((option, index) => (
+								<div onClick={ () => history.push(`/${option.route}`) } key={ `Menu-${index}` } className="menu-item">
+									{ option.name }
 								</div>
                             ))
 						}
+						<div className="menu-item">
+							<Disconnect />
+						</div>
 						</div>
 					)
 					: null

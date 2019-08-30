@@ -23,12 +23,12 @@ const uniqueId = () => {
 
 let connectedUsers = {}
 let userNotifications = {}
-let allChat = []
 
 module.exports = (socket) => {
 
     let sendMessageToChatFromUser
     let sendNotificationToUser
+    let sendTypingFromUser
 
     socket.on("VERIFY_USER", (userName, callback) => {
         if (isUser(connectedUsers, userName)) {
@@ -43,6 +43,7 @@ module.exports = (socket) => {
         connectedUsers = addUser(connectedUsers, user)
         socket.user = user
         sendMessageToChatFromUser = sendMessageToChat(user.name)
+        sendTypingFromUser = sendTypingToChat(user.name)
         sendNotificationToUser = sendNotification(user.name)
         io.emit("USER_CONNECTED", connectedUsers)
     })
@@ -75,25 +76,24 @@ module.exports = (socket) => {
         socket.emit("INLINE_USER_CONNECTED", inlineUsers)
     })
 
+    socket.on("USERNAME_UPDATED", ({ newUserName }) => {
+        socket.user.name = newUserName
+        sendMessageToChatFromUser = sendMessageToChat(newUserName)
+        sendTypingFromUser = sendTypingToChat(newUserName)
+        sendNotificationToUser = sendNotification(newUserName)
+    })
+
     socket.on("PRIVATE_MESSAGE", ({ reciever, sender, activeChat, chatId, loadMoreMessages, limitMessages }) => {
         if (activeChat === null) {
-            const id = checkChatId(chatId)
-            let newChat
-            if (id === false) {
-                const getAllMessages = `SELECT *, DATE_FORMAT(date, "%m-%d-%y %H:%i:%s") as date FROM (SELECT * FROM messages WHERE (fromUser='${reciever}' OR fromUser='${sender}') AND (toUser='${sender}' OR toUser='${reciever}') ORDER BY id DESC LIMIT ${limitMessages}) sub ORDER BY id ASC`
-                connection.query(getAllMessages, (error, results) => {
-                    if (error) {
-                        return error
-                    } else {
-                        newChat = createChat({ id: chatId, messages: results, name: `${reciever}&${sender}`, users: [reciever, sender] })
-                        allChat.push(newChat)
-                        socket.emit("PRIVATE_MESSAGE", newChat)
-                    }
-                })
-            } else {
-                newChat = allChat[id]
-                socket.emit("PRIVATE_MESSAGE", newChat)
-            }
+            const getAllMessages = `SELECT *, DATE_FORMAT(date, "%m-%d-%y %H:%i:%s") as date FROM (SELECT * FROM messages WHERE (fromUser='${reciever}' OR fromUser='${sender}') AND (toUser='${sender}' OR toUser='${reciever}') ORDER BY id DESC LIMIT ${limitMessages}) sub ORDER BY id ASC`
+            connection.query(getAllMessages, (error, results) => {
+                if (error) {
+                    return error
+                } else {
+                    newChat = createChat({ id: chatId, messages: results, name: `${reciever}&${sender}`, users: [reciever, sender] })
+                    socket.emit("PRIVATE_MESSAGE", newChat)
+                }
+            })
         } else {
             if (loadMoreMessages === true) {
                 const getMoreMessages = `SELECT *, DATE_FORMAT(date, "%m-%d-%y %H:%i:%s") as date FROM (SELECT * FROM messages WHERE (fromUser='${reciever}' OR fromUser='${sender}') AND (toUser='${sender}' OR toUser='${reciever}') ORDER BY id DESC LIMIT ${limitMessages}) sub ORDER BY id ASC`
@@ -125,7 +125,7 @@ module.exports = (socket) => {
                     results.forEach((notif) => {
                         notificationArray.push(notif.notificationType)
                     })
-                    userNotifications = { ...userNotifications, [reciever]: getNotifications({ notificationArray }) }
+                    userNotifications = { [reciever]: getNotifications({ notificationArray }) }
                     socket.emit("GET_NOTIFICATIONS", userNotifications[reciever])
                 }
             })
@@ -167,6 +167,10 @@ module.exports = (socket) => {
         })
     })
 
+    socket.on("TYPING", ({ chatId, isTyping }) => {    
+        sendTypingFromUser(chatId, isTyping)
+    })
+
     socket.on("NOTIFICATIONS_SENT", ({ reciever, notification }) => {
         sendNotificationToUser(reciever, notification)
     })
@@ -174,12 +178,31 @@ module.exports = (socket) => {
     socket.on("MESSAGE_SENT", ({ chatId, message, reciever }) => {
         sendMessageToChatFromUser(chatId, message, reciever)
     })
+
+    socket.on("LOAD_MORE_MESSAGE", ({ reciever, sender, limitMessages, activeChat }) => {
+        const getMoreMessages = `SELECT *, DATE_FORMAT(date, "%m-%d-%y %H:%i:%s") as date FROM (SELECT * FROM messages WHERE (fromUser='${reciever}' OR fromUser='${sender}') AND (toUser='${sender}' OR toUser='${reciever}') ORDER BY id DESC LIMIT ${limitMessages}) sub ORDER BY id ASC`
+        connection.query(getMoreMessages, (error, results) => {
+            if (error) {
+                return error
+            } else {
+                let newChat = activeChat
+                newChat.messages = results
+                socket.emit("LOAD_MORE_MESSAGE", newChat)
+            }
+        })
+    })
+
+}
+
+const sendTypingToChat = (user) => {
+    return (chatId, isTyping) => {
+        io.emit(`TYPING-${chatId}`, { user, isTyping })
+    }
 }
 
 const sendMessageToChat = (sender) => {
     return (chatId, message, reciever) => {
         const dataMessage = createMessage({ message, sender })
-        allChat[checkChatId(chatId)].messages.push(dataMessage)
         io.emit(`MESSAGE_RECIEVED-${chatId}`, dataMessage)
         const sql = `INSERT INTO messages (fromUser, toUser, message, date) VALUES('${sender}', '${reciever}', '${message.replace(/'/g, "\\'")}', NOW());`
         connection.query(sql, (error, results) => {
@@ -210,15 +233,6 @@ const removeUser = (userList, userName) => {
     let newList = Object.assign({}, userList)
     delete newList[userName]
     return newList
-}
-
-const checkChatId = (chatId) => {
-    for (let i = 0; i < allChat.length; i++) {
-        if (allChat[i].id === chatId) {
-            return i
-        }
-    }
-    return false
 }
 
 const checkZero = (data) => {
@@ -254,7 +268,7 @@ const isUser = (userList, userName) => {
 }
 
 const createChat = ({ id, messages = [], name = "Chat", users = [] } = {}) => ({
-    id, name, messages, users,
+    id, name, messages, users, typingUsers: [],
 })
 
 const createMessage = ({ message = "", sender = "" } = {}) => ({

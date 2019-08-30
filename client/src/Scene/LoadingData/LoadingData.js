@@ -60,11 +60,11 @@ class LoadingData extends Component {
                                 })
                         })
                         .catch(() => {
-                            setLocationToNull(data.dataUser[0].userName)
+                            setLocationToNull(data.dataUser[0][0].userName)
                                 .then(() => this.setState({ loadGeolocalistationSuccess: true }))
                                 .catch((error) => console.log(error))
                         })
-                    getUserApproximateLocation(data.dataUser[0].userName)
+                    getUserApproximateLocation(data.dataUser[0][0].userName)
                         .then((response) => {
                             this.context.setNewDataUser({
                                 ...this.context.dataUser,

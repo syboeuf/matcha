@@ -10,6 +10,7 @@ const styles = {
         padding: '5px 10px 5px 10px',
         border: '1px solid #4A90E2',
         marginRight: 10,
+        marginBottom: 10,
         fontSize: '1.3em',
         fontWeight: 'bold',
         '&:hover': {

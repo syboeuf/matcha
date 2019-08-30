@@ -39,26 +39,31 @@ class Notifications extends Component {
     }
 
     componentWillMount() {
-        const { dataUser, socket } = this.context
-        const { notificationsArray, maxNotifications } = this.state
+        const { socket } = this.context
         socket.on("GET_NOTIFICATIONS", this.addNotifications)
-        socket.emit("GET_NOTIFICATIONS", {
-            reciever: dataUser.userName,
-            activeNotifications: notificationsArray,
-            maxNotifications,
-            loadMoreNotifications: false,
-        })
+        this.getNotifications()
     }
 
     componentDidMount() {
 		window.addEventListener("mousedown", this.closeDropDown)
-	}
+    }
 
     componentWillUnmount() {
         const { socket, dataUser } = this.context
         window.removeEventListener("mousedown", this.closeDropDown)
         socket.off(`NOTIFICATION_RECIEVED-${dataUser.userName}`)
         socket.off("GET_NOTIFICATIONS")
+    }
+
+    getNotifications = () => {
+        const { dataUser, socket } = this.context
+        const { maxNotifications } = this.state
+        socket.emit("GET_NOTIFICATIONS", {
+            reciever: dataUser.userName,
+            activeNotifications: null,
+            maxNotifications,
+            loadMoreNotifications: false,
+        })
     }
 
     addNotifications = (notificationsArray) => {
@@ -90,10 +95,19 @@ class Notifications extends Component {
     }
 
     closeDropDown = (e) => {
-		if (this.selector.current && !this.selector.current.contains(e.target)) {
-			this.setState({ isOpen: false })
+        const { isOpen } = this.state
+		if (this.selector.current && !this.selector.current.contains(e.target) && isOpen === true) {
+            this.toggleDropDown()
 		}
-	}
+    }
+    
+    toggleDropDown = () => {
+        this.setState({
+            notificationsArray: { "notificationArray": [] },
+            isOpen: !this.state.isOpen,
+            maxNotifications: limitNotificationNumber,
+        }, () => this.getNotifications())
+    }
 
     render() {
         const { notificationsArray } = this.state
@@ -111,7 +125,7 @@ class Notifications extends Component {
 				{
 					(this.state.isOpen)
                         ? (
-                            <div style={ { overflowY: "auto", height: "60%" } } className="menu">
+                            <div style={{ position: 'absolute', right: 25, marginTop: 20, overflowY: "auto", height: "60%", width: 200 }} className="menu">
                             {
                                 notificationsArray.notificationArray.map((notification, index) => (
                                     <div key={ `Menu-${index}` } className="menu-item">
