@@ -13,15 +13,6 @@ import {
     setNewLocation, getDataPeople, getLocation, setLocation, getUserApproximateLocation,
 } from "utils/fileProvider"
 
-/*
-delete L.Icon.Default.prototype._getIconUrl
-L.Icon.Default.mergeOptions({
-    iconRetinaUrl: "https://unpkg.com/leaflet@1.4.0/dist/images/marker-icon-2x.png",
-    iconUrl: process.env.PUBLIC_URL + `/imageProfil/128/CD.jpg`,
-    shadowUrl: "https://unpkg.com/leaflet@1.4.0/dist/images/marker-shadow.png",
-})
-*/
-
 class MapComp extends Component {
 
     static contextType = UserConsumer
@@ -125,7 +116,6 @@ class MapComp extends Component {
                             userApproximateLocation: response.approximateLocation,
                             userApproximateCity: response.userApproximateCity,
                         })
-                        console.log(response.approximateLocation)
                         this.setState({ center: response.approximateLocation.split(",") })
                     })
             })
