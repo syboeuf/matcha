@@ -1,9 +1,7 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
@@ -58,8 +56,11 @@ body {
   .row { flex-wrap: wrap !important; }
   .discussions-container { width: 100% !important; }
   .chat-container { width: 100% !important; }
-  .infos-person-lowres, .edit-profil-lowres, .dropdown-lowres-button {
+  .infos-person-lowres, .edit-profil-lowres {
     display: block !important;
+  }
+  .dropdown-lowres-wrapper {
+    display: flex !important;
   }
   .header-navigation {
     display: none !important;
@@ -78,8 +79,11 @@ body {
   .row { flex-wrap: wrap !important; }
   .discussions-container { width: 100% !important; }
   .chat-container { width: 100% !important; }
-  .infos-person-lowres, .edit-profil-lowres, .dropdown-lowres-button {
+  .infos-person-lowres, .edit-profil-lowres {
     display: block !important;
+  }
+  .dropdown-lowres-wrapper {
+    display: flex !important;
   }
   .header-navigation {
     display: none !important;
@@ -136,6 +140,16 @@ body {
   cursor: pointer;
 	background-color: rgb(230, 230, 230);
 }
+.menu-loadmore {
+  background-color: white;
+  color: #4A90E2;
+  text-align: center;
+  border: 1px solid #4A90E2;
+}
+.menu-loadmore:hover {
+  background-color: #4A90E2;
+  color: white;
+}
 
 .blocked-list {
   width: 50%;
@@ -171,7 +185,7 @@ body {
   padding: 20px;
 }
 
-.dropdown-lowres-button {
+.dropdown-lowres-wrapper {
   display: none;
 }
 .dropdown-lowres {

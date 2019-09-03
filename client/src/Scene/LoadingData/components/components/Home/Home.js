@@ -52,8 +52,8 @@ class Home extends Component {
 						{
 							profiles.map((profile) => {
 								return (
-									<div className="home-user-card" key={`user-${profile.userName}`}>
-										<img src={`${process.env.PUBLIC_URL}/imageProfil/${profile.id}/${profile.picture}`} alt="profile-pic" style={{ width: '100%', height: '80%', objectFit: 'cover' }}/>
+									<div className="col" style={{ textAlign: 'center', margin: 20 }} key={`user-${profile.userName}`}>
+										<img src={`${process.env.PUBLIC_URL}/imageProfil/${profile.id}/${profile.picture}`} alt="profile-pic" style={{ width: 200, height: 200, objectFit: 'cover', borderRadius: '50%' }}/>
 										<p style={{paddingLeft: 20, paddingRight: 20, wordBreak: 'break-word'}}>{profile.userName} ({profile.age} ans)</p>
 									</div>
 								)
@@ -61,7 +61,6 @@ class Home extends Component {
 						}
 					</div>
 				</div>
-				<span style={{ opacity: .25, position: 'absolute' }}><Pattern /></span>
 			</div>
 		)
 	}

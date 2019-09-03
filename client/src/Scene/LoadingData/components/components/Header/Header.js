@@ -2,6 +2,7 @@ import React from "react"
 import { withRouter } from "react-router-dom"
 import { FaRegHeart, FaRegEnvelope } from "react-icons/fa"
 import { UserConsumer } from "store/UserProvider"
+import { ReactComponent as MenuIcon } from '../../../../../menu.svg'
 
 import Grid from '@material-ui/core/Grid'
 
@@ -56,13 +57,17 @@ class Header extends React.Component {
                     <div className="header-navigation">
                         { this.pageComponent(true) }
                     </div>
-                    <button className="dropdown-lowres-button" onClick={() => this.toggleDropdownLowRes()}>Menu</button>
+                    <div style={{alignItems: 'center'}} className="dropdown-lowres-wrapper row">
+                        <Notifications />
+                            <div onClick={() => this.toggleDropdownLowRes()} className="pointer" style={{ marginRight: 50, marginLeft: 50 }}>
+                                <MenuIcon width="35" height="35" fill="#000" />
+                            </div>
+                    </div>
                 </Grid>
                 <div className="dropdown-lowres">
                     <div className="dropdown-lowres-item" onClick={ (e) => { history.push(`/`); this.toggleDropdownItem(e) }}>Home</div>
                     <div className="dropdown-lowres-item" onClick={ (e) => { history.push(`/discover`); this.toggleDropdownItem(e) }}>Discover</div>
                     <div className="dropdown-lowres-item" onClick={ (e) => { history.push(`/messages`); this.toggleDropdownItem(e) }}>Messages</div>
-                    <div className="dropdown-lowres-item">Notifications</div>
                     <div className="dropdown-lowres-item" onClick={ (e) => { history.push(`/editprofil`); this.toggleDropdownItem(e) }}>Edit profile</div>
                     <div className="dropdown-lowres-item" onClick={ (e) => { history.push(`/listprofilblock`); this.toggleDropdownItem(e) }}>Blocked profiles</div>
                     <div className="dropdown-lowres-item" onClick={ (e) => { history.push(`/loginaccount`); this.toggleDropdownItem(e) }}>Disconnect</div>
@@ -70,7 +75,6 @@ class Header extends React.Component {
             </div>
         )
     }
-    
 }
 
 export default withRouter(Header)

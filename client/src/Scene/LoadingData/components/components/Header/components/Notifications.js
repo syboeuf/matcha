@@ -151,8 +151,8 @@ class Notifications extends Component {
                                     </div>
                                 ))
                             }
-                                <div className="menu-item">
-                                    <button onClick={ () => this.moreNotification() }>Load more notifications</button>
+                                <div className="menu-item menu-loadmore" onClick={ () => this.moreNotification() }>
+                                    Load more...
                                 </div>
                             </div>
                         )
