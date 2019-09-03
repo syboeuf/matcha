@@ -29,7 +29,7 @@ class LoadingData extends Component {
                 const { history } = this.props
                 const { setNewDataUser, socket } = this.context
                 if (Object.keys(data).length === 0) {
-                    history.push("/LoginAccount")
+                    history.push("/login")
                 } else {
                     socket.on("USER_ALREAY_CONNECTED", this.userAlreadyConnect)
                     setNewDataUser({ pictures: [...data.dataUser[1]], ...data.dataUser[0][0] })
@@ -88,7 +88,7 @@ class LoadingData extends Component {
         const { history } = this.props
         if (userConnected === true) {
             deleteCookie()
-            history.push("/LoginAccount")
+            history.push("/login")
         } else {
             console.log("user connect")
         }

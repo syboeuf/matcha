@@ -27,7 +27,9 @@ const Interest = ({ classes, listInterest }) => {
         <div style={ styles.container }>
             {
                 arrayTag.map((tag) => (
-                    <div className={ classes.tag } key={ `tag-${tag}` }># { tag }</div>
+                    (tag !== "")
+                        ? <div className={ classes.tag } key={ `tag-${tag}` }>{ tag }</div>
+                        : null
                 ))
             }
         </div>

@@ -50,7 +50,7 @@ class Discover extends Component {
         .then((response) => {
             const { inlineUsers } = this.state
             const inline = inlineUsers.find(name => name === response.otherData.userName)
-            return history.push("/InfosPerson", { dataPerson: { ...response.otherData, inline: (inline === undefined) ? 0 : 1 } })
+            return history.push("/InfosPerson", { data: { id: dataPerson.id, userName: dataUser.userName, profilName: dataPerson.userName, inline: (inline === undefined) ? 0 : 1 } })
         })
             .catch((error) => console.log(error))
     }

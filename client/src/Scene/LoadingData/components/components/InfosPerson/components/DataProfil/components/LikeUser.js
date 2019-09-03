@@ -51,6 +51,7 @@ class LikeUser extends Component {
             isLikable: false,
             like: false
         }
+        this._isMounted = true
     }
 
     componentWillMount() {
@@ -60,7 +61,7 @@ class LikeUser extends Component {
         this.getImages(id)
         checkLike(user, profilName)
             .then((res) => {
-                if (res.like) { this.setState({ like: true }) }
+                if (res.like && this._isMounted) { this.setState({ like: true }) }
             })
             .catch((error) => console.log(error))
     }
@@ -74,6 +75,7 @@ class LikeUser extends Component {
 
     componentWillUnmount() {
         const { socket } = this.context
+        this._isMounted = false
         socket.off("SEND_LIKE")
     }
 
@@ -87,7 +89,8 @@ class LikeUser extends Component {
                 'You are now able to discuss with this user',
                 'success'
             )
-            socket.emit("NOTIFICATIONS_SENT", { reciever: profilName, notification: `${user} like you and you like hit so this is a match !!!` })
+                .then(() => socket.emit("NOTIFICATIONS_SENT", { reciever: profilName, notification: `${user} like you and you like hit so this is a match !!!` }))
+                .catch((error) => console.log(error))
         } else if (response === -1) {
             deleteMatch(user, profilName)
         }
@@ -96,7 +99,7 @@ class LikeUser extends Component {
     getImages = (id) => {
         getPicturesUser(id)
             .then((response) => {
-                if (response.pictures.length > 0) {
+                if (response.pictures.length > 0 && this._isMounted) {
                     this.setState({ isLikable: true })
                 }
             })

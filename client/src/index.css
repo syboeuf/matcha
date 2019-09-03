@@ -27,6 +27,12 @@ body {
   .dropdown-lowres {
     display: none !important;
   }
+  .welcome-box {
+    width: 90% !important;
+    margin-top: 40px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
 }
 
 /* Portrait tablets and small desktops */
@@ -37,6 +43,12 @@ body {
   }
   .dropdown-lowres {
     display: none !important;
+  }
+  .welcome-box {
+    width: 90% !important;
+    margin-top: 40px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
 }
 
@@ -52,6 +64,12 @@ body {
   .header-navigation {
     display: none !important;
   }
+  .welcome-box {
+    width: 90% !important;
+    margin-top: 40px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
 }
 
 /* Portrait phones and smaller */
@@ -65,6 +83,12 @@ body {
   }
   .header-navigation {
     display: none !important;
+  }
+  .welcome-box {
+    width: 90% !important;
+    margin-top: 40px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
 }
 
@@ -206,4 +230,18 @@ body {
   margin: 30px;
   box-shadow: 0px 5px 10px rgba(0, 0, 0, .1);
   background-color: white;
+}
+
+.welcome-box {
+  background-color: white;
+  max-width: 600px;
+  margin-top: 200px;
+  padding: 30px;
+  border-radius: 10px;
+  margin-left: auto;
+  margin-right: 400px;
+}
+
+.pointer:hover {
+  cursor: pointer;
 }

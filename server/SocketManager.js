@@ -57,12 +57,15 @@ module.exports = (socket) => {
 
     socket.on("disconnect", () => {
         if ("user" in socket) {
+            updateLastConnection(socket.user.name)
             connectedUsers = removeUser(connectedUsers, socket.user.name)
+            userNotifications = removeUser(userNotifications, socket.user.name)
             io.emit("USER_DISCONNECTED", connectedUsers)
         }
     })
 
     socket.on("LOGOUT", () => {
+        updateLastConnection(socket.user.name)
         connectedUsers = removeUser(connectedUsers, socket.user.name)
         userNotifications = removeUser(userNotifications, socket.user.name)
         io.emit("USER_DISCONNECTED", connectedUsers)
@@ -77,7 +80,12 @@ module.exports = (socket) => {
     })
 
     socket.on("USERNAME_UPDATED", ({ newUserName }) => {
+        userNotifications[newUserName] = userNotifications[socket.user.name]
+        delete userNotifications[socket.user.name]
+        connectedUsers[newUserName] = { ...connectedUsers[socket.user.name], name: newUserName }
+        delete connectedUsers[socket.user.name]
         socket.user.name = newUserName
+        socket.emit("GET_NOTIFICATIONS", userNotifications[newUserName])
         sendMessageToChatFromUser = sendMessageToChat(newUserName)
         sendTypingFromUser = sendTypingToChat(newUserName)
         sendNotificationToUser = sendNotification(newUserName)
@@ -116,14 +124,14 @@ module.exports = (socket) => {
 
     socket.on("GET_NOTIFICATIONS", ({ reciever, activeNotifications, maxNotifications, loadMoreNotifications }) => {
         if (activeNotifications === null || loadMoreNotifications === true) {
-            const getAllNotifications = `SELECT notificationType FROM notifications WHERE notificationUser='${reciever}' AND notificationRead=0 ORDER BY id DESC LIMIT ${maxNotifications}`
+            const getAllNotifications = `SELECT notificationType, notificationRead FROM notifications WHERE notificationUser='${reciever}' ORDER BY id DESC LIMIT ${maxNotifications}`
             connection.query(getAllNotifications, (error, results) => {
                 if (error) {
                     return error
                 } else {
                     const notificationArray = []
                     results.forEach((notif) => {
-                        notificationArray.push(notif.notificationType)
+                        notificationArray.push({ message: notif.notificationType, read: notif.notificationRead })
                     })
                     userNotifications = { [reciever]: getNotifications({ notificationArray }) }
                     socket.emit("GET_NOTIFICATIONS", userNotifications[reciever])
@@ -215,15 +223,26 @@ const sendMessageToChat = (sender) => {
     }
 }
 
-const sendNotification = () => {
+const sendNotification = (sender) => {
     return (reciever, notification) => {
-        io.emit(`NOTIFICATION_RECIEVED-${reciever}`, notification)
-        const sql = `INSERT INTO notifications (notificationUser, notificationType, notificationRead, date) VALUES('${reciever}', '${notification.replace(/'/g, "\\'")}', 0, NOW())`
-        connection.query(sql, (error, results) => {
+        const query = `SELECT * FROM listblockprofil WHERE user='${reciever}' AND blockProfil='${sender}'`
+        connection.query(query, (error, results) => {
             if (error) {
                 return error
             } else {
-                return
+                if (results.length === 0) {
+                    io.emit(`NOTIFICATION_RECIEVED-${reciever}`, notification)
+                    const sql = `INSERT INTO notifications (notificationUser, notificationType, notificationRead, date) VALUES('${reciever}', '${notification.replace(/'/g, "\\'")}', 0, NOW())`
+                    connection.query(sql, (error, results) => {
+                        if (error) {
+                            return error
+                        } else {
+                            return
+                        }
+                    })
+                } else {
+                    return 
+                }
             }
         })
     }
@@ -278,3 +297,14 @@ const createMessage = ({ message = "", sender = "" } = {}) => ({
 const getNotifications = ({ notificationArray = [] } = {}) => ({
     id: uniqueId() + uniqueId() + uniqueId(), notificationArray, 
 })
+
+const updateLastConnection = (userName) => {
+    const sql = `UPDATE profil set lastConnection=NOW() WHERE userName='${userName}'`
+    connection.query(sql, (error, results) => {
+        if (error) {
+            return error
+        } else {
+            return
+        }
+    })
+}

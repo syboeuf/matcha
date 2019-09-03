@@ -155,14 +155,18 @@ class CollectionView extends Component {
         const distanceMax = distance[1]
         if (distanceMin <= 0 || distanceMax <= 0) {
             return array
-        }   
-        const userCoords = (userLocation !== null) ? userLocation.split(", ") : userApproximateLocation.split(", ")
+        }
+        const userCoords = (userLocation !== null) ? userLocation.split(",") : userApproximateLocation.split(",")
         const newListPerson = []
         array.forEach((data) => {
-            const profilCoords = (data.userLocation !== null) ? data.userLocation.split(", ") : data.userApproximateLocation.split(", ")
-            const distance = calculDistance(userCoords[0], userCoords[1], profilCoords[0], profilCoords[1])
-            if (distanceMin <= distance && distanceMax >= distance) {
+            if (distanceMax >= 100) {
                 newListPerson.push(data)
+            } else {
+                const profilCoords = (data.userLocation !== null) ? data.userLocation.split(",") : data.userApproximateLocation.split(",")
+                const distance = calculDistance(userCoords[0], userCoords[1], profilCoords[0], profilCoords[1])
+                if (distanceMin <= distance && distanceMax >= distance) {
+                    newListPerson.push(data)
+                }
             }
         })
         return newListPerson
@@ -265,6 +269,91 @@ class CollectionView extends Component {
         this.setState({ [name]: newValue }, () => this.filterList(this.props.listPerson)) // Made in real time
     }
 
+    swap = (leftIndex, rightIndex) => {
+        const temp = this.array[leftIndex]
+        this.array[leftIndex] = this.array[rightIndex]
+        this.array[rightIndex] = temp
+    }
+
+    ascendingSort = (items, left, right, option) => {
+        const pivot = items[Math.floor((right + left) / 2)][option]
+        let i = left
+        let j = right
+        while (i <= j) {
+            while (items[i][option] < pivot) {
+                i++
+            }
+            while (items[j][option] > pivot) {
+                j--
+            }
+            if (i <= j) {
+                this.swap(i, j)
+                i++
+                j--
+            }
+        }
+        return i
+    }
+
+    descendingSort = (items, left, right, option) => {
+        const pivot = items[Math.floor((right + left) / 2)][option]
+        let i = left
+        let j = right
+        while (i <= j) {
+            while (items[i][option] > pivot) {
+                i++
+            }
+            while (items[j][option] < pivot) {
+                j--
+            }
+            if (i <= j) {
+                this.swap(i, j)
+                i++
+                j--
+            }
+        }
+        return i
+    }
+
+    quickSort = (left, right, option, sort) => {
+        let index
+        if (this.array.length > 1) {
+            index = (sort === true) ? this.ascendingSort(this.array, left, right, option) : this.descendingSort(this.array, left, right, option)
+            if (left < index - 1) {
+                this.quickSort(left, index - 1, option, sort)
+            }
+            if (index < right) {
+                this.quickSort(index, right, option, sort)
+            }
+        }
+    }
+
+    sortArray = (option, sort) => {
+        const { listProfil } = this.state
+        if (option === "distance") {
+            const { userLocation, userApproximateLocation } = this.props.dataUser
+            const newArray = []
+            const userCoords = (userLocation !== null) ? userLocation.split(",") : userApproximateLocation.split(",")
+            listProfil.forEach((person) => {
+                const profilCoords = (person.userLocation !== null) ? person.userLocation.split(",") : person.userApproximateLocation.split(",")
+                const distance = calculDistance(userCoords[0], userCoords[1], profilCoords[0], profilCoords[1])
+                newArray.push({ ...person, distance })
+            })
+            this.array = listProfil
+        } else if (option === "numberOfTags") {
+            const newArray = []
+            listProfil.forEach((person) => {
+                const numberOfTags = person.listInterest.split("#").length
+                newArray.push({ ...person, numberOfTags })
+            })
+            this.array = newArray
+        } else {
+            this.array = listProfil
+        }
+        this.quickSort(0, this.array.length - 1, option, sort)
+        this.setState({ listProfil: this.array })
+    }
+
     render() {
         const { chooseDataPerson, listPerson, classes } = this.props
         const {
@@ -278,12 +367,18 @@ class CollectionView extends Component {
                         <div style={{ display: 'flex', width: '100%', marginLeft: 'auto', marginRight: 'auto', marginTop: 50, flexWrap: 'wrap', justifyContent: "space-around" }}>
                             <div style={{ width: "20%" }}>
                                 <RangeSlider name={'Age'} value={ age } min={18} max={150} handleChange={ this.handleChange } />
+                                <button onClick={ () => this.sortArray("age", true) }>ascending</button>
+                                <button onClick={ () => this.sortArray("age", false) }>descending</button>
                             </div>
                             <div style={{ width: "30%", marginLeft: 20, marginRight: 20 }}>
                                 <RangeSlider name={'Distance'} value={ distance } min={0} max={100} handleChange={ this.handleChange } />
+                                <button onClick={ () => this.sortArray("distance", true) }>ascending</button>
+                                <button onClick={ () => this.sortArray("distance", false) }>descending</button>
                             </div>
                             <div style={{ width: "30%", marginLeft: 20, marginRight: 20 }}>
                                 <RangeSlider name={'Score'} value={ score } min={0} max={100} handleChange={ this.handleChange } />
+                                <button onClick={ () => this.sortArray("populareScore", true) }>ascending</button>
+                                <button onClick={ () => this.sortArray("populareScore", false) }>descending</button>
                             </div>
                         </div>
                     </div>
@@ -299,6 +394,8 @@ class CollectionView extends Component {
                                 </button>
                             ))
                         }
+                        <button onClick={ () => this.sortArray("numberOfTags", true) }>ascending</button>
+                        <button onClick={ () => this.sortArray("numberOfTags", false) }>descending</button>
                     </div>
                     <button
                             className={ classes.searchBtn }

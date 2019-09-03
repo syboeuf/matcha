@@ -14,7 +14,7 @@ import Container from "@material-ui/core/Container"
 import { checkLogIn } from "utils/fileProvider"
 
 import Form from "components/Form"
-import ForgetPassword from "./components/ForgetPassword"
+import ForgotPassword from "./components/ForgotPassword"
 
 const styles = (theme) => ({
     "@global": {
@@ -24,6 +24,7 @@ const styles = (theme) => ({
         background: 'white',
         padding: 50,
         borderRadius: 10,
+        marginTop: 50
     },
     buttonLogIn: {
         marginTop: '40px',
@@ -57,7 +58,7 @@ class LogIn extends Component {
                 { name: "userName", type: "text", value: "", placeholder: "Username" },
                 { name: "password", type: "password", value: "", placeholder: "Password" },
             ],
-            showForgetPassword: false,
+            showForgotPassword: false,
         }
     }
 
@@ -83,8 +84,8 @@ class LogIn extends Component {
             .catch((error) => console.log(error))
     }
 
-    hideForgetPassword = () => {
-        this.setState({ showForgetPassword: false })
+    hideForgotPassword = () => {
+        this.setState({ showForgotPassword: false })
     }
 
     MadeWithLove = () => (
@@ -95,10 +96,9 @@ class LogIn extends Component {
 
     render() {
         const { showCreateAccount, classes } = this.props
-        const { showForgetPassword, inputArray } = this.state
+        const { showForgotPassword, inputArray } = this.state
         return (
             <Container component="main" maxWidth="xs" className={ classes.container }>
-                <CssBaseline />
                 <div className={ classes.paper }>
                     <Avatar className={ classes.avatar }>
                         <LockOutlinedIcon />
@@ -115,14 +115,14 @@ class LogIn extends Component {
                             Login
                         </div>
                         {
-                            (showForgetPassword)
-                                ? <ForgetPassword hideForgetPassword={ this.hideForgetPassword } />
+                            (showForgotPassword)
+                                ? <ForgotPassword hideForgotPassword={ this.hideForgotPassword } />
                                 : null
                         }
                     </div>
                     <Grid container>
                         <Grid item xs>
-                            <span style={{ color: '#c31e27' }} onClick={ () => this.setState({ showForgetPassword: !this.state.showForgetPassword }) }>
+                            <span style={{ color: '#c31e27' }} onClick={ () => this.setState({ showForgotPassword: !this.state.showForgotPassword }) }>
                                 Forgot password ?
                             </span>
                         </Grid>

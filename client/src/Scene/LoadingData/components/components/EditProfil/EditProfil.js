@@ -1,8 +1,6 @@
 import React, { useContext } from "react"
 import { withRouter } from "react-router-dom"
-//import PropTypes from "prop-types"
-import Container from "@material-ui/core/Container"
-import Grid from "@material-ui/core/Grid"
+
 import InfosProfil from "./components/InfosProfil"
 import InfosPersonal from "./components/InfosPersonal"
 import { UserConsumer } from "store/UserProvider"

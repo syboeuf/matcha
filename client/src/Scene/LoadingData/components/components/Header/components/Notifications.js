@@ -3,6 +3,8 @@ import { UserConsumer } from "store/UserProvider"
 
 import { FaRegBell } from "react-icons/fa"
 
+import { updateNotificationsToRead } from "utils/fileProvider"
+
 const limitNotificationNumber = 20
 
 const styles = {
@@ -76,7 +78,7 @@ class Notifications extends Component {
         return notification => {
             const { notificationsArray } = this.state
             if (notificationsArray.id === notifId) {
-                notificationsArray.notificationArray = [notification, ...notificationsArray.notificationArray]
+                notificationsArray.notificationArray = [{ message: notification, read: 0 }, ...notificationsArray.notificationArray]
             }
             this.setState({ notificationsArray })
         }
@@ -97,8 +99,13 @@ class Notifications extends Component {
     closeDropDown = (e) => {
         const { isOpen } = this.state
 		if (this.selector.current && !this.selector.current.contains(e.target) && isOpen === true) {
-            this.toggleDropDown()
+            this.onClick()
 		}
+    }
+
+    updateNotificationsRead = () => {
+        const { dataUser } = this.context
+        updateNotificationsToRead(dataUser.userName)
     }
     
     toggleDropDown = () => {
@@ -109,6 +116,17 @@ class Notifications extends Component {
         }, () => this.getNotifications())
     }
 
+    onClick = () => {
+        const { dataUser } = this.context
+        if (this.state.isOpen === true) {
+            updateNotificationsToRead(dataUser.userName)
+                .then(() => this.toggleDropDown())
+                .catch((error) => console.log(error))
+        } else {
+            this.setState({ isOpen: !this.state.isOpen })
+        }
+    }
+
     render() {
         const { notificationsArray } = this.state
         if (notificationsArray === null) {
@@ -117,7 +135,7 @@ class Notifications extends Component {
         return (
             <div ref={ this.selector }>
 				<span
-                    onClick={ () => this.setState({ isOpen: !this.state.isOpen }) }
+                    onClick={ () => this.onClick() }
                     className="menu-icon"
                 >
                     <div><FaRegBell /><span style={ (notificationsArray.notificationArray.length > 0) ? styles.dotBlue : styles.dotGrey }></span></div>
@@ -128,8 +146,8 @@ class Notifications extends Component {
                             <div style={{ position: 'absolute', right: 25, marginTop: 20, overflowY: "auto", height: "60%", width: 200 }} className="menu">
                             {
                                 notificationsArray.notificationArray.map((notification, index) => (
-                                    <div key={ `Menu-${index}` } className="menu-item">
-                                        { notification }
+                                    <div key={ `Menu-${index}` } className="menu-item" style={ { backgroundColor: (notification.read === 0) ? "red" : null } }>
+                                        { notification.message }
                                     </div>
                                 ))
                             }

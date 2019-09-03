@@ -37,11 +37,11 @@ class LogIn extends Component {
             <div>
                 <TextInput
                     value={ value }
-                    placeholder="Put your mail address here !!"
+                    placeholder="E-mail"
                     onChangeValue={ (e) => this.setState({ value: e.target.value }) }
                     type="text"
                 />
-                <button onClick={ () => this.onClick() }>Send</button>
+                <button className="red-btn" style={{ width: '100%', fontSize: '16px' }} onClick={ () => this.onClick() }>Send</button>
                 {
                     (setModal)
                         ? <SetNewPassword closeModal={ this.closeModal } />

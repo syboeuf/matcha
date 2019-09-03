@@ -23,6 +23,7 @@ const styles = (theme) => ({
         background: 'white',
         padding: 50,
         borderRadius: 10,
+        marginTop: 50
     },
     createAccount: {
         marginTop: '40px',
@@ -98,11 +99,10 @@ class CreateAccount extends Component {
     )
 
     render() {
-        const { showLogIn, classes } = this.props
+        const { showLogin, classes } = this.props
         const { inputArray } = this.state
         return (
             <Container component="main" maxWidth="xs" className={ classes.container }>
-                <CssBaseline />
                 <div className={ classes.paper}>
                     <Avatar className={ classes.avatar }>
                         <LockOutlinedIcon />
@@ -120,7 +120,7 @@ class CreateAccount extends Component {
                     </div>
                     <Grid container justify="center">
                         <Grid item>
-                            <span onClick={ () => showLogIn() } className={ classes.span }>
+                            <span onClick={ () => showLogin() } className={ classes.span }>
                                 Already have an account ? Sign in
                             </span>
                         </Grid>

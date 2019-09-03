@@ -148,7 +148,7 @@ class MapComp extends Component {
                                 })
                                 let position
                                 if (data.userLocation === null) {
-                                    position = data.userApproximateLocation.split(", ")
+                                    position = data.userApproximateLocation.split(",")
                                 } else {
                                     position = data.userLocation.split(", ")
                                 }

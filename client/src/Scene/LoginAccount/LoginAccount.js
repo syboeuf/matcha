@@ -21,13 +21,6 @@ const styles = {
         color: 'white',
         border: 'none',
     },
-    createAccount: {
-        backgroundColor: 'white',
-        maxWidth: '400px',
-        padding: '30px',
-        borderRadius: '10px',
-        position: 'absolute',
-    },
     title1: { fontSize: '1.4em' },
     title2: { fontSize: '1.8em' },
     hr: {
@@ -52,44 +45,51 @@ class LoginAccount extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            showLogIn: false,
+            showLogin: false,
             showCreateAccount: false,
         }
     }
 
     hideLoginAndCreateAccount = () => {
-        this.setState({ showLogIn: false, showCreateAccount: false })
+        this.setState({ showLogin: false, showCreateAccount: false })
     }
 
-    showLogIn = () => {
-        this.setState({ showLogIn: !this.state.showLogIn, showCreateAccount: false })
+    showLogin = () => {
+        this.setState({ showLogin: !this.state.showLogin, showCreateAccount: false })
     }
 
     showCreateAccount = () => {
-        this.setState({ showLogIn: false, showCreateAccount: !this.state.showCreateAccount })
+        this.setState({ showLogin: false, showCreateAccount: !this.state.showCreateAccount })
     }
 
     render() {
-        const { showLogIn, showCreateAccount } = this.state
+        const { showLogin, showCreateAccount } = this.state
         return (
             <div style={ styles.container }>
-                <img
-                    src="logo.png"
-                    alt="background"
-                    onClick={ () => this.hideLoginAndCreateAccount() }
-                    style={ styles.logo }
-                />
-                <div
-                    onClick={ () => this.showLogIn() }
-                    style={ styles.logIn }
-                >
-                    Log In
+                <div style={{ display: 'flex', backgroundColor: 'rgba(255,255,255,.1)', justifyContent: 'space-between', paddingLeft: 30, paddingRight: 30 }}>
+                    <div style={{ height: 70 }}>
+                        <img
+                            src="logo.png"
+                            alt="background"
+                            onClick={ () => this.hideLoginAndCreateAccount() }
+                            className="pointer"
+                            style={{ ...styles.logo, paddingTop: 30 }}
+                        />
+                    </div>
+                    <div style={{ display: 'flex', fontSize: '1.2em', color: '#fff', fontWeight: 'bold' }}>
+                        <div className="header-link" style={{ marginRight: 50 }} onClick={ () => this.showCreateAccount() }>
+                            Create account
+                        </div>
+                        <div className="header-link" onClick={ () => this.showLogin() }>
+                            Sign in
+                        </div>
+                    </div>
                 </div>
                 {
-                    (showCreateAccount || showLogIn )
+                    (showCreateAccount || showLogin )
                     ? null
                     :
-                    <div style={ styles.createAccount }>
+                    <div className="welcome-box">
                         <h1 style={ styles.title1 }>Bonjour, vous cherchez l'amour ?</h1>
                         <h2 style={ styles.title2 }>Alors vous êtes au bon endroit, inscrivez-vous dès maintenant.</h2>
                         <hr style={ styles.hr } />
@@ -99,16 +99,16 @@ class LoginAccount extends Component {
                         >
                             Create account
                         </div>
-                        <span style={ styles.span } onClick={ () => this.showCreateAccount() }>Already have an account ?</span>
+                        <span style={ styles.span } onClick={ () => this.showLogin() }>Already have an account ?</span>
                     </div>
                 }
                 {
                     (showCreateAccount)
-                        ? <CreateAccount showLogIn={ this.showLogIn } />
+                        ? <CreateAccount showLogin={ this.showLogin } />
                         : null
                 }
                 {
-                    (showLogIn)
+                    (showLogin)
                         ? <LogIn showCreateAccount={ this.showCreateAccount } />
                         : null
                 }

@@ -49,14 +49,21 @@ class DataPersonal extends React.Component {
         this.state = {
             profilePic: 'noImage.png'
         }
+        this._isMounted = true
     }
 
     componentWillMount() {
         getImageProfil(this.props.dataPersonal.id)
             .then((res) => {
-                this.setState({ profilePic: process.env.PUBLIC_URL + `/imageProfil/${this.props.dataPersonal.id}/${res.imageProfil[0].picture}` })
+                if (this._isMounted) {
+                    this.setState({ profilePic: process.env.PUBLIC_URL + `/imageProfil/${this.props.dataPersonal.id}/${res.imageProfil[0].picture}` })
+                }
             })
             .catch((err) => console.log(err))
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false
     }
     
     render() {

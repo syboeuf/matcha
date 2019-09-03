@@ -6,6 +6,7 @@ import Orientation from "./components/Orientation"
 import Gender from "./components/Gender"
 import Pictures from "./components/Pictures"
 import Map from "./components/Map"
+import PersonLikeYou from "./components/PersonLikeYou"
 import { withStyles } from "@material-ui/core/styles"
 import Modal from "@material-ui/core/Modal"
 import Swal from "sweetalert2"
@@ -42,7 +43,11 @@ const styles = {
 class InfosPersonal extends Component {
     constructor(props) {
         super(props)
-        this.state = { infosPersonalUser: {}, openMap: false }
+        this.state = {
+            infosPersonalUser: {},
+            openMap: false,
+            openPersonLikeYou: false,
+        }
     }
     componentWillMount() {
         const { infosUser } = this.props
@@ -76,13 +81,18 @@ class InfosPersonal extends Component {
             'success'
         )
     }
-    handleClose = () => {
+    handleModalMapClose = () => {
         this.setState({ openMap: false })
     }
+
+    handleModalPersonLikeYou = () => {
+        this.setState({ openPersonLikeYou: false })
+    }
+
     render() {
         const { classes, infosUser, updateDataUser } = this.props
         const { userName, id } = infosUser
-        const { infosPersonalUser, openMap } = this.state
+        const { infosPersonalUser, openMap, openPersonLikeYou } = this.state
         const {
             orientation, gender, biography, listInterest,
         } = infosPersonalUser
@@ -110,6 +120,7 @@ class InfosPersonal extends Component {
                 </div>
                 <button className={ classes.blueBtn } style={{marginRight: 10}} onClick={ () => this.onClick(infosPersonalUser, userName) }>Save</button>
                 <button className={ classes.blueBtn } onClick={ () => this.setState({ openMap: true }) }>Open map</button>
+                <button className={ classes.blueBtn } onClick={ () => this.setState({ openPersonLikeYou: true }) }>Person who like you</button>
                 <Pictures
                     userId={ id }
                     userName={ userName }
@@ -118,13 +129,23 @@ class InfosPersonal extends Component {
                     aria-labelledby="modal-map"
                     aria-describedby="simple-modal-map"
                     open={ openMap }
-                    onClose={ this.handleClose }
+                    onClose={ this.handleModalMapClose }
                 >
                     <div style={ styles.modal }>
                         <Map
                             updateDataUser={ updateDataUser }
                             infosUser={ infosUser }
                         />
+                    </div>
+                </Modal>
+                <Modal
+                    aria-labelledby="modal-map"
+                    aria-describedby="simple-modal-map"
+                    open={ openPersonLikeYou }
+                    onClose={ this.handleModalPersonLikeYou }
+                >
+                    <div style={ styles.modal }>
+                        <PersonLikeYou userName={ userName }/>
                     </div>
                 </Modal>
             </div>

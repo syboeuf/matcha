@@ -51,7 +51,6 @@ class Home extends Component {
 					<div style={{display: 'flex', flexWrap: 'wrap'}}>
 						{
 							profiles.map((profile) => {
-								console.log(profile)
 								return (
 									<div className="home-user-card" key={`user-${profile.userName}`}>
 										<img src={`${process.env.PUBLIC_URL}/imageProfil/${profile.id}/${profile.picture}`} alt="profile-pic" style={{ width: '100%', height: '80%', objectFit: 'cover' }}/>

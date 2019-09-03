@@ -3,7 +3,6 @@ import { withRouter } from "react-router-dom"
 import { FaRegHeart, FaRegEnvelope } from "react-icons/fa"
 import { UserConsumer } from "store/UserProvider"
 
-import Hidden from '@material-ui/core/Hidden'
 import Grid from '@material-ui/core/Grid'
 
 import Notifications from "./components/Notifications"
@@ -14,7 +13,7 @@ class Header extends React.Component {
     static contextType = UserConsumer
 
     pageComponent = (highResolution) => {
-        const { history, classes } = this.props
+        const { history } = this.props
         const stylesGrid = { display: "flex", float: "right", alignItems: "center" }
         return (
             <div style={ (highResolution === true) ? { ...stylesGrid, fontSize: "1.3em" } : null }>

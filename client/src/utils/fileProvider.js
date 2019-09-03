@@ -26,8 +26,22 @@ const transformArrayInObject = (array) => {
     return dataObject
 }
 
-export const getUserProfil = (id) => {
-    return fetch("http://localhost:4000/users/getUserProfil", optionsFetch({ id }))
+export const verifyKey = (key) => {
+    return fetch("http://localhost:4000/verifyKey", optionsFetch({ key }))
+        .then((response) => response.json())
+        .then((responseJson) => responseJson)
+        .catch((error) => console.log(error))
+}
+
+export const verifyKeyForgot = (key) => {
+    return fetch("http://localhost:4000/verifyKeyForgot", optionsFetch({ key }))
+        .then((response) => response.json())
+        .then((responseJson) => responseJson)
+        .catch((error) => console.log(error))
+}
+
+export const getUserProfil = (id, profilName) => {
+    return fetch("http://localhost:4000/users/getUserProfil", optionsFetch({ id, profilName }))
         .then((response) => response.json())
         .then((responseJson) => responseJson)
         .catch((error) => console.log(error))
@@ -91,8 +105,13 @@ export const checkLogIn = (inputArray) => {
     const hashPassword = hash.sha256().update(password).digest("hex")
     return fetch("http://localhost:4000/users/checkLogin", optionsFetch({ name, hashPassword }))
         .then((response) => response.json())
-        .then((responseJson) => responseJson.dataUser[0])
-        .catch((error) => console.log(error))
+        .then((responseJson) => {
+            if (responseJson.dataUser === undefined) {
+                return undefined
+            }
+            return responseJson.dataUser[0]
+        })
+        .catch((error) => alert(error))
 }
 
 export const verifyPassword = (name, password) => {
@@ -188,7 +207,6 @@ export const blockProfil = (userName, profilBlock) => {
 } 
 
 export const checkBlock = (firstUser, scndUser) => {
-    console.log(firstUser, scndUser)
     return fetch("http://localhost:4000/users/checkBlock", optionsFetch({ firstUser, scndUser }))
         .then((res) => res.json())
         .then((resJson) => resJson)
@@ -228,7 +246,7 @@ export const getNotificationsNoRead = (userName, limit) => {
 }
 
 export const updateNotificationsToRead = (userName) => {
-    fetch("http://localhost:4000/users/updateNotificationsToRead", optionsFetch({ userName }))
+    return fetch("http://localhost:4000/users/updateNotificationsToRead", optionsFetch({ userName }))
 }
 
 export const reportingFakeProfil = (profilName) => {
@@ -319,4 +337,11 @@ export const deleteCookie = () => {
         credentials: "include",
         method: "GET",
     })
+}
+
+export const getListPersonLikeYou = (userName) => {
+    return fetch("http://localhost:4000/users/getListPersonLikeYou", optionsFetch({ userName }))
+        .then((response) => response.json())
+        .then((responseJson) => responseJson)
+        .catch((error) => console.log(error))
 }

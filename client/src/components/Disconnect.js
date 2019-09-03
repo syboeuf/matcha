@@ -17,7 +17,7 @@ const Disconnect = ({ history }) => {
                 deleteCookie()
                 logout()
                 user.setNewDataUser(undefined)
-                history.push("/LoginAccount")
+                history.push("/login")
             } }
         >
             Disconnect

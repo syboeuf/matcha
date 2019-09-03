@@ -7,7 +7,9 @@ import Interest from "./components/Interest"
 
 import { withStyles } from "@material-ui/core/styles"
 
-import { blockProfil, checkBlock, reportingFakeProfil } from "utils/fileProvider"
+import {
+    blockProfil, checkBlock, reportingFakeProfil, getUserProfil,
+} from "utils/fileProvider"
 
 import { UserConsumer } from "store/UserProvider"
 
@@ -41,36 +43,43 @@ class InfosPerson extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            dataProfil: null,
             blocked: false,
             fake: false
         }
     }
     
     componentWillMount() {
-        const { dataUser } = this.context
-        console.log(dataUser)
         this.checkBlock()
     }
 
     checkBlock = () => {
         const { dataUser } = this.context
-        const { dataPerson } = this.props.location.state
-        checkBlock(dataUser.userName, dataPerson.userName)
-            .then((res) => this.setState({ blocked: res.blocked }))
+        const { data } = this.props.location.state
+        checkBlock(dataUser.userName, data.profilName)
+            .then((res) => {
+                if (res.blocked === false) {
+                    getUserProfil(data.id, data.userName)
+                        .then((response) => this.setState({ dataProfil: { ...response.data[0], inline: data.inline } }))
+                        .catch((error) => console.log(error))
+                } else {
+                    this.setState({ blocked: res.blocked, dataProfil: {} } )
+                }
+            })
             .catch((error) => console.log(error))
     }
 
     onClick = () => {
         const { dataUser } = this.context
-        const { dataPerson } = this.props.location.state
-        blockProfil(dataUser.userName, dataPerson.userName)
+        const { data } = this.props.location.state
+        blockProfil(dataUser.userName, data.profilName)
         // Recup la liste des utilisateurs bloqués par l'user connecté, pour savoir si il bloque une personne deja bloquee ou non
         this.checkBlock()
         Swal.fire(
             'User blocked',
             'You succesfully blocked this profile',
             'success'
-        )
+        ).then(() => this.setState({ blocked: true })).catch((error) => console.log(error))
     }
 
     render() {
@@ -78,18 +87,16 @@ class InfosPerson extends Component {
         if (dataUser === undefined) {
             return <div />
         }
-        const { location } = this.props
-        const { dataPerson } = location.state
-        if (dataPerson === null) {
+        const { blocked, fake, dataProfil } = this.state
+        if (dataProfil === null) {
             return <div />
         }
-        const { blocked, fake } = this.state
         const {
             id, userName, lastName, firstName, biography,
             listInterest, gender, orientation, likeUser,
             fakeUser, inline, date, age, populareScore,
-        } = dataPerson
-        const dataProfil = { userName, lastName, firstName }
+        } = dataProfil
+        const dataProfile = { userName, lastName, firstName }
         const dataPersonal = {
             biography, listInterest, gender, orientation, populareScore, id,
         }
@@ -97,8 +104,8 @@ class InfosPerson extends Component {
         return (
             <div>
                 {
-                (!blocked)
-                    ? (
+                    (blocked === false)
+                        ? (
                         <div>
                             <div className="center infos-person" style={{width: '70%', marginTop: 80}}>
                                 <div className="col" style={{width: '25%', boxShadow: "0px 5px 15px rgba(0,0,0,.2)", borderRadius: 10, padding: 50}}>
@@ -135,7 +142,7 @@ class InfosPerson extends Component {
                             <div className="infos-person-lowres" style={{paddingLeft: '10%', paddingRight: '10%'}}>
                                 <div style={{width: '100%'}}>
                                     <DataProfil
-                                        dataProfil={ dataProfil }
+                                        dataProfil={ dataProfile }
                                         dataPersonal={ dataPersonal }
                                         id={ id }
                                         date={ date }
