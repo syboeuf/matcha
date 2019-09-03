@@ -13,8 +13,7 @@ const jwt = require('jsonwebtoken')
 const connection = mysql.createConnection({
 	host: "localhost",
 	user: "root",
-	password: "tpompon",
-	port: 3307,
+	password: "",
 	database: "matcha",
 	multipleStatements: true,
 })
@@ -513,8 +512,8 @@ app.post("/users/deleteMatch", (req, res) => {
 })
 
 app.post("/users/listBlockProfil", (req, res) => {
-	const { userName } = req.body
-	const listBlock = `SELECT p.*, u.biography, u.gender, u.orientation, u.listInterest, u.userAddress, u.userLocation, u.userApproximateLocation, u.populareScore, picturesusers.picture FROM profil p INNER JOIN userinfos u ON p.userName=u.userName INNER JOIN picturesusers ON picturesusers.userId=p.id WHERE p.userName NOT IN (SELECT blockProfil FROM listblockprofil WHERE user='${userName}') AND p.userName<>'${userName}' GROUP BY p.id`
+	const { userName, orientation, limit } = req.body
+	const listBlock = `SELECT p.*, u.biography, u.gender, u.orientation, u.listInterest, u.userAddress, u.userLocation, u.userApproximateLocation, u.populareScore, picturesusers.picture FROM profil p INNER JOIN userinfos u ON p.userName=u.userName INNER JOIN picturesusers ON picturesusers.userId=p.id WHERE p.userName NOT IN (SELECT blockProfil FROM listblockprofil WHERE user='${userName}') AND p.userName<>'${userName}' ${(orientation !== "Bisexuelle") ? `AND u.gender='${orientation}'` : ""} GROUP BY p.id LIMIT ${limit}`
 	connection.query(listBlock, (error, results) => {
 		if (error) {
 			return res.send(error)
@@ -595,7 +594,7 @@ app.post("/users/deblockUser", (req, res) => {
 
 app.post("/users/getAllOtherDataOfProfil", (req, res) => {
 	const { userName, profilName } = req.body
-	let sql = `SELECT p.*, DATE_FORMAT(p.lastConnection, "%m-%d-%y %H:%i:%s") AS date, u.biography, u.gender, u.orientation, u.listInterest, u.userAddress, u.populareScore FROM profil p INNER JOIN userinfos u ON p.userName=u.userName WHERE p.userName='${profilName}';`
+	let sql = `SELECT p.*, DATE_FORMAT(p.lastConnection, "%m-%d-%y %H:%i:%s") AS date, u.biography, u.gender, u.orientation, u.listInterest, u.userAddress, u.populareScore FROM profil p INNER JOIN userinfos u ON p.userName=u.userName INNER JOIN picturesusers ON picturesusers.userId=p.id WHERE p.userName='${profilName}';`
 	sql += `SELECT likeUser FROM likeuser WHERE (userName, profilName) IN (('${profilName}', '${userName}'));`
 	sql += `SELECT fakeUser FROM fakeuser WHERE fakeUser='${profilName}';`
 	connection.query(sql, (error, results) => {
@@ -706,7 +705,7 @@ app.post("/users/setLocationToNull", (req, res) => {
 })
 
 app.get("/users/findUser", (req, res) => {
-	const getAllName = `SELECT userName FROM profil`
+	const getAllName = `SELECT userName FROM profil INNER JOIN picturesusers ON picturesusers.userId=profil.id GROUP BY profil.id`
 	connection.query(getAllName, (error, results) => {
 		if (error) {
 			return res.send(error)

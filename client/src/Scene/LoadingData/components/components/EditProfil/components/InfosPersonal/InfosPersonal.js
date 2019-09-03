@@ -1,5 +1,4 @@
 import React, { Component } from "react"
-// import PropTypes from "prop-types"
 import Biography from "./components/Biography"
 import ListInterest from "./components/ListInterest"
 import Orientation from "./components/Orientation"
@@ -41,6 +40,7 @@ const styles = {
     }
 }
 class InfosPersonal extends Component {
+    
     constructor(props) {
         super(props)
         this.state = {
@@ -49,10 +49,12 @@ class InfosPersonal extends Component {
             openPersonLikeYou: false,
         }
     }
+
     componentWillMount() {
         const { infosUser } = this.props
         this.setState({ infosPersonalUser: { ...infosUser } })
     }
+
     onChangeValue = (e, option) => {
         this.setState({
             ...this.state,
@@ -62,6 +64,17 @@ class InfosPersonal extends Component {
             },
         })
     }
+
+    updatePicture = (newPicturesArray) => {
+        this.setState({
+            ...this.state,
+            infosPersonalUser: {
+                ...this.state.infosPersonalUser,
+                pictures: { ...newPicturesArray },
+            }
+        })
+    }
+
     updateListInterest = (newlistInterest) => {
         this.setState({
             ...this.state,
@@ -71,6 +84,7 @@ class InfosPersonal extends Component {
             },
         })
     }
+
     onClick = (infosPersonalUser, userName) => {
         const { updateDataUser } = this.props
         updateInfosPersonal({ ...infosPersonalUser, userName })
@@ -81,6 +95,7 @@ class InfosPersonal extends Component {
             'success'
         )
     }
+
     handleModalMapClose = () => {
         this.setState({ openMap: false })
     }
@@ -91,7 +106,7 @@ class InfosPersonal extends Component {
 
     render() {
         const { classes, infosUser, updateDataUser } = this.props
-        const { userName, id } = infosUser
+        const { userName } = infosUser
         const { infosPersonalUser, openMap, openPersonLikeYou } = this.state
         const {
             orientation, gender, biography, listInterest,
@@ -121,10 +136,7 @@ class InfosPersonal extends Component {
                 <button className={ classes.blueBtn } style={{marginRight: 10}} onClick={ () => this.onClick(infosPersonalUser, userName) }>Save</button>
                 <button className={ classes.blueBtn } onClick={ () => this.setState({ openMap: true }) }>Open map</button>
                 <button className={ classes.blueBtn } onClick={ () => this.setState({ openPersonLikeYou: true }) }>Person who like you</button>
-                <Pictures
-                    userId={ id }
-                    userName={ userName }
-                />
+                <Pictures updatePicture={ this.updatePicture } />
                 <Modal
                     aria-labelledby="modal-map"
                     aria-describedby="simple-modal-map"
@@ -152,5 +164,5 @@ class InfosPersonal extends Component {
         )
     }
 }
-// InfosPersonal.propTypes = {}
+
 export default (withStyles(styles)(InfosPersonal))

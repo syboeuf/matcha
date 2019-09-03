@@ -110,26 +110,11 @@ class CollectionView extends Component {
     }
 
     filterList = (listPerson) => {
-        let newListPerson = this.filterOrientation(listPerson)
-        newListPerson = this.filterAge(newListPerson)
+        let newListPerson = this.filterAge(listPerson)
         newListPerson = this.filterLocation(newListPerson)
         newListPerson = this.filterTag(newListPerson)
         newListPerson = this.filterPopularScore(newListPerson)
         this.setState({ listProfil: newListPerson })
-    }
-
-    filterOrientation = (array) => {
-        const { orientation } = this.props.dataUser
-        if (orientation === "Bisexuelle") {
-            return array
-        }
-        const newListPerson = []
-        array.forEach((data) => {
-            if (data.gender === orientation) {
-                newListPerson.push(data)
-            }
-        })
-        return array
     }
 
     filterAge = (array) => {
@@ -355,7 +340,9 @@ class CollectionView extends Component {
     }
 
     render() {
-        const { chooseDataPerson, listPerson, classes } = this.props
+        const {
+            chooseDataPerson, listPerson, classes, loadMoreProfil,
+        } = this.props
         const {
             listProfil, listTag, age, distance, score,
         } = this.state
@@ -417,6 +404,7 @@ class CollectionView extends Component {
                             ))
                         }
                     </Grid>
+                    <div><button className={ classes.searchBtn } onClick={ () => loadMoreProfil() }>Load more profile</button></div>
                 </Container>
             </div>
         )

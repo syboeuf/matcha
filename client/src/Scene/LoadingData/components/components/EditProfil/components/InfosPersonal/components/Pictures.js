@@ -44,9 +44,9 @@ class Pictures extends Component {
         this.setState({ picturesArray: { ...dataUser.pictures } })
     }
 
-    handleSubmit = (e, index) => {
-        e.preventDefault()
-        const { userId, userName } = this.props
+    handleSubmit = (index) => {
+        const { dataUser } = this.context
+        const { updatePicture } = this.props
         const { picturesFiles, picturesArray } = this.state
         if (picturesFiles[index].file.type !== "image/jpeg" &&  picturesFiles[index].file.type !== "image/png"
             && picturesFiles[index].file.type !== "image/jpg") {
@@ -59,7 +59,7 @@ class Pictures extends Component {
                 ...newPicturesArray,
                 [index]: {
                     id: (picturesArray.length >= 5 || picturesArray[index]) ? picturesArray[index].id : null,
-                    userId,
+                    userId: dataUser.id,
                     picture: picturesFiles[index].file.name,
                 },
             }
@@ -71,24 +71,23 @@ class Pictures extends Component {
                 method: "POST",
                 body: JSON.stringify({
                     id: (picturesArray.length >= 5 || picturesArray[index]) ? picturesArray[index].id : null,
-                    userId,
+                    userId: dataUser.id,
                     dataPicture: picturesFiles[index].imagePreviewUrl,
                     requestId: (picturesArray.length >= 5 || picturesArray[index]) ? true : false,
                     namePicture: picturesFiles[index].file.name,
-                    userName,
+                    userName: dataUser.userName,
                 })
             })
             .then(() => {
                 const { dataUser, setNewDataUser } = this.context
                 setNewDataUser({ ...dataUser, pictures: newPicturesArray })
-                this.setState({ picturesArray: { ...newPicturesArray } })
+                this.setState({ picturesArray: { ...newPicturesArray } }, () => updatePicture(newPicturesArray))
             })
             .catch((error) => console.log(error))
         }
     }
 
     handleImageChange = (e, index) => {
-        e.preventDefault()
         const reader = new FileReader()
         const file = e.target.files[0]
         reader.onloadend = () => {
@@ -96,7 +95,7 @@ class Pictures extends Component {
             picturesFiles[index].file = file
             picturesFiles[index].imagePreviewUrl = reader.result
             this.setState({ ...this.state, picturesFiles })
-            this.handleSubmit(e, index)
+            this.handleSubmit(index)
         }
         if (file) {
             reader.readAsDataURL(file)
@@ -122,16 +121,12 @@ class Pictures extends Component {
                         picturesDataArray.map((pictureData, index) => (
                             <div key={ `pic-${index}` }>
                                 {
-                                    (pictureData !== null)
-                                        ? (
-                                            <img
-                                                alt={ `pictureData-${index}` }
-                                                src={ process.env.PUBLIC_URL + `/imageProfil/${pictureData.userId}/${pictureData.picture}` }
-                                                style={{ width: 400, height: 300, objectFit: 'cover' }}
-                                                onClick={ () => document.getElementById(`pic-${index}`).click() }
-                                            />
-                                        )
-                                        : <div style={ styles.pictures } />
+                                    <img
+                                        alt={ `pictureData-${index}` }
+                                        src={ (pictureData !== null) ? `${process.env.PUBLIC_URL}/imageProfil/${pictureData.userId}/${pictureData.picture}` : `${process.env.PUBLIC_URL}/noImage.png` }
+                                        style={{ width: 400, height: 300, objectFit: 'cover' }}
+                                        onClick={ () => document.getElementById(`pic-${index}`).click() }
+                                    />
                                 }
                                 <input
                                     id={ `pic-${index}` }

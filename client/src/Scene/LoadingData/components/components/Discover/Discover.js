@@ -3,8 +3,10 @@ import { withRouter } from "react-router-dom"
 
 import CollectionView from "./components/CollectionView"
 
-import { blockList, getAllOtherDataOfProfil, blockProfil } from "utils/fileProvider"
+import { blockList, blockProfil } from "utils/fileProvider"
 import { UserConsumer } from "store/UserProvider"
+
+const limitProfil = 20
 
 class Discover extends Component {
 
@@ -15,25 +17,20 @@ class Discover extends Component {
         this.state = {
             listPerson: null,
             dataPerson: null,
+            maxShowProfil: limitProfil,
         }
     }
 
     componentWillMount() {
-        const { dataUser, socket } = this.context
-        socket.on("INLINE_USER_CONNECTED", this.inlineUserConnected)
-        socket.emit("INLINE_USER_CONNECTED")
-        blockList(dataUser.userName)
+        this.getListPerson()
+    }
+
+    getListPerson = () => {
+        const { maxShowProfil } = this.state
+        const { dataUser } = this.context
+        blockList(dataUser.userName, dataUser.orientation, maxShowProfil)
             .then((response) => this.setState({ listPerson: response.blockList }))
             .catch((error) => console.log(error))
-    }
-
-    componentWillUnmount() {
-        const { socket } = this.context
-        socket.off("INLINE_USER_CONNECTED")
-    }
-
-    inlineUserConnected = (inlineUsers) => {
-        this.setState({ inlineUsers })
     }
 
     getListUser = (userName, profilName) => {
@@ -46,13 +43,11 @@ class Discover extends Component {
         const { history } = this.props
         const { dataUser, socket } = this.context
         socket.emit("NOTIFICATIONS_SENT", { reciever: dataPerson.userName, notification: `${dataUser.userName} visit you're profil` })
-        getAllOtherDataOfProfil(dataUser.userName, dataPerson.userName)
-        .then((response) => {
-            const { inlineUsers } = this.state
-            const inline = inlineUsers.find(name => name === response.otherData.userName)
-            return history.push("/InfosPerson", { data: { id: dataPerson.id, userName: dataUser.userName, profilName: dataPerson.userName, inline: (inline === undefined) ? 0 : 1 } })
-        })
-            .catch((error) => console.log(error))
+        history.push("/InfosPerson", { data: { id: dataPerson.id, userName: dataUser.userName, profilName: dataPerson.userName } })
+    }
+
+    loadMoreProfil = () => {
+        this.setState({ maxShowProfil: this.state.maxShowProfil + limitProfil }, () => this.getListPerson())
     }
 
     render() {
@@ -79,6 +74,7 @@ class Discover extends Component {
                 dataUser={ dataUser }
                 listPerson={ listPerson }
                 chooseDataPerson={ this.chooseDataPerson }
+                loadMoreProfil={ this.loadMoreProfil }
             />
         )
     }

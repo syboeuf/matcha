@@ -32,13 +32,14 @@ class Home extends Component {
 	componentWillMount() {
 		const { dataUser } = this.context
 		blockList(dataUser.userName)
-			.then((response) => this.setState({ profiles: response.blockList }))
+			.then((response) => console.log(response))
 			.catch((error) => console.log(error))
 	}
 
 	render() {
 		const { dataUser } = this.context
 		const { profiles } = this.state
+		return <div />
 		return (
 			<div>
 				<div style={{ position: 'absolute', width: '100%', zIndex: 2 }}>

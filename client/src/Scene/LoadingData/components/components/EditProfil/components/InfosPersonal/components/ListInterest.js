@@ -50,6 +50,8 @@ const ListInterest = ({ list, onChangeValue, classes }) => {
     const toggleTag = (checkInterest, interest) => {
         if (checkInterest !== -1) {
             onChangeValue(list.replace(interest, ""))
+        } else if (list === null) {
+            onChangeValue(interest)
         } else {
             onChangeValue(list + `${interest}`)
         }

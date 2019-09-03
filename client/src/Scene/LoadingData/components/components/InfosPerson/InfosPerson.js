@@ -48,9 +48,21 @@ class InfosPerson extends Component {
             fake: false
         }
     }
-    
+
     componentWillMount() {
+        const { socket } = this.context
+        socket.on("INLINE_USER_CONNECTED", this.inlineUserConnected)
+        socket.emit("INLINE_USER_CONNECTED")
         this.checkBlock()
+    }
+
+    componentWillUnmount() {
+        const { socket } = this.context
+        socket.off("INLINE_USER_CONNECTED")
+    }
+
+    inlineUserConnected = (inlineUsers) => {
+        this.setState({ inlineUsers })
     }
 
     checkBlock = () => {
@@ -87,20 +99,21 @@ class InfosPerson extends Component {
         if (dataUser === undefined) {
             return <div />
         }
-        const { blocked, fake, dataProfil } = this.state
+        const { blocked, fake, dataProfil, inlineUsers } = this.state
         if (dataProfil === null) {
             return <div />
         }
         const {
             id, userName, lastName, firstName, biography,
             listInterest, gender, orientation, likeUser,
-            fakeUser, inline, date, age, populareScore,
+            fakeUser, date, age, populareScore,
         } = dataProfil
         const dataProfile = { userName, lastName, firstName }
         const dataPersonal = {
             biography, listInterest, gender, orientation, populareScore, id,
         }
         const { classes } = this.props
+        const inline = inlineUsers.find(name => name === userName)
         return (
             <div>
                 {
@@ -131,7 +144,7 @@ class InfosPerson extends Component {
                                         age={ age }
                                         date={ date }
                                         gender={ gender }
-                                        inline={ inline }
+                                        inline={ (inline === undefined) ? 0 : 1 }
                                     />
                                     <Interest listInterest={ listInterest } />
                                     <div className="center" style={{width: '80%'}}>
@@ -163,7 +176,7 @@ class InfosPerson extends Component {
                                         age={ age }
                                         date={ date }
                                         gender={ gender }
-                                        inline={ inline }
+                                        inline={ (inline === undefined) ? 0 : 1 }
                                     />
                                     <Interest listInterest={ listInterest } />
                                     <Images id={ id } />

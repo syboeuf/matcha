@@ -45,7 +45,5 @@ const EditProfil = () => {
         </div>
     )
 }
-EditProfil.propTypes = {
-    //dataUser: PropTypes.objectOf().isRequired,
-}
+
 export default withRouter(EditProfil)

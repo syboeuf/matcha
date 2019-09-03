@@ -181,8 +181,8 @@ export const deleteMatch = (user, profilName) => {
     fetch("http://localhost:4000/users/deleteMatch", optionsFetch({ user, profilName }))
 }
 
-export const blockList = (userName) => {
-    return fetch("http://localhost:4000/users/listBlockProfil", optionsFetch({ userName }))
+export const blockList = (userName, orientation, limit) => {
+    return fetch("http://localhost:4000/users/listBlockProfil", optionsFetch({ userName, orientation, limit }))
         .then((response) => response.json())
         .then((responseJson) => responseJson)
         .catch((error) => console.log(error))
