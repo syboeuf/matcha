@@ -324,7 +324,7 @@ class CollectionView extends Component {
                 const distance = calculDistance(userCoords[0], userCoords[1], profilCoords[0], profilCoords[1])
                 newArray.push({ ...person, distance })
             })
-            this.array = listProfil
+            this.array = newArray
         } else if (option === "numberOfTags") {
             const newArray = []
             listProfil.forEach((person) => {

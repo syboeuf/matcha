@@ -90,6 +90,10 @@ class Pictures extends Component {
     handleImageChange = (e, index) => {
         const reader = new FileReader()
         const file = e.target.files[0]
+        if (file.size > 500000) {
+            alert("The size is too large")
+            return
+        }
         reader.onloadend = () => {
             const { picturesFiles } = this.state
             picturesFiles[index].file = file

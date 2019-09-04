@@ -13,7 +13,7 @@ const jwt = require('jsonwebtoken')
 const connection = mysql.createConnection({
 	host: "localhost",
 	user: "root",
-	password: "",
+	password: "input305",
 	database: "matcha",
 	multipleStatements: true,
 })
@@ -83,13 +83,101 @@ connection.connect(err => {
 
 app.use(cors({ credentials: true, origin: "http://localhost:3000" }))
 app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json({ limit: "50mb" }))
+app.use(bodyParser.json({ limit: "5mb" }))
 app.use(cookieParser())
 
 app.get("/", (req, res) => {
 	res.send("hello from the products server")
 })
-0
+
+let createTableMatcha =
+`
+	CREATE TABLE IF NOT EXISTS fakeuser (
+		id int primary key auto_increment,
+		fakeUser varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+	CREATE TABLE IF NOT EXISTS likeuser (
+		id int primary key auto_increment,
+		userName varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+		profilName varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+		likeUser int(11) NOT NULL DEFAULT '0'
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+	CREATE TABLE IF NOT EXISTS listblockprofil (
+		id int primary key auto_increment,
+		user varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+		blockProfil varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+	CREATE TABLE IF NOT EXISTS messages (
+		id int primary key auto_increment,
+		fromUser varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+		toUser varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+		message text,
+		date datetime DEFAULT NULL
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+	CREATE TABLE IF NOT EXISTS notifications (
+		id int primary key auto_increment,
+		notificationUser varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+		notificationType text NOT NULL,
+		notificationRead int(11) NOT NULL DEFAULT '0',
+		date datetime NOT NULL
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+	CREATE TABLE IF NOT EXISTS picturesusers (
+		id int primary key auto_increment,
+		userId varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+		picture longtext CHARACTER SET utf8 COLLATE utf8_bin NOT NULL
+	) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+	CREATE TABLE IF NOT EXISTS profil (
+		id int primary key auto_increment,
+		userName varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+		password varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+		email varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+		lastName varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+		firstName varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+		age int(11) DEFAULT NULL,
+		lastConnection datetime DEFAULT NULL,
+		confirmKey bigint(20) NOT NULL,
+		confirmKeyOk int(11) NOT NULL DEFAULT '0',
+		keyResetPassword varchar(255) DEFAULT NULL,
+		bantime varchar(50) NOT NULL DEFAULT '0'
+	) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+	CREATE TABLE IF NOT EXISTS profilmatch (
+		id int primary key auto_increment,
+		firstPerson varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+		secondPerson varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+		chatId varchar(255) NOT NULL
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+	CREATE TABLE IF NOT EXISTS userinfos (
+		id int primary key auto_increment,
+		userName varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+		biography text,
+		gender text,
+		orientation text,
+		listInterest text,
+		userLocation text,
+		userApproximateLocation text,
+		userAddress text,
+		userApproximateCity text,
+		populareScore int(11) NOT NULL DEFAULT '0'
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+`
+/*
+connection.query(createTableMatcha, (error, results) => {
+	if (error) {
+		console.log(error)
+	} else {
+		console.log(results)
+	}
+})
+*/
+
 app.get("/cookieDataUser", (req, res) => {
 	// We can obtain the session token from the requests cookies, which come with every request
 	let cookiesArray = req.headers.cookie
@@ -208,7 +296,8 @@ app.post("/verifyKey", (req, res) => {
 			return res.send(err)
 		} else {
 			if (results.length > 0) {
-				connection.query(`UPDATE profil SET confirmKeyOk = 1 WHERE confirmKey = '${key}'`, (err, results) => {
+				const sql = `UPDATE profil SET confirmKeyOk = 1, confirmKey=NULL WHERE confirmKey = '${key}'`
+				connection.query(sql, (err, results) => {
 					if (err) {
 						return res.send(err)
 					} else {
@@ -309,7 +398,7 @@ app.post("/users/add", (req, res) => {
 		if (error) {
 			return res.send(error)
 		} else {
-			const text = `This is your ${confirmKey} and the link: http://localhost:3000/ConfirmKey`
+			const text = `Please follow this link to confirm your account: http://localhost:3000/confirm/${confirmKey}`
 			const subject = "Confirm you key"
 			sendMail(email, text, subject)
 			return res.send("added user")
@@ -359,7 +448,7 @@ app.post("/users/findEmail", (req, res) => {
 		} else {
 			if (results.length > 0) {
 				const key = uniqueId()
-				const text = `This is your key: ${key}`
+				const text = `Follow this link to reset your password: http://localhost:3000/forgot/${key}`
 				const subject = "Key to reset your password"
 				const setKeyResetPassword = `UPDATE profil SET keyResetPassword='${key}' WHERE email='${email}'`
 				connection.query(setKeyResetPassword, (error, results) => {
@@ -379,7 +468,8 @@ app.post("/users/findEmail", (req, res) => {
 
 app.post("/users/recoverPassword", (req, res) => {
 	const { passwordHash, key } = req.body
-	const updatePassword = `UPDATE profil SET password='${passwordHash}' WHERE keyResetPassword='${key}'`
+	let updatePassword = `UPDATE profil SET password='${passwordHash}' WHERE keyResetPassword='${key}';`
+	updatePassword += `UPDATE profil SET keyResetPassword=NULL WHERE keyResetPassword='${key}';`
 	connection.query(updatePassword, (error, results) => {
 		if (error) {
 			return res.send(error)
@@ -398,7 +488,7 @@ app.post("/users/confirmIdendity", (req, res) => {
 		} else {
 			if (results.length > 0) {
 				let updateConfirmKeyOk = `UPDATE profil SET confirmKeyOk=1 WHERE (userName, confirmKey) IN (('${name}', ${key}));`
-				updateConfirmKeyOk += `SELECT p.*, u.biography, u.gender, u.orientation, u.listInterest, u.userAddress, u.populareScore FROM profil p INNER JOIN userinfos u ON p.userName=u.userName WHERE p.userName='${name}'`
+				updateConfirmKeyOk += `SELECT p.*, u.biography, u.gender, u.orientation, u.listInterest, u.userAddress, u.populareScore FROM profil p INNER JOIN userinfos u ON p.userName=u.userName WHERE p.userName='${name}';`
 				connection.query(updateConfirmKeyOk, (error, results) => {
 					if (error) {
 						return res.send(error)
@@ -617,8 +707,98 @@ app.post("/users/getAllOtherDataOfProfil", (req, res) => {
 	})
 })
 
+/*
+// Second way
 app.post("/users/getListMatch", (req, res) => {
 	const { userName } = req.body
+	verifyToken(req, res, (error, result) => {
+		if (error) {
+			console.log(error)
+		} else {
+			if (result === false) {
+				return
+			} else {
+				let getList = `SELECT p.id, p.age, m.secondPerson AS person, m.chatId, u.picture FROM profilmatch m INNER JOIN profil p ON m.secondPerson=p.userName INNER JOIN picturesusers u ON p.id=u.userId WHERE m.firstPerson='${userName}' GROUP BY (m.secondPerson);`
+				getList += `SELECT p.id, p.age, m.firstPerson AS person, m.chatId, u.picture FROM profilmatch m INNER JOIN profil p ON m.firstPerson=p.userName INNER JOIN picturesusers u ON p.id=u.userId  WHERE m.secondPerson='${userName}' GROUP BY (m.firstPerson);`
+				getList += `SELECT blockProfil FROM listblockprofil WHERE user='${userName}'`
+				connection.query(getList, (error, results) => {
+					if (error) {
+						return res.send(error)
+					} else {
+						const getList = results[0].concat(results[1])
+						const getListMatch = []
+						getList.forEach((user) => {
+							if (results[2].filter(name => name === user.person).length === 0) {
+								getListMatch.push(user)
+							}
+						})
+						return res.json({ listMatch: getListMatch })
+					}
+				})
+			}
+		}
+	})
+})
+*/
+
+const db = {
+	query(query) {
+		return new Promise((resolve, reject) => {
+			connection.query(query, (error, results) => {
+				if (error) {
+					reject(error)
+				} else {
+					resolve(results)
+				}
+			})
+		}
+	)}
+}
+
+const verifyToken = async(req) => {
+	let cookiesArray = req.headers.cookie
+	let list = {}
+	if (cookiesArray === undefined) {
+		return false
+	}
+	cookiesArray.split(";").forEach((cookie) => {
+		const parts = cookie.split("=")
+		list[parts.shift().trim()] = decodeURI(parts.join('='))
+	})
+	// if the cookie is not set, return an unauthorized error
+	const token = list.token
+    try {
+      // Parse the JWT string and store the result in `payload`.
+      // Note that we are passing the key in this method as well. This method will throw an error
+      // if the token is invalid (if it has expired according to the expiry time we set on sign in),
+      // or if the signature does not match
+	  const payload = jwt.verify(token, jwtKey)
+	  const sql = `SELECT * FROM profil WHERE userName='${payload.name}' AND password='${payload.hashPassword}'`
+	  const result = await db.query(sql)
+	  if (result.length === 1) {
+		  console.log(1)
+		  return true
+	  } else {
+		  console.log(2)
+		return false
+	  }
+    } catch (e) {
+      if (e instanceof jwt.JsonWebTokenError) {
+		// if the error thrown is because the JWT is unauthorized, return a 401 error
+        return false
+	  }
+		// otherwise, return a bad request error
+		return false
+	}
+}
+
+app.post("/users/getListMatch", async(req, res) => {
+	const { userName } = req.body
+	const sql = `SELECT * FROM profil WHERE id=128`
+	const result = await db.query(sql)
+	if (result.length === 0) {
+		return
+	}
 	let getList = `SELECT p.id, p.age, m.secondPerson AS person, m.chatId, u.picture FROM profilmatch m INNER JOIN profil p ON m.secondPerson=p.userName INNER JOIN picturesusers u ON p.id=u.userId WHERE m.firstPerson='${userName}' GROUP BY (m.secondPerson);`
 	getList += `SELECT p.id, p.age, m.firstPerson AS person, m.chatId, u.picture FROM profilmatch m INNER JOIN profil p ON m.firstPerson=p.userName INNER JOIN picturesusers u ON p.id=u.userId  WHERE m.secondPerson='${userName}' GROUP BY (m.firstPerson);`
 	getList += `SELECT blockProfil FROM listblockprofil WHERE user='${userName}'`
@@ -790,5 +970,3 @@ const populareScore = (profilName, like) => {
 server.listen(4000, () => {
 	console.log(`Server is launch on port 4000`)
 })
-
-// SELECT likeuser.userName, profil.*, picturesusers.picture FROM likeuser INNER JOIN profil ON likeuser.userName=profil.userName INNER JOIN picturesusers ON picturesusers.id=profil.id WHERE likeuser.userName NOT IN (SELECT blockProfil FROM listblockprofil WHERE user='metentis') AND likeuser.profilName='metentis' GROUP BY id

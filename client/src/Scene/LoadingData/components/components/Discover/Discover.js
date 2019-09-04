@@ -43,7 +43,7 @@ class Discover extends Component {
         const { history } = this.props
         const { dataUser, socket } = this.context
         socket.emit("NOTIFICATIONS_SENT", { reciever: dataPerson.userName, notification: `${dataUser.userName} visit you're profil` })
-        history.push("/InfosPerson", { data: { id: dataPerson.id, userName: dataUser.userName, profilName: dataPerson.userName } })
+        history.push("/InfosPerson", { data: { id: dataPerson.id, userName: dataUser.userNames } })
     }
 
     loadMoreProfil = () => {

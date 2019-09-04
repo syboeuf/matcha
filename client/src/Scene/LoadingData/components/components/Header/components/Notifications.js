@@ -36,6 +36,7 @@ class Notifications extends Component {
             notificationsArray: null,
             maxNotifications: limitNotificationNumber,
             isOpen: false,
+            checkRead: false,
         }
         this.selector = React.createRef()
     }
@@ -70,7 +71,8 @@ class Notifications extends Component {
 
     addNotifications = (notificationsArray) => {
         const { socket, dataUser } = this.context
-        this.setState({ notificationsArray, activeNotifications: notificationsArray })
+        const checkRead = notificationsArray.notificationArray.find(u => u.read === 0)
+        this.setState({ notificationsArray, activeNotifications: notificationsArray, checkRead })
         socket.on(`NOTIFICATION_RECIEVED-${dataUser.userName}`, this.insertNotificationsToArray(notificationsArray.id))
     }
 
@@ -128,7 +130,7 @@ class Notifications extends Component {
     }
 
     render() {
-        const { notificationsArray } = this.state
+        const { notificationsArray, checkRead } = this.state
         if (notificationsArray === null) {
             return <div />
         }
@@ -138,7 +140,7 @@ class Notifications extends Component {
                     onClick={ () => this.onClick() }
                     className="menu-icon"
                 >
-                    <div><FaRegBell /><span style={ (notificationsArray.notificationArray.length > 0) ? styles.dotBlue : styles.dotGrey }></span></div>
+                    <div><FaRegBell /><span style={ (checkRead !== undefined) ? styles.dotBlue : styles.dotGrey }></span></div>
                 </span>
 				{
 					(this.state.isOpen)

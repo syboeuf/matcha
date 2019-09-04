@@ -75,9 +75,9 @@ class MapComp extends Component {
 
     onClick = (data) => {
         const { history, infosUser } = this.props
-        const { socket } = this.context
+        const { socket, dataUser } = this.context
         socket.emit("NOTIFICATIONS_SENT", { reciever: data.userName, notification: `${infosUser.userName} visit you're profil` })
-        history.push("/InfosPerson", { dataPerson: data })
+        history.push("/InfosPerson", { data: { id: data.id, userName: dataUser.userName } })
     }
 
     geolocate = () => {

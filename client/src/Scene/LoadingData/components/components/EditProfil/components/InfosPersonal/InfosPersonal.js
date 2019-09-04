@@ -13,11 +13,8 @@ import { updateInfosPersonal } from "utils/fileProvider"
 const styles = {
     modal: {
         position: "absolute",
-        left: "25%",
-        bottom: "25%",
         top: "25%",
-        right: "25%",
-        margin: "auto",
+        width: "100%",
         background: "white",
     },
     blueBtn: {
