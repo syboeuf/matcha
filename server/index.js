@@ -14,8 +14,7 @@ const bcrypt = require('bcrypt')
 const connection = mysql.createConnection({
 	host: "localhost",
 	user: "root",
-	password: "tpompon",
-	port: 3307,
+	password: "",
 	database: "matcha",
 	multipleStatements: true,
 })
@@ -174,7 +173,7 @@ connection.query(createTableMatcha, (error, results) => {
 })
 */
 
-app.get("/cookieDataUser", (req, res) => {
+app.post("/cookieDataUser", (req, res) => {
 	// We can obtain the session token from the requests cookies, which come with every request
 	let cookiesArray = req.headers.cookie
 	let list = {}
@@ -219,7 +218,7 @@ app.get("/cookieDataUser", (req, res) => {
 	})
 })
 
-app.get("/deleteCookie", async(req, res) => {
+app.post("/deleteCookie", async(req, res) => {
 	const result = await verifyToken(req)
 	if (result === false) {
 		return res.json({ authentified: false })
@@ -240,11 +239,11 @@ app.post("/users", (req, res) => {
 	})
 })
 
-app.get("/dataForMap", /*async*/(req, res) => {
-	//const result = await verifyToken(req)
-	//if (result === false) {
-	//	return
-	//}
+app.post("/dataForMap", async(req, res) => {
+	const result = await verifyToken(req)
+	if (result === false) {
+		return
+	}
 	const dataPeople = `SELECT p.*, u.biography, u.listInterest, u.gender, u.orientation, u.userLocation, u.userAddress, u.userApproximateLocation, u.userApproximateCity, u.populareScore, i.picture FROM profil p INNER JOIN userinfos u ON p.userName=u.userName INNER JOIN picturesusers i ON p.id=i.userId GROUP BY (p.id)`
 	connection.query(dataPeople, (error, results) => {
 		if (error) {
@@ -417,11 +416,11 @@ app.post("/users/picturesUser", async(req, res) => {
 
 app.post("/users/add", (req, res) => {
 	const {
-		name, password, email, lastName, firstName, confirmKey,
+		name, password, email, lastName, firstName, confirmKey, age,
 	} = req.body
 	bcrypt.hash(password, saltRounds, function(err, hash) {
-		let insertUserIntoBdd = `INSERT INTO profil (userName, password, email, lastname, firstname, confirmKey)
-		VALUES('${name}', '${hash}', '${email}', '${lastName}', '${firstName}', ${confirmKey});`
+		let insertUserIntoBdd = `INSERT INTO profil (userName, password, email, lastname, firstname, age, confirmKey)
+		VALUES('${name}', '${hash}', '${email}', '${lastName}', '${firstName}', ${age}, ${confirmKey});`
 		insertUserIntoBdd += `INSERT INTO userinfos (userName, gender, orientation) VALUES ('${name}', 'Male', 'Bisexuelle')`
 		connection.query(insertUserIntoBdd, (error, results) => {
 			if (error) {
@@ -553,20 +552,19 @@ app.post("/users/updateInfosProfil", async(req, res) => {
 		return res.json({ authentified: false })
 	}
 	const {
-			id, userName, newPassword, email, firstName, lastName, previousUserName, age,
+		id, userName, newPassword, email, firstName, lastName, previousUserName, age,
 	} = req.body
 	const checkIfUserAlreadyExist = `SELECT * FROM profil WHERE id<>${id} AND (userName='${userName}' OR email='${email}')`
-	connection.query(checkIfUserAlreadyExist, async(error, results) => {
+	connection.query(checkIfUserAlreadyExist, (error, results) => {
 		if (error) {
 			return res.send(error)
 		} else {
-			console.log(results)
-			const match = await bcrypt.compare(newPassword, results[0].password)
-			if (match) {
-				if (results.length > 0) {
-					return res.send("0")
-				} else {
-					let updateDataUser = `UPDATE profil SET userName='${userName}', password='${newPassword}', email='${email}', firstName='${firstName}', lastName='${lastName}', age='${age}' WHERE id=${id};`
+			if (results.length === 0) {
+				bcrypt.hash(newPassword, saltRounds, function(err, hash) {
+					if (error) {
+						return res.send(error)
+					}
+					let updateDataUser = `UPDATE profil SET userName='${userName}', password='${hash}', email='${email}', firstName='${firstName}', lastName='${lastName}', age='${age}' WHERE id=${id};`
 					updateDataUser += `UPDATE userinfos SET userName='${userName}' WHERE userName='${previousUserName}';`
 					updateDataUser += `UPDATE profilmatch SET firstPerson='${userName}' WHERE firstPerson='${previousUserName}';`
 					updateDataUser += `UPDATE profilmatch SET secondPerson='${userName}' WHERE secondPerson='${previousUserName}';`
@@ -589,8 +587,10 @@ app.post("/users/updateInfosProfil", async(req, res) => {
 							res.cookie("token", token)
 							return res.send("1")
 						}
-					})
-				}
+					})	
+				})
+			} else {
+				return res.send("0")
 			}
 		}
 	})

@@ -354,7 +354,7 @@ export const calculDistance = (lat1, lon1, lat2, lon2) => {
 export const getDataFromCookie = () => {
     return fetch("http://localhost:4000/cookieDataUser", {
         credentials: "include",
-        method: "GET",
+        method: "POST",
     })
         .then((response) => response.json())
         .then(responseJson => responseJson)
@@ -362,7 +362,7 @@ export const getDataFromCookie = () => {
 }
 
 export const getDataPeople = () => {
-    return fetch("http://localhost:4000/dataForMap")
+    return fetch("http://localhost:4000/dataForMap", { method: "POST", credentials: "include" })
         .then((response) => response.json())
         .then((responseJson) => responseJson)
         .catch((error) => console.log(error))
@@ -371,7 +371,7 @@ export const getDataPeople = () => {
 export const deleteCookie = () => {
     fetch("http://localhost:4000/deleteCookie", {
         credentials: "include",
-        method: "GET",
+        method: "POST",
     })
 }
 

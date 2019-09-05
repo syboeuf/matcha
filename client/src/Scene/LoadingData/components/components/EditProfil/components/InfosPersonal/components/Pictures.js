@@ -68,6 +68,7 @@ class Pictures extends Component {
                     Accept: "application/json",
                     "Content-Type": "application/json",
                 },
+                credentials: "include",
                 method: "POST",
                 body: JSON.stringify({
                     id: (picturesArray.length >= 5 || picturesArray[index]) ? picturesArray[index].id : null,
@@ -90,7 +91,7 @@ class Pictures extends Component {
     handleImageChange = (e, index) => {
         const reader = new FileReader()
         const file = e.target.files[0]
-        if (file.size > 500000) {
+        if (file.size > 5000000) {
             alert("The size is too large")
             return
         }

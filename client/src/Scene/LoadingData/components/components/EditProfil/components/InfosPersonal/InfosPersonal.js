@@ -18,6 +18,14 @@ const styles = {
         width: "100%",
         background: "white",
     },
+    map: {
+        position: "absolute",
+        top: "25%",
+        bottom: "25%",
+        left: "25%",
+        right: "25%",
+        margin: "auto",
+    },
     blueBtn: {
         padding: '20px',
         backgroundColor: 'transparent',
@@ -141,7 +149,7 @@ class InfosPersonal extends Component {
                     open={ openMap }
                     onClose={ this.handleModalMapClose }
                 >
-                    <div style={ styles.modal }>
+                    <div style={ styles.map }>
                         <Map
                             updateDataUser={ updateDataUser }
                             infosUser={ infosUser }
