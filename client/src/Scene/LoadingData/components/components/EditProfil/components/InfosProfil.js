@@ -77,12 +77,12 @@ class InfosProfil extends Component {
         } = props.infosUser
         this.state = {
             inputArray: [
-                { name: "lastName", type: "text", value: lastName, placeholder: "lastName" },
-                { name: "firstName", type: "text", value: firstName, placeholder: "firstName" },
-                { name: "userName", type: "text", value: userName, placeholder: "userName" },
-                { name: "age", type: "number", value: (age === null) ? "" : age, placeholder: "age" },
+                { name: "lastName", type: "text", value: lastName, placeholder: "Last name" },
+                { name: "firstName", type: "text", value: firstName, placeholder: "First name" },
+                { name: "userName", type: "text", value: userName, placeholder: "Username" },
+                { name: "age", type: "number", value: (age === null) ? "" : age, placeholder: "Age" },
                 { name: "newPassword", type: "password", value: "", placeholder: "New password" },
-                { name: "email", type: "email", value: email, placeholder: "email" },
+                { name: "email", type: "email", value: email, placeholder: "Email" },
             ],
             profilePic: 'noImage.png'
         }
@@ -122,10 +122,6 @@ class InfosProfil extends Component {
                         verifyPassword(userName, password)
                             .then((res) => {
                                 if (res.success) {
-                                    newDataUser = {
-                                        ...newDataUser,
-                                        newPassword: password,
-                                    }
                                     updateInfosProfil(id, userName, newDataUser)
                                         .then((response) => {
                                             if (response === 1) {

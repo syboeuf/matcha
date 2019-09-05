@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import { ReactComponent as Pattern } from '../../../../../pattern.svg'
 import { UserConsumer } from "store/UserProvider";
-import { blockList } from "utils/fileProvider"
+import { recommended } from "utils/fileProvider"
 
 class Home extends Component {
 
@@ -10,7 +10,7 @@ class Home extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			profiles: []
+			recommended: []
 		}
 	}
 
@@ -30,16 +30,16 @@ class Home extends Component {
 	// } 
 
 	componentWillMount() {
+		console.log(1)
 		const { dataUser } = this.context
-		blockList(dataUser.userName)
-			.then((response) => console.log(response))
+		recommended(dataUser.userName, dataUser.orientation, dataUser.age)
+			.then((res) => this.setState({ recommended: res.recommended }))
 			.catch((error) => console.log(error))
 	}
 
 	render() {
 		const { dataUser } = this.context
-		const { profiles } = this.state
-		return <div />
+		const { recommended } = this.state
 		return (
 			<div>
 				<div style={{ position: 'absolute', width: '100%', zIndex: 2 }}>
@@ -49,9 +49,9 @@ class Home extends Component {
 					<div style={{ display: 'table', margin: '0 auto'}}>
 						<h2><span style={{ fontWeight: 'lighter', fontStyle: 'italic' }}>{ dataUser.userName }</span>, some profiles for you:</h2>
 					</div>
-					<div style={{display: 'flex', flexWrap: 'wrap'}}>
+					<div className="center" style={{display: 'flex', flexWrap: 'wrap', width: '90%', justifyContent: 'center' }}>
 						{
-							profiles.map((profile) => {
+							recommended.map((profile) => {
 								return (
 									<div className="col" style={{ textAlign: 'center', margin: 20 }} key={`user-${profile.userName}`}>
 										<img src={`${process.env.PUBLIC_URL}/imageProfil/${profile.id}/${profile.picture}`} alt="profile-pic" style={{ width: 200, height: 200, objectFit: 'cover', borderRadius: '50%' }}/>

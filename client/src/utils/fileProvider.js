@@ -1,6 +1,6 @@
-import hash from "hash.js"
+import Swal from "sweetalert2"
 
-import { checkEmail, checkPassword } from "utils/utils"
+import { checkEmail, checkPassword, checkAge } from "utils/utils"
 
 const optionsFetch = (dataBody) => {
     const options = {
@@ -47,8 +47,8 @@ export const getUserProfil = (id, profilName) => {
         .catch((error) => console.log(error))
 }
 
-export const getAllProfilName = () => {
-    return fetch("http://localhost:4000/users/findUser")
+export const getAllProfilName = (id) => {
+    return fetch("http://localhost:4000/users/findUser", optionsFetch({ id }))
         .then((response) => response.json())
         .then((responseJson) => responseJson)
         .catch((error) => console.log(error))
@@ -78,23 +78,46 @@ export const addNewUser = (newUser) => {
         .then((userExist) => {
             if (userExist === 0) {
                 if (!checkEmail(userData.email)) {
-                    alert("L'adresse email est invalide !!!")
+                    Swal.fire(
+                        'Error',
+                        'The email you entered is invalid',
+                        'error'
+                    )
                 } else if (!checkPassword(userData.password)) {
-                    alert("Le mot de passe n'est pas assez securise")
+                    Swal.fire(
+                        'Error',
+                        'Please choose a most secure password',
+                        'error'
+                    )
+                } else if (!checkAge(userData.age)) {
+                    Swal.fire(
+                        'Error',
+                        'You must be at least 18 years old',
+                        'error'
+                    )
                 } else {
                     const confirmKey = Math.floor(Math.random() * 10000000000000)
-                    const hashPassword = hash.sha256().update(userData.password).digest("hex")
                     fetch(`http://localhost:4000/users/add`, optionsFetch({
                         name: userData.userName,
-                        password: hashPassword,
+                        password: userData.password,
                         email: userData.email,
                         lastName: userData.lastName,
                         firstName: userData.firstName,
+                        age: userData.age,
                         confirmKey,
                     }))
+                    Swal.fire(
+                        'A mail has been sent',
+                        'Please check your inbox and follow the link to confirm your account',
+                        'success'
+                    )
                 }
             } else {
-                alert("Le nom ou l'adresse email est déjà utilisé")
+                Swal.fire(
+                    'Error',
+                    'Email or username already in use, sorry',
+                    'error'
+                )
             }
         })
 }
@@ -102,8 +125,7 @@ export const addNewUser = (newUser) => {
 export const checkLogIn = (inputArray) => {
     const name = inputArray[0].value
     const password = inputArray[1].value
-    const hashPassword = hash.sha256().update(password).digest("hex")
-    return fetch("http://localhost:4000/users/checkLogin", optionsFetch({ name, hashPassword }))
+    return fetch("http://localhost:4000/users/checkLogin", optionsFetch({ name, password }))
         .then((response) => response.json())
         .then((responseJson) => {
             if (responseJson.dataUser === undefined) {
@@ -115,8 +137,7 @@ export const checkLogIn = (inputArray) => {
 }
 
 export const verifyPassword = (name, password) => {
-    const hashPassword = hash.sha256().update(password).digest("hex")
-    return fetch("http://localhost:4000/users/verifyPassword", optionsFetch({ name, hashPassword }))
+    return fetch("http://localhost:4000/users/verifyPassword", optionsFetch({ name, password }))
         .then((response) => response.json())
         .catch((error) => console.log(error))
 }
@@ -141,16 +162,25 @@ export const findEmail = (email) => {
         .then((response) => response.json())
         .then((responseJson) => {
             if (responseJson.result === true) {
+                Swal.fire(
+                    'A mail has been sent',
+                    'Please check your inbox and follow the instructions to reset your password',
+                    'success'
+                )
                 return 1
             }
+            Swal.fire(
+                'Sorry',
+                'This email doesn\'t exist',
+                'error'
+            )
             return 0
         })
         .catch((error) => console.log(error))
 }
 
 export const recoverPassword = (newPassword, key) => {
-    const passwordHash = hash.sha256().update(newPassword).digest("hex")
-    fetch(`http://localhost:4000/users/recoverPassword`, optionsFetch({ passwordHash, key }))
+    fetch(`http://localhost:4000/users/recoverPassword`, optionsFetch({ password: newPassword, key }))
 }
 
 export const updateInfosProfil = (id, previousUserName, dataArray) => {
@@ -161,7 +191,6 @@ export const updateInfosProfil = (id, previousUserName, dataArray) => {
     } else if (!checkPassword(newPassword)) {
         return new Promise((resolve) => resolve(3))
     } else {
-        infosProfilUser.newPassword = hash.sha256().update(newPassword).digest("hex")
         return fetch("http://localhost:4000/users/updateInfosProfil", optionsFetch(infosProfilUser))
             .then((response) => response.text())
             .then((responseText) => (responseText === "1") ? 1 : 0)
@@ -183,6 +212,13 @@ export const deleteMatch = (user, profilName) => {
 
 export const blockList = (userName, orientation, limit) => {
     return fetch("http://localhost:4000/users/listBlockProfil", optionsFetch({ userName, orientation, limit }))
+        .then((response) => response.json())
+        .then((responseJson) => responseJson)
+        .catch((error) => console.log(error))
+}
+
+export const recommended = (userName, orientation, age) => {
+    return fetch("http://localhost:4000/users/recommended", optionsFetch({ userName, orientation, age }))
         .then((response) => response.json())
         .then((responseJson) => responseJson)
         .catch((error) => console.log(error))

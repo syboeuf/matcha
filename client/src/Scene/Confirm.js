@@ -27,17 +27,14 @@ class Confirm extends Component {
 
     render() {
         const { confirmed } = this.state;
+        const { history } = this.props;
         return (
             <div>
             {
                 (confirmed) ? (
-                    <div>
-                        Account confirmed
-                    </div>
+                    <div />
                 ) : (
-                    <div>
-                        ...
-                    </div>
+                    history.push('/')
                 )
             }
             </div>

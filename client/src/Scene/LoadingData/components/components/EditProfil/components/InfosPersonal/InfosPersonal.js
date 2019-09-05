@@ -10,6 +10,7 @@ import { withStyles } from "@material-ui/core/styles"
 import Modal from "@material-ui/core/Modal"
 import Swal from "sweetalert2"
 import { updateInfosPersonal } from "utils/fileProvider"
+
 const styles = {
     modal: {
         position: "absolute",
@@ -131,8 +132,8 @@ class InfosPersonal extends Component {
                     />
                 </div>
                 <button className={ classes.blueBtn } style={{marginRight: 10}} onClick={ () => this.onClick(infosPersonalUser, userName) }>Save</button>
-                <button className={ classes.blueBtn } onClick={ () => this.setState({ openMap: true }) }>Open map</button>
-                <button className={ classes.blueBtn } onClick={ () => this.setState({ openPersonLikeYou: true }) }>Person who like you</button>
+                <button className={ classes.blueBtn } style={{marginRight: 10}} onClick={ () => this.setState({ openMap: true }) }>Open map</button>
+                <button className={ classes.blueBtn } onClick={ () => this.setState({ openPersonLikeYou: true }) }>Last likes and notifications</button>
                 <Pictures updatePicture={ this.updatePicture } />
                 <Modal
                     aria-labelledby="modal-map"

@@ -3,6 +3,8 @@ import React, { Component } from "react"
 import { getListMatch } from "utils/fileProvider"
 import { UserConsumer } from "store/UserProvider"
 
+import { ReactComponent as Conversation } from './conversation.svg'
+
 import './Messages.css'
 
 const limits = 20
@@ -96,10 +98,10 @@ class Messages extends Component {
 
     addMessagesToChat = (chat) => {
         const { chats } = this.state
-        const index = chats.filter(u => u.id === chat.id)
+        const index = chats.findIndex(u => u.id === chat.id)
         let newChats = chats
         newChats[index] = chat
-        this.setState({ newChats, activeChat: chat }, () => { // verifier si on peux faire juste avec activeChat: chat
+        this.setState({ newChats, activeChat: chat }, () => {
             this.selector.current.scrollTop = this.selector.current.scrollHeight - this.valueScroll
         })
     }
@@ -259,8 +261,10 @@ class Messages extends Component {
                             (activeChat !== null)
                                 ? (
                                     <div ref={ this.selector } className="chat-sub-container col">
-                                        <span className="title row">Chat { activeChat.name }</span>
+                                        <span className="title row">Chat with { activeChat.name }</span>
                                         <div
+                                            className="pointer"
+                                            style={{ textAlign: 'center', color: '#1DA1F2', border: '1px solid #1DA1F2', borderRadius: 10, padding: 10, margin: 10 }}
                                             onMouseDown={ () => { this.onLoad = true } }
                                             onMouseUp={ () => { this.onLoad = false } }
                                             onClick={ () => this.moreMessages() }
@@ -268,12 +272,18 @@ class Messages extends Component {
                                             Load more messages
                                         </div>
                                         {
-                                            activeChat.messages.map((message, index) => (
-                                                <div key={ `message-${index}` } className={ (message.fromUser === dataUser.userName) ? "chat-message sent right" : "chat-message received left" }>
-                                                    <p>{ message.message }</p>
-                                                    <p>{ `Sent ${message.date}` }</p>
+                                            (activeChat.messages.length > 2) ? (
+                                                activeChat.messages.map((message, index) => (
+                                                    <div key={ `message-${index}` } className={ (message.fromUser === dataUser.userName) ? "chat-message sent right" : "chat-message received left" }>
+                                                        <p>{ message.message }</p>
+                                                        <p>{ `Sent ${message.date}` }</p>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <div style={{textAlign: 'center', color: 'gray', fontSize: '1.2em', padding: 20}}>
+                                                    No messages here
                                                 </div>
-                                            ))
+                                            )
                                         }
                                         <input
                                             className="message-input"
@@ -285,7 +295,14 @@ class Messages extends Component {
                                         <button onClick={ () => (activeChat !== null) ? this.sendMessage(activeChat.id, messageValue) : null }>Send</button>
                                     </div>
                                 )
-                                : null
+                                : (
+                                    <div>
+                                        <div style={{textAlign: 'center', color: 'gray', fontSize: '1.2em', padding: 20}}>
+                                            <p style={{marginBottom: 50}}>Select a discussion on left panel</p>
+                                            <Conversation width="400" height="400" />
+                                        </div>
+                                    </div>
+                                )
                         }
                     </div>
                 </div>

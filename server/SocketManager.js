@@ -3,7 +3,8 @@ const mysql = require("mysql")
 const connection = mysql.createConnection({
 	host: "localhost",
 	user: "root",
-	password: "input305",
+	password: "tpompon",
+	port: 3307,
 	database: "matcha",
 	multipleStatements: true,
 })
@@ -79,15 +80,17 @@ module.exports = (socket) => {
     })
 
     socket.on("USERNAME_UPDATED", ({ newUserName }) => {
-        userNotifications[newUserName] = userNotifications[socket.user.name]
-        delete userNotifications[socket.user.name]
-        connectedUsers[newUserName] = { ...connectedUsers[socket.user.name], name: newUserName }
-        delete connectedUsers[socket.user.name]
-        socket.user.name = newUserName
-        socket.emit("GET_NOTIFICATIONS", userNotifications[newUserName])
-        sendMessageToChatFromUser = sendMessageToChat(newUserName)
-        sendTypingFromUser = sendTypingToChat(newUserName)
-        sendNotificationToUser = sendNotification(newUserName)
+        if (socket.user.name !== newUserName) {
+            userNotifications[newUserName] = userNotifications[socket.user.name]
+            delete userNotifications[socket.user.name]
+            connectedUsers[newUserName] = { ...connectedUsers[socket.user.name], name: newUserName }
+            delete connectedUsers[socket.user.name]
+            socket.user.name = newUserName
+            socket.emit("GET_NOTIFICATIONS", userNotifications[newUserName])
+            sendMessageToChatFromUser = sendMessageToChat(newUserName)
+            sendTypingFromUser = sendTypingToChat(newUserName)
+            sendNotificationToUser = sendNotification(newUserName)
+        }
     })
 
     socket.on("PRIVATE_MESSAGE", ({ reciever, sender, activeChat, chatId, loadMoreMessages, limitMessages }) => {
@@ -97,7 +100,7 @@ module.exports = (socket) => {
                 if (error) {
                     return error
                 } else {
-                    newChat = createChat({ id: chatId, messages: results, name: `${reciever}&${sender}`, users: [reciever, sender] })
+                    newChat = createChat({ id: chatId, messages: results, name: `${reciever}`, users: [reciever, sender] })
                     socket.emit("PRIVATE_MESSAGE", newChat)
                 }
             })

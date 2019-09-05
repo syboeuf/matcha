@@ -60,8 +60,8 @@ class Discover extends Component {
         } = dataUser
         if (!age || !biography || !gender || !orientation || !listInterest) {
             return (
-                <div>
-                    Vous devez remplir votre profil pour acceder a cette page !
+                <div style={{textAlign: 'center', marginTop: 200, fontSize: '1.6em', color: 'gray'}}>
+                    Update your profile first to access this page
                 </div>
             )
         }

@@ -8,6 +8,14 @@ export const checkPassword = (password) => {
     return regexPassword.test(password)
 }
 
+export const checkAge = (age) => {
+    if (parseInt(age) < 18) {
+        return false
+    } else {
+        return true
+    }
+}
+
 export const uniqueId = () => {
     return `${Date.now()}${Math.floor(Math.random() * 10000)}`
 }

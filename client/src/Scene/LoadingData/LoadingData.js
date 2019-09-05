@@ -2,19 +2,14 @@ import React, { Component } from "react"
 import { withRouter } from "react-router-dom"
 import { UserConsumer } from "store/UserProvider"
 import * as ELG from "esri-leaflet-geocoder"
-
 import {
     getDataFromCookie, getLocation, getUserApproximateLocation, setLocationToNull,
     setLocation, deleteCookie,
 } from "utils/fileProvider"
-
 import Loader from "components/Loader"
 import PageWithHeader from "./components/PageWithHeader"
-
 class LoadingData extends Component {
-
     static contextType = UserConsumer
-
     constructor(props) {
         super(props)
         this.state = {
@@ -22,7 +17,6 @@ class LoadingData extends Component {
             loadGeolocalistationApproximateSuccess: false
         }
     }
-
     componentWillMount() {
         getDataFromCookie()
             .then((data) => {
@@ -46,7 +40,7 @@ class LoadingData extends Component {
                                             coords: `${results.latlng.lat} , ${results.latlng.lng}`,
                                             address: results.address.LongLabel,
                                         }
-                                        setLocation(data.dataUser[0].userName, dataAddress)
+                                        setLocation(data.dataUser[0][0].userName, dataAddress)
                                             .then(() => {
                                                 this.context.setNewDataUser({
                                                     ...this.context.dataUser,
@@ -61,7 +55,14 @@ class LoadingData extends Component {
                         })
                         .catch(() => {
                             setLocationToNull(data.dataUser[0][0].userName)
-                                .then(() => this.setState({ loadGeolocalistationSuccess: true }))
+                                .then(() => {
+                                    this.context.setNewDataUser({
+                                        ...this.context.dataUser,
+                                        userLocation: null,
+                                        userAddress: null,
+                                    })
+                                    this.setState({ loadGeolocalistationSuccess: true })
+                                })
                                 .catch((error) => console.log(error))
                         })
                     getUserApproximateLocation(data.dataUser[0][0].userName)
@@ -78,12 +79,10 @@ class LoadingData extends Component {
             })
             .catch((error) => console.log(error))
     }
-
     componentWillUnmount() {
         const { socket } = this.context
         socket.off("USER_ALREAY_CONNECTED")
     }
-
     userAlreadyConnect = (userConnected) => {
         const { history } = this.props
         if (userConnected === true) {
@@ -93,12 +92,10 @@ class LoadingData extends Component {
             console.log("user connect")
         }
     }
-
     setUser = (user) => {
         const { socket } = this.context
         socket.emit("USER_CONNECTED", user)
     }
-
     verifyIfUserIsConnected = ({ user, isUser }) => {
         const { socket } = this.context
         if (isUser) {
@@ -107,7 +104,6 @@ class LoadingData extends Component {
             this.setUser(user)
         }
     }
-
     render() {
         const { loadGeolocalistationApproximateSuccess, loadGeolocalistationSuccess } = this.state
         if (loadGeolocalistationApproximateSuccess !== true || loadGeolocalistationSuccess !== true) {
@@ -115,7 +111,5 @@ class LoadingData extends Component {
         }
         return <PageWithHeader />
     }
-
 }
-
 export default withRouter(LoadingData)

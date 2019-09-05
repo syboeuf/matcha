@@ -36,19 +36,16 @@ class Notifications extends Component {
             notificationsArray: null,
             maxNotifications: limitNotificationNumber,
             isOpen: false,
-            checkRead: false,
+            checkRead: undefined,
         }
         this.selector = React.createRef()
     }
 
-    componentWillMount() {
+    componentDidMount() {
         const { socket } = this.context
         socket.on("GET_NOTIFICATIONS", this.addNotifications)
         this.getNotifications()
-    }
-
-    componentDidMount() {
-		window.addEventListener("mousedown", this.closeDropDown)
+        window.addEventListener("mousedown", this.closeDropDown)
     }
 
     componentWillUnmount() {
@@ -82,7 +79,7 @@ class Notifications extends Component {
             if (notificationsArray.id === notifId) {
                 notificationsArray.notificationArray = [{ message: notification, read: 0 }, ...notificationsArray.notificationArray]
             }
-            this.setState({ notificationsArray })
+            this.setState({ notificationsArray, checkRead: 1 })
         }
     }
 
@@ -148,7 +145,7 @@ class Notifications extends Component {
                             <div style={{ position: 'absolute', right: 25, marginTop: 20, overflowY: "auto", height: "60%", width: 200 }} className="menu">
                             {
                                 notificationsArray.notificationArray.map((notification, index) => (
-                                    <div key={ `Menu-${index}` } className="menu-item" style={ { backgroundColor: (notification.read === 0) ? "red" : null } }>
+                                    <div key={ `Menu-${index}` } className="menu-item" style={ { backgroundColor: (notification.read === 0) ? "rgba(74, 144, 226, .1)" : null } }>
                                         { notification.message }
                                     </div>
                                 ))

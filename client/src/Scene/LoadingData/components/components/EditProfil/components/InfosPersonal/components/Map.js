@@ -8,15 +8,11 @@ import {
 import { withRouter } from "react-router-dom"
 import { UserConsumer } from "store/UserProvider"
 import { IoMdLocate } from "react-icons/io"
-
 import {
-    setNewLocation, getDataPeople, getLocation, setLocation, getUserApproximateLocation,
+    setNewLocation, getDataPeople, getLocation, setLocation, getUserApproximateLocation, setLocationToNull,
 } from "utils/fileProvider"
-
 class MapComp extends Component {
-
     static contextType = UserConsumer
-
     constructor(props) {
         super(props)
         this.state = {
@@ -24,16 +20,15 @@ class MapComp extends Component {
             dataPeople: undefined,
         }
     }
-
     componentWillMount() {
-        this.findLocation(this.props)
+        this.findLocation()
         getDataPeople()
             .then((response) => this.setState({ dataPeople: response.dataPeople }))
             .catch((error) => console.log(error))
     }
-
     componentDidMount() {
-        const { updateDataUser, infosUser } = this.props
+        const { dataUser } = this.context
+        const { updateDataUser } = this.props
         const map = this.leafleMap.leafletElement
         const searchControl = new ELG.Geosearch({
             useMapBounds: false,
@@ -48,38 +43,29 @@ class MapComp extends Component {
                 this.setState({ center: [data.results[i].latlng.lat, data.results[i].latlng.lng] },
                     () => {
                         const userLocation = `${data.results[i].latlng.lat}, ${data.results[i].latlng.lng}`
-                        updateDataUser({ ...infosUser, userLocation })
-                        setNewLocation(infosUser.userName, `${data.results[i].latlng.lat}, ${data.results[i].latlng.lng}`, data.results[i].text)
+                        updateDataUser({ ...dataUser, userLocation })
+                        setNewLocation(dataUser.userName, `${data.results[i].latlng.lat}, ${data.results[i].latlng.lng}`, data.results[i].text)
                     })
             }
         })
     }
-
-    componentWillReceiveProps(nextProps) {
-        const { userLocation, userApproximateCity } = nextProps.infosUser
-        if (this.props.infosUser.userLocation !== userLocation || this.props.infosUser.userApproximateCity !== userApproximateCity) {
-            this.findLocation(nextProps)
-        }
-    }
-
-    findLocation = (location) => {
-        const { userLocation, userApproximateLocation } = location.infosUser
+    findLocation = () => {
+        const { dataUser } = this.context
+        const { userLocation, userApproximateLocation } = dataUser
         let coords
         if (userLocation === null) {
             coords = userApproximateLocation.split(",")
         } else {
-            coords = userLocation.split(", ")
+            coords = userLocation.split(",")
         }
         this.setState({ center: coords })
     }
-
     onClick = (data) => {
-        const { history, infosUser } = this.props
+        const { history } = this.props
         const { socket, dataUser } = this.context
-        socket.emit("NOTIFICATIONS_SENT", { reciever: data.userName, notification: `${infosUser.userName} visit you're profil` })
-        history.push("/InfosPerson", { data: { id: data.id, userName: dataUser.userName } })
+        socket.emit("NOTIFICATIONS_SENT", { reciever: data.userName, notification: `${dataUser.userName} visit you're profil` })
+        history.push("/InfosPerson", { data: { id: data.id, userName: dataUser.userName, profilName: data.userName } })
     }
-
     geolocate = () => {
         getLocation()
             .then((response) => {
@@ -91,7 +77,7 @@ class MapComp extends Component {
                         } else {
                             const { dataUser } = this.context
                             const dataAddress = {
-                                coords: `${results.latlng.lat} , ${results.latlng.lng}`,
+                                coords: `${results.latlng.lat},${results.latlng.lng}`,
                                 address: results.address.LongLabel,
                             }
                             setLocation(dataUser.userName, dataAddress)
@@ -109,21 +95,22 @@ class MapComp extends Component {
             })
             .catch(() => {
                 const { dataUser, setNewDataUser } = this.context
+                setLocationToNull(dataUser.userName)
                 getUserApproximateLocation(dataUser.userName)
                     .then((response) => {
                         setNewDataUser({
                             ...this.context.dataUser,
                             userApproximateLocation: response.approximateLocation,
                             userApproximateCity: response.userApproximateCity,
+                            userLocation: null,
+                            userAddress: null,
                         })
                         this.setState({ center: response.approximateLocation.split(",") })
                     })
             })
     }
-
     render() {
-        const { infosUser } = this.props
-        const { userLocation, userName } = infosUser
+        const { userLocation, userName } = this.context.dataUser
         const { center, dataPeople } = this.state
         return (
             <Map
@@ -180,7 +167,5 @@ class MapComp extends Component {
             </Map>
         )
     }
-
 }
-
 export default withRouter(MapComp)

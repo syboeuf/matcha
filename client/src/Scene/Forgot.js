@@ -1,7 +1,38 @@
 import React, { Component } from "react"
 
+import Swal from "sweetalert2"
+
+import Form from "components/Form"
+import Typography from "@material-ui/core/Typography"
+import Container from "@material-ui/core/Container"
+import { withStyles } from "@material-ui/core/styles"
+
 import { verifyKeyForgot, recoverPassword } from "utils/fileProvider"
 import { checkPassword } from "utils/utils"
+
+const styles = (theme) => ({
+    container: {
+        background: 'white',
+        padding: 50,
+        borderRadius: 10,
+        textAlign: 'center'
+    },
+    paper: {
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center"
+    },
+    submit: {
+        marginTop: '40px',
+        padding: '20px',
+        width: "100%",
+        backgroundColor: '#c31e27',
+        borderRadius: '5px',
+        color: 'white',
+        border: 'none',
+        textAlign: 'center',
+    }
+  })
 
 class Confirm extends Component {
 
@@ -9,7 +40,11 @@ class Confirm extends Component {
         super(props)
         this.state = {
 			key: this.props.match.params.key,
-			user: {}
+            user: {},
+            inputArray: [
+                { name: "newPassword", type: "password", value: "", placeholder: "New password" },
+                { name: "confirmPassword", type: "password", value: "", placeholder: "Confirm password" },
+            ]
         }
     }
 
@@ -17,19 +52,37 @@ class Confirm extends Component {
         this.confirmKey();
     }
 
+    onChangeValue = (e, index) => {
+        const { inputArray } = this.state
+        inputArray[index].value = e.target.value
+        this.setState({ inputArray })
+    }
+
     setNewPassword = () => {
-        const { key } = this.state;
-        const password = document.getElementsByClassName('newPassword')[0].value;
-        const confirmPassword = document.getElementsByClassName('confirmPassword')[0].value;
+        const { key, inputArray } = this.state;
+        const password = inputArray[0].value;
+        const confirmPassword = inputArray[1].value;
         if (password.trim() !== "" && confirmPassword !== "" && password === confirmPassword) {
             if (checkPassword(password)) {
                 recoverPassword(password, key)
-                alert("Password updated")
+                Swal.fire(
+                    'Success',
+                    'Your password has been updated',
+                    'success'
+                )
             } else {
-                alert("Password not safe, please retry")
+                Swal.fire(
+                    'Error',
+                    'Please choose a more safe password',
+                    'error'
+                )
             }
         } else {
-            alert("Passwords don't match or empty")
+            Swal.fire(
+                'Error',
+                'Passwords don\'t match or empty fields',
+                'error'
+            )
         }
     }
 
@@ -45,22 +98,24 @@ class Confirm extends Component {
 	}
 
     render() {
-        const { confirmed, user } = this.state;
+        const { confirmed, user, inputArray } = this.state;
+        const { classes } = this.props;
         return (
-            <div>
+            <div style={{ height: '100vh', backgroundImage: 'url(../../background.png)', backgroundPosition: 'center', backgroundRepeat: 'no-repeat',backgroundSize: 'cover' }}>
             {
                 (confirmed) ? (
-                    <div>
-						Hello, {user.userName}
-                        <input className="newPassword" type="password" placeholder="New password" />
-						<input className="confirmPassword" type="password" placeholder="Confirm password" />
-						<button onClick={() => this.setNewPassword()}>Submit</button>
+                    <div style={{ paddingTop: 80 }}>
+                        <Container component="main" maxWidth="xs" className={ classes.container }>
+                            <div className={ classes.paper }>
+                                <Typography component="h1" variant="h5">
+                                    Hi <span style={{ fontWeight: 'bold' }}>{user.userName}</span>, reset your password
+                                </Typography>
+                                <Form inputArray={ inputArray } onChangeValue={ this.onChangeValue } />
+                                <button onClick={() => this.setNewPassword()} className={ classes.submit }>Submit</button>
+                            </div>
+                        </Container>
                     </div>
-                ) : (
-                    <div>
-                        ...
-                    </div>
-                )
+                ) : <div />
             }
             </div>
         )
@@ -68,4 +123,4 @@ class Confirm extends Component {
 
 }
 
-export default Confirm
+export default (withStyles(styles)(Confirm))

@@ -2,7 +2,6 @@ import React, { Component } from "react"
 import { withRouter } from "react-router-dom"
 
 import Avatar from "@material-ui/core/Avatar"
-import CssBaseline from "@material-ui/core/CssBaseline"
 import Grid from "@material-ui/core/Grid"
 import Box from "@material-ui/core/Box"
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined"
@@ -10,10 +9,9 @@ import Typography from "@material-ui/core/Typography"
 import { withStyles } from "@material-ui/core/styles"
 import Container from "@material-ui/core/Container"
 
+import Form from "components/Form"
 
 import { addNewUser } from "utils/fileProvider"
-
-import Form from "components/Form"
 
 const styles = (theme) => ({
     "@global": {
@@ -53,8 +51,9 @@ class CreateAccount extends Component {
         super(props)
         this.state = {
             inputArray: [
-                { name: "lastName", type: "text", value: "", placeholder: "Lastname" },
-                { name: "firstName", type: "text", value: "", placeholder: "Firstname" },
+                { name: "firstName", type: "text", value: "", placeholder: "First name" },
+                { name: "lastName", type: "text", value: "", placeholder: "Last name" },
+                { name: "age", type: "number", value: "", placeholder: "Age" },
                 { name: "userName", type: "text", value: "", placeholder: "Username" },
                 { name: "password", type: "password", value: "", placeholder: "Password" },
                 { name: "confirmPassword", type: "password", value: "", placeholder: "Confirm password" },

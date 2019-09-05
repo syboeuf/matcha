@@ -259,3 +259,19 @@ body {
 .pointer:hover {
   cursor: pointer;
 }
+
+.sort-btn {
+  display: table;
+  border: 1px solid #4A90E2;
+  background-color: white;
+  font-weight: bold;
+  color: #4A90E2;
+  border-radius: 10px;
+  padding: 10px;
+  transition: .3s all ease;
+}
+.sort-btn:hover {
+  color: white;
+  background-color: rgb(65, 130, 206);
+  cursor: pointer;
+}

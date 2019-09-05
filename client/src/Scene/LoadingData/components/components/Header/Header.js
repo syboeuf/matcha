@@ -13,19 +13,6 @@ class Header extends React.Component {
 
     static contextType = UserConsumer
 
-    pageComponent = (highResolution) => {
-        const { history } = this.props
-        const stylesGrid = { display: "flex", float: "right", alignItems: "center" }
-        return (
-            <div style={ (highResolution === true) ? { ...stylesGrid, fontSize: "1.3em" } : null }>
-                <span onClick={ () => history.push("/Discover") } className="header-link"><span style={{ verticalAlign: 'middle', marginRight: 5 }}><FaRegHeart /></span>Discover</span>
-                <span onClick={ () => history.push("/Messages") } className="header-link"><span style={{ verticalAlign: 'middle', marginRight: 5 }}><FaRegEnvelope /></span>Messages</span>
-                <span className="header-link"><Notifications /></span>
-                <span style={{ marginRight: 20, height: 70 }}><Menu /></span>
-            </div>
-        )
-    }
-
     toggleDropdownLowRes = () => {
         const dropdownLowRes = document.getElementsByClassName('dropdown-lowres')[0];
         if (dropdownLowRes) {
@@ -55,13 +42,17 @@ class Header extends React.Component {
                         <div style={{ height: 103 }}><img src={ window.location.origin + "/img/header.png" } onClick={ () => history.push("/") } className="logo" alt="Logo" style={{ width: 200 }} /></div>
                     </Grid>
                     <div className="header-navigation">
-                        { this.pageComponent(true) }
+                        <div style={ { display: "flex", float: "right", alignItems: "center", fontSize: "1.3em" } }>
+                            <span onClick={ () => history.push("/Discover") } className="header-link"><span style={{ verticalAlign: 'middle', marginRight: 5 }}><FaRegHeart /></span>Discover</span>
+                            <span onClick={ () => history.push("/Messages") } className="header-link"><span style={{ verticalAlign: 'middle', marginRight: 5 }}><FaRegEnvelope /></span>Messages</span>
+                            <span style={{ marginRight: 20, height: 70 }}><Menu /></span>
+                        </div>
                     </div>
                     <div style={{alignItems: 'center'}} className="dropdown-lowres-wrapper row">
                         <Notifications />
-                            <div onClick={() => this.toggleDropdownLowRes()} className="pointer" style={{ marginRight: 50, marginLeft: 50 }}>
-                                <MenuIcon width="35" height="35" fill="#000" />
-                            </div>
+                        <div onClick={() => this.toggleDropdownLowRes()} className="pointer" style={{ marginRight: 50, marginLeft: 50 }}>
+                            <MenuIcon width="35" height="35" fill="#000" />
+                        </div>
                     </div>
                 </Grid>
                 <div className="dropdown-lowres">
