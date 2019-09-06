@@ -122,6 +122,9 @@ class InfosProfil extends Component {
                         verifyPassword(userName, password)
                             .then((res) => {
                                 if (res.success) {
+                                    if (newDataUser.newPassword.trim() === '') {
+                                        newDataUser.newPassword = password
+                                    }
                                     updateInfosProfil(id, userName, newDataUser)
                                         .then((response) => {
                                             if (response === 1) {

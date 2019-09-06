@@ -89,21 +89,23 @@ class Pictures extends Component {
     }
 
     handleImageChange = (e, index) => {
-        const reader = new FileReader()
         const file = e.target.files[0]
-        if (file.size > 5000000) {
-            alert("The size is too large")
-            return
-        }
-        reader.onloadend = () => {
-            const { picturesFiles } = this.state
-            picturesFiles[index].file = file
-            picturesFiles[index].imagePreviewUrl = reader.result
-            this.setState({ ...this.state, picturesFiles })
-            this.handleSubmit(index)
-        }
         if (file) {
-            reader.readAsDataURL(file)
+            if (file.size > 5000000) {
+                alert("The size is too large")
+                return
+            }
+            const reader = new FileReader()
+            reader.onloadend = () => {
+                const { picturesFiles } = this.state
+                picturesFiles[index].file = file
+                picturesFiles[index].imagePreviewUrl = reader.result
+                this.setState({ ...this.state, picturesFiles })
+                this.handleSubmit(index)
+            }
+            if (file) {
+                reader.readAsDataURL(file)
+            }
         }
     }
 

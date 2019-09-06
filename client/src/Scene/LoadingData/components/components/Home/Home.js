@@ -1,6 +1,5 @@
 import React, { Component } from "react"
-import { ReactComponent as Pattern } from '../../../../../pattern.svg'
-import { UserConsumer } from "store/UserProvider";
+import { UserConsumer } from "store/UserProvider"
 import { recommended } from "utils/fileProvider"
 
 class Home extends Component {
@@ -14,31 +13,34 @@ class Home extends Component {
 		}
 	}
 
-	// componentWillMount() {
-	// 	const { socket } = this.context
-	// 	socket.on("INLINE_USER_CONNECTED", this.inlineUser)
-	// 	socket.emit("INLINE_USER_CONNECTED")
-	// }
-
-	// componentWillUnmount() {
-	// 	const { socket } = this.context
-	// 	socket.off("INLINE_USER_CONNECTED")
-	// }
-
-	// inlineUser = (userConnected) => {
-	// 	this.setState({ userConnected })
-	// } 
-
 	componentWillMount() {
-		console.log(1)
 		const { dataUser } = this.context
 		recommended(dataUser.userName, dataUser.orientation, dataUser.age)
 			.then((res) => this.setState({ recommended: res.recommended }))
 			.catch((error) => console.log(error))
 	}
 
+	onClick = (id, profilName) => {
+		const { history } = this.props
+		const { dataUser } = this.context
+		history.push("/InfosPerson", { data: { id, userName: dataUser.userName, profilName } })
+	}
+
 	render() {
 		const { dataUser } = this.context
+        if (dataUser === undefined) {
+            return <div />
+        }
+        const {
+            age, biography, gender, orientation, listInterest,
+        } = dataUser
+        if (!age || !biography || !gender || !orientation || !listInterest) {
+            return (
+                <div style={{textAlign: 'center', marginTop: 200, fontSize: '1.6em', color: 'gray'}}>
+                    Update your profile first to access this page
+                </div>
+            )
+		}
 		const { recommended } = this.state
 		return (
 			<div>
@@ -53,7 +55,7 @@ class Home extends Component {
 						{
 							recommended.map((profile) => {
 								return (
-									<div className="col" style={{ textAlign: 'center', margin: 20 }} key={`user-${profile.userName}`}>
+									<div onClick={ () => this.onClick(profile.id, profile.userName) } className="col" style={{ textAlign: 'center', margin: 20 }} key={`user-${profile.userName}`}>
 										<img src={`${process.env.PUBLIC_URL}/imageProfil/${profile.id}/${profile.picture}`} alt="profile-pic" style={{ width: 200, height: 200, objectFit: 'cover', borderRadius: '50%' }}/>
 										<p style={{paddingLeft: 20, paddingRight: 20, wordBreak: 'break-word'}}>{profile.userName} ({profile.age} ans)</p>
 									</div>

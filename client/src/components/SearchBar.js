@@ -31,7 +31,8 @@ class SearchBar extends React.Component {
     }
     onClick = (id, profilName) => {
         const { history } = this.props
-        const { dataUser } = this.context
+        const { dataUser, socket } = this.context
+        socket.emit("NOTIFICATIONS_SENT", { reciever: profilName, notification: `${dataUser.userName} visit you're profil` })
         history.push("/InfosPerson", { data: { id, userName: dataUser.userName, profilName } })
     }
     render() {

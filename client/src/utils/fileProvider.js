@@ -1,6 +1,6 @@
 import Swal from "sweetalert2"
 
-import { checkEmail, checkPassword, checkAge } from "utils/utils"
+import { checkEmail, checkPassword } from "utils/utils"
 
 const optionsFetch = (dataBody) => {
     const options = {
@@ -89,10 +89,16 @@ export const addNewUser = (newUser) => {
                         'Please choose a most secure password',
                         'error'
                     )
-                } else if (!checkAge(userData.age)) {
+                } else if (userData.age < 18) {
                     Swal.fire(
                         'Error',
                         'You must be at least 18 years old',
+                        'error'
+                    )
+                } else if (userData.age > 150) {
+                    Swal.fire(
+                        'Error',
+                        'You are too old',
                         'error'
                     )
                 } else {

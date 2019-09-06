@@ -13,6 +13,23 @@ class Header extends React.Component {
 
     static contextType = UserConsumer
 
+    constructor(props) {
+        super(props)
+        this.state = { width: window.innerWidth }
+    }
+
+    componentDidMount() {
+        window.addEventListener("resize", this.updateDimension)
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.updateDimension)
+    }
+
+    updateDimension = () => {
+        this.setState({ width: window.innerWidth })
+    }
+
     toggleDropdownLowRes = () => {
         const dropdownLowRes = document.getElementsByClassName('dropdown-lowres')[0];
         if (dropdownLowRes) {
@@ -35,6 +52,7 @@ class Header extends React.Component {
         if (dataUser === undefined) {
             return <div />
         }
+        const { width } = this.state
         return (
             <div>
                 <Grid container direction="row" className="header">
@@ -45,11 +63,12 @@ class Header extends React.Component {
                         <div style={ { display: "flex", float: "right", alignItems: "center", fontSize: "1.3em" } }>
                             <span onClick={ () => history.push("/Discover") } className="header-link"><span style={{ verticalAlign: 'middle', marginRight: 5 }}><FaRegHeart /></span>Discover</span>
                             <span onClick={ () => history.push("/Messages") } className="header-link"><span style={{ verticalAlign: 'middle', marginRight: 5 }}><FaRegEnvelope /></span>Messages</span>
+                            { (width > 767) ? <Notifications /> : null }
                             <span style={{ marginRight: 20, height: 70 }}><Menu /></span>
                         </div>
                     </div>
                     <div style={{alignItems: 'center'}} className="dropdown-lowres-wrapper row">
-                        <Notifications />
+                        { (width < 768) ? <Notifications /> : null }
                         <div onClick={() => this.toggleDropdownLowRes()} className="pointer" style={{ marginRight: 50, marginLeft: 50 }}>
                             <MenuIcon width="35" height="35" fill="#000" />
                         </div>

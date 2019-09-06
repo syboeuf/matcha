@@ -65,10 +65,12 @@ class Messages extends Component {
         socket.off("LOAD_MORE_MESSAGE")
         getListMatch(dataUser.userName)
             .then((list) => {
-                list.listMatch.forEach((match) => {
-                    socket.off(`MESSAGE_RECIEVED-${match.chatId}`)
-                    socket.off(`TYPING-${match.chatId}`)
-                })
+                if (list.listMatch !== undefined) {
+                    list.listMatch.forEach((match) => {
+                        socket.off(`MESSAGE_RECIEVED-${match.chatId}`)
+                        socket.off(`TYPING-${match.chatId}`)
+                    })
+                }
             })
             .catch((error) => console.log(error))
     }
@@ -272,7 +274,7 @@ class Messages extends Component {
                                             Load more messages
                                         </div>
                                         {
-                                            (activeChat.messages.length > 2) ? (
+                                            (activeChat.messages.length > 0) ? (
                                                 activeChat.messages.map((message, index) => (
                                                     <div key={ `message-${index}` } className={ (message.fromUser === dataUser.userName) ? "chat-message sent right" : "chat-message received left" }>
                                                         <p>{ message.message }</p>

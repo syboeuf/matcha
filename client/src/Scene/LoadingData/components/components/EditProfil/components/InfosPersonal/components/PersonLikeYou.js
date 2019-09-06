@@ -1,4 +1,5 @@
 import React, { Component } from "react"
+import { withRouter } from "react-router-dom"
 
 import { getListPersonLikeYou, getNotificationsNoRead } from "utils/fileProvider"
 
@@ -21,6 +22,11 @@ class PersonLikeYou extends Component {
             .catch((error) => console.log(error))
     }
 
+    onClick = (id, profilName) => {
+        const { history, userName } = this.props
+        history.push("/InfosPerson", { data: { id, userName, profilName } })
+    }
+
     render() {
         const { listOfPerson, listOfNotif } = this.state
         return (
@@ -37,7 +43,7 @@ class PersonLikeYou extends Component {
                         listOfPerson.map((person, index) => (
                             (person.likeUser === 1)
                                 ? (
-                                    <div className="col" style={{textAlign: 'center', margin: 10}} key={ `person-${index}` }>
+                                    <div onClick={ () => this.onClick(person.id, person.userName) } className="col" style={{textAlign: 'center', margin: 10}} key={ `person-${index}` }>
                                         <img
                                             alt="picProfil"
                                             style={ { width: 100, height: 100, objectFit: 'cover', borderRadius: '50%' } }
@@ -56,4 +62,4 @@ class PersonLikeYou extends Component {
 
 }
 
-export default PersonLikeYou
+export default withRouter(PersonLikeYou)

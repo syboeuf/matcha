@@ -324,6 +324,9 @@ class CollectionView extends Component {
             listProfil, listTag, age, distance, score,
             sortAge, sortDistance, sortScore, sortTag,
         } = this.state
+        if (listPerson === null) {
+            return <div />
+        }
         return (
             <div>
                 <SearchBar />

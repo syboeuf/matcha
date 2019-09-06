@@ -29,7 +29,9 @@ class Discover extends Component {
         const { maxShowProfil } = this.state
         const { dataUser } = this.context
         blockList(dataUser.userName, dataUser.orientation, maxShowProfil)
-            .then((response) => this.setState({ listPerson: response.blockList }))
+            .then((response) => {
+                this.setState({ listPerson: response.blockList })
+            })
             .catch((error) => console.log(error))
     }
 

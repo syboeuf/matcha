@@ -85,7 +85,6 @@ class InfosPerson extends Component {
         const { dataUser } = this.context
         const { data } = this.props.location.state
         blockProfil(dataUser.userName, data.profilName)
-        // Recup la liste des utilisateurs bloqués par l'user connecté, pour savoir si il bloque une personne deja bloquee ou non
         this.checkBlock()
         Swal.fire(
             'User blocked',

@@ -3,7 +3,6 @@ import { withRouter } from "react-router-dom"
 import { UserConsumer } from "store/UserProvider"
 
 import Avatar from "@material-ui/core/Avatar"
-import CssBaseline from "@material-ui/core/CssBaseline"
 import Grid from "@material-ui/core/Grid"
 import Box from "@material-ui/core/Box"
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined"

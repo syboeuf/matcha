@@ -138,7 +138,7 @@ let createTableMatcha =
                 firstName varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
                 age int(11) DEFAULT NULL,
                 lastConnection datetime DEFAULT NULL,
-                confirmKey bigint(20) NOT NULL,
+                confirmKey bigint(20) DEFAULT NULL,
                 confirmKeyOk int(11) NOT NULL DEFAULT '0',
                 keyResetPassword varchar(255) DEFAULT NULL,
                 bantime varchar(50) NOT NULL DEFAULT '0'
@@ -580,7 +580,7 @@ app.post("/users/updateInfosProfil", async(req, res) => {
 							return res.send(error)
 						} else {
 							res.clearCookie("token")
-							const token = jwt.sign({ name: userName, hashPassword: newPassword }, jwtKey, {
+							const token = jwt.sign({ name: userName, hashPassword: hash }, jwtKey, {
 								algorithm: "HS256",
 								expiresIn: "24h",
 							})
@@ -977,7 +977,7 @@ app.post("/users/findUser", async(req, res) => {
 		return res.json({ authentified: false })
 	}
 	const { id } = req.body
-	const getAllName = `SELECT p.id, p.userName FROM profil p INNER JOIN picturesusers i ON i.userId=p.id WHERE p.id<>${id} GROUP BY p.id LIMIT 15`	
+	const getAllName = `SELECT p.id, p.userName FROM profil p INNER JOIN picturesusers i ON i.userId=p.id WHERE p.id<>${id} GROUP BY p.id`	
 	connection.query(getAllName, (error, results) => {
 		if (error) {
 			return res.send(error)
