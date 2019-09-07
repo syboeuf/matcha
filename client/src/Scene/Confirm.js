@@ -9,17 +9,22 @@ class Confirm extends Component {
         this.state = {
             key: this.props.match.params.key
         }
+        this._isMounted = true
     }
 
     componentWillMount() {
         this.confirmKey();
     }
 
+    componentWillUnmount() {
+        this._isMounted = false
+    }
+
     confirmKey = () => {
         const { key } = this.state;
         verifyKey(key)
             .then((res) => {
-                if (res.success) {
+                if (res.success && this._isMounted) {
                     this.setState({ confirmed: true })
                 }
             })

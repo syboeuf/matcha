@@ -19,11 +19,16 @@ class MapComp extends Component {
             center: [48.866667, 2.33333],
             dataPeople: undefined,
         }
+        this._isMounted = true
     }
     componentWillMount() {
         this.findLocation()
         getDataPeople()
-            .then((response) => this.setState({ dataPeople: response.dataPeople }))
+            .then((response) => {
+                if (this._isMounted) {
+                    this.setState({ dataPeople: response.dataPeople })
+                }
+            })
             .catch((error) => console.log(error))
     }
     componentDidMount() {
@@ -48,6 +53,9 @@ class MapComp extends Component {
                     })
             }
         })
+    }
+    componentWillUnmount() {
+        this._isMounted = false
     }
     findLocation = () => {
         const { dataUser } = this.context
@@ -134,10 +142,11 @@ class MapComp extends Component {
                                     iconSize: [30, 30],
                                 })
                                 let position
+                                console.log()
                                 if (data.userLocation === null) {
                                     position = data.userApproximateLocation.split(",")
                                 } else {
-                                    position = data.userLocation.split(", ")
+                                    position = data.userLocation.split(",")
                                 }
                                 return (
                                     (data.userName === userName)

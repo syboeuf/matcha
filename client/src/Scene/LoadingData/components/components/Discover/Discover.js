@@ -19,10 +19,15 @@ class Discover extends Component {
             dataPerson: null,
             maxShowProfil: limitProfil,
         }
+        this._isMounted = true
     }
 
     componentWillMount() {
         this.getListPerson()
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false
     }
 
     getListPerson = () => {
@@ -30,7 +35,9 @@ class Discover extends Component {
         const { dataUser } = this.context
         blockList(dataUser.userName, dataUser.orientation, maxShowProfil)
             .then((response) => {
-                this.setState({ listPerson: response.blockList })
+                if (this._isMounted === true) {
+                    this.setState({ listPerson: response.blockList })
+                }
             })
             .catch((error) => console.log(error))
     }

@@ -11,13 +11,22 @@ class Home extends Component {
 		this.state = {
 			recommended: []
 		}
+		this._isMounted = true
 	}
 
 	componentWillMount() {
 		const { dataUser } = this.context
 		recommended(dataUser.userName, dataUser.orientation, dataUser.age)
-			.then((res) => this.setState({ recommended: res.recommended }))
+			.then((res) => {
+				if (this._isMounted === true) {
+					this.setState({ recommended: res.recommended })
+				}
+			})
 			.catch((error) => console.log(error))
+	}
+
+	componentWillUnmount() {
+		this._isMounted = false
 	}
 
 	onClick = (id, profilName) => {

@@ -103,6 +103,7 @@ class CollectionView extends Component {
         }
     }
     filterList = (listPerson) => {
+        console.log(listPerson.length)
         let newListPerson = this.filterAge(listPerson)
         newListPerson = this.filterLocation(newListPerson)
         newListPerson = this.filterTag(newListPerson)
