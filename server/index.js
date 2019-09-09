@@ -16,9 +16,10 @@ const connection = mysql.createConnection({
 	host: "localhost",
 	user: "root",
 	password: "input305",
-	database: "matcha",
+	//database: "matcha",
 	multipleStatements: true,
 })
+
 
 fs.existsSync("../client/public/imageProfil") || fs.mkdirSync("../client/public/imageProfil", 0777)
 
@@ -164,15 +165,6 @@ let createTableMatcha =
                 populareScore int(11) NOT NULL DEFAULT '0'
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 `
-/*
-connection.query(createTableMatcha, (error, results) => {
-        if (error) {
-                console.log(error)
-        } else {
-                console.log(results)
-        }
-})
-*/
 
 const suffleArray = (array) => {
 	let arrayIsShuffle = []
@@ -213,7 +205,7 @@ const startFaker = () => {
 							const randomTag = Math.floor(Math.random() * 5)
 							let i = 0
 							listInterestArray = suffleArray(listInterestArray)
-							while (i < randomTag) {
+							while (i <= randomTag) {
 								listInterestPerson += listInterestArray[i]
 								i++
 							}
@@ -226,10 +218,10 @@ const startFaker = () => {
 								i++
 							}
 							const fakeProfil = {
-								userName: faker.fake("{{name.firstName}}"),
+								userName: faker.fake("{{name.firstName}}").replace(/'/g, "\\'"),
 								email: faker.internet.email(),
-								lastName: faker.fake("{{name.lastName}}"),
-								firstName: faker.fake("{{name.firstName}}"),
+								lastName: faker.fake("{{name.lastName}}").replace(/'/g, "\\'"),
+								firstName: faker.fake("{{name.firstName}}").replace(/'/g, "\\'"),
 								age: Math.floor(Math.random() * 132) + 18,
 								lastConnection: faker.date.recent(),
 								confirmKeyOk: 1,
@@ -239,14 +231,14 @@ const startFaker = () => {
 								listInterest: listInterestPerson,
 								userLocation: `${faker.address.latitude()},${faker.address.longitude()}`,
 								userApproximateLocation: `${faker.address.latitude()},${faker.address.longitude()}`,
-								userAddress: faker.address.streetAddress(),
-								userApproximateCity: faker.address.city(),
+								userAddress: faker.address.streetAddress().replace(/'/g, "\\'"),
+								userApproximateCity: faker.address.city().replace(/'/g, "\\'"),
 								populareScore: Math.floor(Math.random() * 100),
 							}
 							let sql = `INSERT INTO profil (userName, password, email, lastName, firstName, age, lastConnection, confirmKeyOk) VALUES ('${fakeProfil.userName}', '${hash}', '${fakeProfil.email}', '${fakeProfil.lastName}', '${fakeProfil.firstName}', ${fakeProfil.age}, '${fakeProfil.lastConnection}', 1);`
 							sql += `INSERT INTO userinfos (userName, biography, gender, orientation, listInterest, userLocation, userApproximateLocation, userAddress, userApproximateCity, populareScore) VALUES ('${fakeProfil.userName}', '${fakeProfil.biography}', '${fakeProfil.gender}', '${fakeProfil.orientation}', '${fakeProfil.listInterest}', '${fakeProfil.userLocation}', '${fakeProfil.userApproximateLocation}', '${fakeProfil.userAddress}', '${fakeProfil.userApproximateCity}', ${fakeProfil.populareScore});`
 							for (let i = 0; i < arrayPicture.length; i++) {
-								sql += `INSERT INTO picturesusers (userId, picture) VALUES ((SELECT id FROM profil WHERE userName='${fakeProfil.userName}'), '${arrayPicture[i]}');`
+								sql += `INSERT INTO picturesusers (userId, picture) VALUES ((SELECT id FROM profil WHERE userName='${fakeProfil.userName}' LIMIT 1), '${arrayPicture[i]}');`
 							}
 							connection.query(sql, (error, results) => {
 								if (error) {
@@ -254,7 +246,7 @@ const startFaker = () => {
 								} else {
 									let i = 0
 									while (i < arrayPicture.length) {
-										image(faker.image.avatar(), arrayPicture[i], results[0].insertId)
+										image(faker.image.avatar(), arrayPicture[i], results[0].insertId, i)
 										i++
 									}
 								}
@@ -268,8 +260,29 @@ const startFaker = () => {
 	})
 }
 
+const sqlCreateDatabase = `CREATE DATABASE IF NOT EXISTS matcha`
+
+connection.query(sqlCreateDatabase, (error, results) => {
+	if (error) {
+		console.log("error in creating database", error)
+	}
+	console.log("databse created")
+	connection.changeUser({ database: "matcha" }, (error) => {
+		if (error) {
+			console.log('error in changing database', err)
+      		return
+		}
+		connection.query(createTableMatcha, (error) => {
+			if (error) {
+				console.log("error in creating table", error)
+			}
+			startFaker()
+		})
+	})
+})
+
 var https = require('https');
-const image = (url, namePicture, userId) => {
+const image = (url, namePicture, userId, i) => {
 https.get(url, (resp) => {
     resp.setEncoding('base64');
     body = "data:" + resp.headers["content-type"] + ";base64,";
@@ -279,17 +292,15 @@ https.get(url, (resp) => {
 		fs.existsSync(pathDir, 0777) || fs.mkdirSync(pathDir, 0777)
         fs.writeFile(`${pathDir}/${namePicture}`, body.replace("data:image/jpeg;base64,", ""), "base64", (error) => {
 			if (error) {
+				console.log(i)
 				throw (error)
 			}
-			console.log("save")
 		})
     })
 }).on('error', (e) => {
     console.log(`Got error: ${e.message}`)
 })
 }
-
-startFaker()
 
 app.post("/cookieDataUser", (req, res) => {
 	// We can obtain the session token from the requests cookies, which come with every request
