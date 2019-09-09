@@ -25,7 +25,7 @@ const ProfilBar = ({ userName, age, gender, inline, date }) => {
     let iconGender = null
     if (gender === 'Male') {
         iconGender = <span style={ styles.male }><FaMars /></span>
-    } else if (gender === 'Femme') {
+    } else if (gender === 'Female') {
         iconGender = <span style={ styles.female }><FaVenus /></span>
     }
 
@@ -42,7 +42,7 @@ const ProfilBar = ({ userName, age, gender, inline, date }) => {
                     }
                 }
             />
-            { (inline === 0) ? `Last connection are ${date}` : null }
+            { (inline === 0) ? `Last connection - ${date}` : null }
         </div>
     )
 }

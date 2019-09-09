@@ -89,7 +89,7 @@ class LikeUser extends Component {
                 'You are now able to discuss with this user',
                 'success'
             )
-                .then(() => socket.emit("NOTIFICATIONS_SENT", { reciever: profilName, notification: `${user} like you and you like hit so this is a match !!!` }))
+                .then(() => socket.emit("NOTIFICATIONS_SENT", { reciever: profilName, notification: `${user} liked your profile too, this is a MATCH !` }))
                 .catch((error) => console.log(error))
         } else if (response === -1) {
             deleteMatch(user, profilName)
@@ -114,11 +114,11 @@ class LikeUser extends Component {
 
         if (!like && isLikable) {
             socket.emit("SEND_LIKE", { reciever: profilName, sender: user, valueLike: 1 })
-            socket.emit("NOTIFICATIONS_SENT", { reciever: profilName, notification: `${user} like you` })
+            socket.emit("NOTIFICATIONS_SENT", { reciever: profilName, notification: `${user} liked your profile` })
         }
         else if (like && isLikable) {
             socket.emit("SEND_LIKE", { reciever: profilName, sender: user, valueLike: -1 })
-            socket.emit("NOTIFICATIONS_SENT", { reciever: profilName, notification: `${user} unlike you` })
+            socket.emit("NOTIFICATIONS_SENT", { reciever: profilName, notification: `${user} no longer like your profile` })
         }
     }
 
@@ -144,18 +144,7 @@ class LikeUser extends Component {
                                             }}>
                                                 This user liked your profile
                                             </div>
-                                        :
-                                            <div style={{
-                                                marginTop: 15,
-                                                marginBottom: 15,
-                                                textAlign: 'center',
-                                                backgroundColor: 'black',
-                                                padding: 15,
-                                                color: 'white',
-                                                borderRadius: 10
-                                            }}>
-                                                This user unliked your profile
-                                            </div>
+                                        : null
                                 }
                             </div>
                         )

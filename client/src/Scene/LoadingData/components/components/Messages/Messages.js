@@ -159,7 +159,7 @@ class Messages extends Component {
         const { socket, dataUser } = this.context
         const { profilYourMatch } = this.state
         if (message.trim() !== "") {
-            socket.emit("NOTIFICATIONS_SENT", {reciever: profilYourMatch, notification: `${dataUser.userName} send you a message` })
+            socket.emit("NOTIFICATIONS_SENT", {reciever: profilYourMatch, notification: `${dataUser.userName} sent you a new message` })
             socket.emit("MESSAGE_SENT", { chatId, message, reciever: profilYourMatch })
             this.setState({ messageValue: "" })
         }

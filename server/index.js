@@ -16,7 +16,6 @@ const connection = mysql.createConnection({
 	host: "localhost",
 	user: "root",
 	password: "input305",
-	//database: "matcha",
 	multipleStatements: true,
 })
 
@@ -24,10 +23,8 @@ const connection = mysql.createConnection({
 fs.existsSync("../client/public/imageProfil") || fs.mkdirSync("../client/public/imageProfil", 0777)
 
 const server = require("http").Server(app)
-const io = module.exports.io = require("socket.io")(server)
+const io = module.exports.io = require("socket.io")(server, { pingTimeout: 60000 })
 const SocketManager = require("./SocketManager")
-
-io.on(("connection"), SocketManager)
 
 const sendMail = (mail, text, subject) => {
 	let transporter = nodemailer.createTransport({
@@ -69,7 +66,6 @@ const saveImage = (dataPicture, userId, namePicture) => {
         	if (error) {
         	     throw (error)
         	}
-        	console.log("save")
         })
     }
 }
@@ -92,7 +88,7 @@ app.use(bodyParser.json({ limit: "5mb" }))
 app.use(cookieParser())
 
 app.get("/", (req, res) => {
-        res.send("hello from the products server")
+    res.send("hello from the products server")
 })
 
 let createTableMatcha =
@@ -188,7 +184,7 @@ const startFaker = () => {
 			if (results.length < 500) {
 				let j = 0
 				while (j < 500) {
-					bcrypt.hash("input305", saltRounds, (error, hash) => {
+					bcrypt.hash("Input305", saltRounds, (error, hash) => {
 						if (error) {
 							return error
 						} else {
@@ -199,8 +195,8 @@ const startFaker = () => {
 								"#NightParty",
 								"#Data Processing",
 							]
-							const genderArray = ["Male", "Femme"]
-							const orientationArray = ["Male", "Femme", "Bisexuelle"]
+							const genderArray = ["Male", "Female"]
+							const orientationArray = ["Male", "Female", "Bisexual"]
 							let listInterestPerson = ""
 							const randomTag = Math.floor(Math.random() * 5)
 							let i = 0
@@ -218,12 +214,11 @@ const startFaker = () => {
 								i++
 							}
 							const fakeProfil = {
-								userName: faker.fake("{{name.firstName}}").replace(/'/g, "\\'"),
-								email: faker.internet.email(),
+								userName: faker.fake("{{name.firstName}}").replace(/'/g, "\\'") + Math.floor(Math.random() * 100).toString(),
+								email: Math.floor(Math.random() * 100).toString() + faker.internet.email().replace(/'/g, "\\'"),
 								lastName: faker.fake("{{name.lastName}}").replace(/'/g, "\\'"),
 								firstName: faker.fake("{{name.firstName}}").replace(/'/g, "\\'"),
 								age: Math.floor(Math.random() * 132) + 18,
-								lastConnection: faker.date.recent(),
 								confirmKeyOk: 1,
 								biography: faker.lorem.text(),
 								gender: genderArray[Math.floor(Math.random() * 2)],
@@ -235,7 +230,7 @@ const startFaker = () => {
 								userApproximateCity: faker.address.city().replace(/'/g, "\\'"),
 								populareScore: Math.floor(Math.random() * 100),
 							}
-							let sql = `INSERT INTO profil (userName, password, email, lastName, firstName, age, lastConnection, confirmKeyOk) VALUES ('${fakeProfil.userName}', '${hash}', '${fakeProfil.email}', '${fakeProfil.lastName}', '${fakeProfil.firstName}', ${fakeProfil.age}, '${fakeProfil.lastConnection}', 1);`
+							let sql = `INSERT INTO profil (userName, password, email, lastName, firstName, age, lastConnection, confirmKeyOk) VALUES ('${fakeProfil.userName}', '${hash}', '${fakeProfil.email}', '${fakeProfil.lastName}', '${fakeProfil.firstName}', ${fakeProfil.age}, NOW(), 1);`
 							sql += `INSERT INTO userinfos (userName, biography, gender, orientation, listInterest, userLocation, userApproximateLocation, userAddress, userApproximateCity, populareScore) VALUES ('${fakeProfil.userName}', '${fakeProfil.biography}', '${fakeProfil.gender}', '${fakeProfil.orientation}', '${fakeProfil.listInterest}', '${fakeProfil.userLocation}', '${fakeProfil.userApproximateLocation}', '${fakeProfil.userAddress}', '${fakeProfil.userApproximateCity}', ${fakeProfil.populareScore});`
 							for (let i = 0; i < arrayPicture.length; i++) {
 								sql += `INSERT INTO picturesusers (userId, picture) VALUES ((SELECT id FROM profil WHERE userName='${fakeProfil.userName}' LIMIT 1), '${arrayPicture[i]}');`
@@ -276,6 +271,7 @@ connection.query(sqlCreateDatabase, (error, results) => {
 			if (error) {
 				console.log("error in creating table", error)
 			}
+			io.on(("connection"), SocketManager)
 			startFaker()
 		})
 	})
@@ -292,8 +288,7 @@ https.get(url, (resp) => {
 		fs.existsSync(pathDir, 0777) || fs.mkdirSync(pathDir, 0777)
         fs.writeFile(`${pathDir}/${namePicture}`, body.replace("data:image/jpeg;base64,", ""), "base64", (error) => {
 			if (error) {
-				console.log(i)
-				throw (error)
+				return (error)
 			}
 		})
     })
@@ -549,8 +544,8 @@ app.post("/users/add", (req, res) => {
 	} = req.body
 	bcrypt.hash(password, saltRounds, function(err, hash) {
 		let insertUserIntoBdd = `INSERT INTO profil (userName, password, email, lastname, firstname, age, confirmKey)
-		VALUES('${name}', '${hash}', '${email}', '${lastName}', '${firstName}', ${age}, ${confirmKey});`
-		insertUserIntoBdd += `INSERT INTO userinfos (userName, gender, orientation) VALUES ('${name}', 'Male', 'Bisexuelle')`
+		VALUES('${name.replace(/'/g, "\\'")}', '${hash}', '${email.replace(/'/g, "\\'")}', '${lastName.replace(/'/g, "\\'")}', '${firstName.replace(/'/g, "\\'")}', ${age}, ${confirmKey});`
+		insertUserIntoBdd += `INSERT INTO userinfos (userName, gender, orientation) VALUES ('${name}', 'Male', 'Bisexual')`
 		connection.query(insertUserIntoBdd, (error, results) => {
 			if (error) {
 				return res.send(error)
@@ -683,7 +678,7 @@ app.post("/users/updateInfosProfil", async(req, res) => {
 	const {
 		id, userName, newPassword, email, firstName, lastName, previousUserName, age,
 	} = req.body
-	const checkIfUserAlreadyExist = `SELECT * FROM profil WHERE id<>${id} AND (userName='${userName}' OR email='${email}')`
+	const checkIfUserAlreadyExist = `SELECT * FROM profil WHERE id<>${id} AND (userName='${userName.replace(/'/g, "\\'")}' OR email='${email.replace(/'/g, "\\'")}')`
 	connection.query(checkIfUserAlreadyExist, (error, results) => {
 		if (error) {
 			return res.send(error)
@@ -693,17 +688,17 @@ app.post("/users/updateInfosProfil", async(req, res) => {
 					if (error) {
 						return res.send(error)
 					}
-					let updateDataUser = `UPDATE profil SET userName='${userName}', password='${hash}', email='${email}', firstName='${firstName}', lastName='${lastName}', age='${age}' WHERE id=${id};`
-					updateDataUser += `UPDATE userinfos SET userName='${userName}' WHERE userName='${previousUserName}';`
-					updateDataUser += `UPDATE profilmatch SET firstPerson='${userName}' WHERE firstPerson='${previousUserName}';`
-					updateDataUser += `UPDATE profilmatch SET secondPerson='${userName}' WHERE secondPerson='${previousUserName}';`
-					updateDataUser += `UPDATE notifications SET notificationUser='${userName}' WHERE notificationUser='${previousUserName}';`
-					updateDataUser += `UPDATE messages SET fromUser='${userName}' WHERE fromUser='${previousUserName}';`
-					updateDataUser += `UPDATE messages SET toUser='${userName}' WHERE toUser='${previousUserName}';`
-					updateDataUser += `UPDATE listblockprofil SET user='${userName}' WHERE user='${previousUserName}';`
-					updateDataUser += `UPDATE likeuser SET userName='${userName}' WHERE userName='${previousUserName}';`
-					updateDataUser += `UPDATE likeuser SET profilName='${userName}' WHERE profilName='${previousUserName}';`
-					updateDataUser += `UPDATE fakeuser SET fakeUser='${userName}' WHERE fakeUser='${previousUserName}';`
+					let updateDataUser = `UPDATE profil SET userName='${userName.replace(/'/g, "\\'")}', password='${hash}', email='${email.replace(/'/g, "\\'")}', firstName='${firstName.replace(/'/g, "\\'")}', lastName='${lastName.replace(/'/g, "\\'")}', age='${age}' WHERE id=${id};`
+					updateDataUser += `UPDATE userinfos SET userName='${userName.replace(/'/g, "\\'")}' WHERE userName='${previousUserName.replace(/'/g, "\\'")}';`
+					updateDataUser += `UPDATE profilmatch SET firstPerson='${userName.replace(/'/g, "\\'")}' WHERE firstPerson='${previousUserName.replace(/'/g, "\\'")}';`
+					updateDataUser += `UPDATE profilmatch SET secondPerson='${userName.replace(/'/g, "\\'")}' WHERE secondPerson='${previousUserName.replace(/'/g, "\\'")}';`
+					updateDataUser += `UPDATE notifications SET notificationUser='${userName.replace(/'/g, "\\'")}' WHERE notificationUser='${previousUserName.replace(/'/g, "\\'")}';`
+					updateDataUser += `UPDATE messages SET fromUser='${userName.replace(/'/g, "\\'")}' WHERE fromUser='${previousUserName.replace(/'/g, "\\'")}';`
+					updateDataUser += `UPDATE messages SET toUser='${userName.replace(/'/g, "\\'")}' WHERE toUser='${previousUserName.replace(/'/g, "\\'")}';`
+					updateDataUser += `UPDATE listblockprofil SET user='${userName.replace(/'/g, "\\'")}' WHERE user='${previousUserName.replace(/'/g, "\\'")}';`
+					updateDataUser += `UPDATE likeuser SET userName='${userName.replace(/'/g, "\\'")}' WHERE userName='${previousUserName.replace(/'/g, "\\'")}';`
+					updateDataUser += `UPDATE likeuser SET profilName='${userName.replace(/'/g, "\\'")}' WHERE profilName='${previousUserName.replace(/'/g, "\\'")}';`
+					updateDataUser += `UPDATE fakeuser SET fakeUser='${userName.replace(/'/g, "\\'")}' WHERE fakeUser='${previousUserName.replace(/'/g, "\\'")}';`
 					connection.query(updateDataUser, (error, results) => {
 						if (error) {
 							return res.send(error)
@@ -735,7 +730,7 @@ app.post("/users/updateInfosPersonal", async(req, res) => {
 	} = req.body
 	const text = (biography === null) ? "" : biography
 	const interest = (listInterest === null) ? "" : listInterest
-	const updateUserInfos = `UPDATE userinfos SET orientation='${orientation}', gender='${gender}', biography='${text.replace(/'/g, "\\'")}', listInterest='${interest}' WHERE userName='${userName}'`
+	const updateUserInfos = `UPDATE userinfos SET orientation='${orientation}', gender='${gender}', biography='${text.replace(/'/g, "\\'")}', listInterest='${interest}' WHERE userName='${userName.replace(/'/g, "\\'")}'`
 	connection.query(updateUserInfos, (error, results) => {
 		if (error) {
 			return res.send(error)
@@ -798,8 +793,8 @@ app.post("/users/listBlockProfil", async(req, res) => {
 	if (result === false) {
 		return res.json({ authentified: false })
 	}
-	const { userName, orientation, limit } = req.body
-	const listBlock = `SELECT p.*, u.biography, u.gender, u.orientation, u.listInterest, u.userAddress, u.userLocation, u.userApproximateLocation, u.populareScore, picturesusers.picture FROM profil p INNER JOIN userinfos u ON p.userName=u.userName INNER JOIN picturesusers ON picturesusers.userId=p.id WHERE p.userName NOT IN (SELECT blockProfil FROM listblockprofil WHERE user='${userName}') AND p.userName<>'${userName}' ${(orientation !== "Bisexuelle") ? `AND u.gender='${orientation}'` : ""} GROUP BY p.id LIMIT ${limit}`
+	const { userName, orientation, limit, gender } = req.body
+	const listBlock = `SELECT p.*, u.biography, u.gender, u.orientation, u.listInterest, u.userAddress, u.userLocation, u.userApproximateLocation, u.populareScore, picturesusers.picture FROM profil p INNER JOIN userinfos u ON p.userName=u.userName INNER JOIN picturesusers ON picturesusers.userId=p.id WHERE p.userName NOT IN (SELECT blockProfil FROM listblockprofil WHERE user='${userName}') AND p.userName<>'${userName}' ${(orientation !== "Bisexual") ? `AND u.gender='${orientation}'` : ""} AND u.orientation='${gender}' GROUP BY p.id LIMIT ${limit}`
 	connection.query(listBlock, (error, results) => {
 		if (error) {
 			return res.send(error)
@@ -814,8 +809,8 @@ app.post("/users/recommended", async(req, res) => {
 	if (result === false) {
 		return res.json({ authentified: false })
 	}
-	const { userName, orientation, age } = req.body
-	const query = `SELECT p.*, u.biography, u.gender, u.orientation, u.listInterest, u.userAddress, u.userLocation, u.userApproximateLocation, u.populareScore, picturesusers.picture FROM profil p INNER JOIN userinfos u ON p.userName=u.userName INNER JOIN picturesusers ON picturesusers.userId=p.id WHERE p.userName NOT IN (SELECT blockProfil FROM listblockprofil WHERE user='${userName}') AND p.userName<>'${userName}' AND p.age > ${age} - 10 AND p.age < ${age} + 10 ${(orientation !== "Bisexuelle") ? `AND u.gender='${orientation}'` : ""} GROUP BY p.id ORDER BY u.populareScore ASC LIMIT 20`
+	const { userName, orientation, age, gender } = req.body
+	const query = `SELECT p.*, u.biography, u.gender, u.orientation, u.listInterest, u.userAddress, u.userLocation, u.userApproximateLocation, u.populareScore, picturesusers.picture FROM profil p INNER JOIN userinfos u ON p.userName=u.userName INNER JOIN picturesusers ON picturesusers.userId=p.id WHERE p.userName NOT IN (SELECT blockProfil FROM listblockprofil WHERE user='${userName}') AND p.userName<>'${userName}' AND p.age > ${age} - 10 AND p.age < ${age} + 10 ${(orientation !== "Bisexual") ? `AND u.gender='${orientation}'` : ""} AND u.orientation='${gender}' GROUP BY p.id ORDER BY u.populareScore ASC`
 	connection.query(query, (error, results) => {
 		if (error) {
 			return res.send(error)
@@ -961,7 +956,6 @@ const verifyToken = async(req) => {
 	let cookiesArray = req.headers.cookie
 	let list = {}
 	if (cookiesArray === undefined) {
-		console.log(1)
 		return false
 	}
 	cookiesArray.split(";").forEach((cookie) => {
@@ -976,15 +970,12 @@ const verifyToken = async(req) => {
           if (result.length === 1) {
             return true
           } else {
-			console.log(2)
             return false
           }
     } catch (e) {
 	if (e instanceof jwt.JsonWebTokenError) {
-			console.log(3)
 			return false
 		}
-		console.log(4)
 		return false
 	}
 }
@@ -1105,8 +1096,8 @@ app.post("/users/findUser", async(req, res) => {
 	if (result === false) {
 		return res.json({ authentified: false })
 	}
-	const { id } = req.body
-	const getAllName = `SELECT p.id, p.userName FROM profil p INNER JOIN picturesusers i ON i.userId=p.id WHERE p.id<>${id} GROUP BY p.id`	
+	const { id, userName } = req.body
+	const getAllName = `SELECT p.id, p.userName FROM profil p INNER JOIN picturesusers i ON i.userId=p.id WHERE p.userName NOT IN (SELECT blockProfil FROM listblockprofil WHERE user='${userName}') AND p.id<>${id} GROUP BY p.id`	
 	connection.query(getAllName, (error, results) => {
 		if (error) {
 			return res.send(error)
@@ -1172,33 +1163,6 @@ app.post("/users/getListPersonLikeYou", async(req, res) => {
 		}
 	})
 })
-
-const populareScore = (profilName, like) => {
-	const selectScore = `SELECT likeUser FROM likeuser WHERE profilName='${profilName}'`
-	connection.query(selectScore, (error, results) => {
-		if (error) {
-			return
-		} else {
-			const valueLike = (1 / results.length) * 100
-			let populareScore = 0
-			results.forEach((like) => {
-				if (like.likeUser === 1) {
-					populareScore += valueLike
-				} else {
-					populareScore -= valueLike
-				}
-			})
-			const insertPopulareScore = `UPDATE userinfos SET populareScore=${populareScore} WHERE userName='${profilName}';`
-			connection.query(insertPopulareScore, (error, results) => {
-				if (error) {
-						return false
-				} else {
-						return true
-				}
-			})
-		}
-	})
-}
 
 server.listen(4000, () => {
         console.log(`Server is launch on port 4000`)

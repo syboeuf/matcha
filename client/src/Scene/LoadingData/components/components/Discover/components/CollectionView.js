@@ -69,11 +69,11 @@ const listTagArray = [
     "#NigthParty",
     "#Data processing",
 ]
-const defaultAgeMin = 10
-const defaultAgeMax = 50
+const defaultAgeMin = 18
+const defaultAgeMax = 150
 const defaultDistanceMin = 0
-const defaultDistanceMax = 30
-const defaultPopulareScoreMin = 10
+const defaultDistanceMax = 100
+const defaultPopulareScoreMin = 0
 const defaultPopulareScoreMax = 100
 class CollectionView extends Component {
     constructor(props) {

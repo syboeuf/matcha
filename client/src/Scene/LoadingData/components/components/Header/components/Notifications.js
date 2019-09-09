@@ -128,9 +128,9 @@ class Notifications extends Component {
 
     render() {
         const { notificationsArray, checkRead } = this.state
-        if (notificationsArray === null) {
-            return <div />
-        }
+        //if (notificationsArray === null) {
+        //    return <div />
+        //}
         return (
             <div ref={ this.selector }>
 				<span

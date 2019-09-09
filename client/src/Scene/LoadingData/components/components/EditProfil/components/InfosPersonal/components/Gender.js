@@ -3,7 +3,7 @@ import PropTypes from "prop-types"
 
 import RadioInput from "components/RadioInput"
 
-const radioInputArray = ["Male", "Femme"]
+const radioInputArray = ["Male", "Female"]
 
 const Gender = ({ optionChecked, onChangeValue }) => (
     <div>

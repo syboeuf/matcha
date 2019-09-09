@@ -163,6 +163,7 @@ module.exports = (socket) => {
                     if (error) {
                         return
                     } else {
+                        populareScore(reciever, valueLike)
                         if (results[1].length > 0 && results[1][0].likeUser === 1 && valueLike === 1) {
                             socket.emit("SEND_LIKE", 1)
                         } else if (valueLike === -1) {
@@ -211,14 +212,23 @@ const sendTypingToChat = (user) => {
 
 const sendMessageToChat = (sender) => {
     return (chatId, message, reciever) => {
-        const dataMessage = createMessage({ message, sender })
-        io.emit(`MESSAGE_RECIEVED-${chatId}`, dataMessage)
-        const sql = `INSERT INTO messages (fromUser, toUser, message, date) VALUES('${sender}', '${reciever}', '${message.replace(/'/g, "\\'")}', NOW());`
-        connection.query(sql, (error, results) => {
+        const checkuserBlock = `SELECT * FROM listblockprofil WHERE user='${reciever}' AND blockProfil='${sender}'`
+        connection.query(checkuserBlock, (error, results) => {
             if (error) {
                 return error
             } else {
-                return
+                if (results.length === 0) {
+                    const dataMessage = createMessage({ message, sender })
+                    io.emit(`MESSAGE_RECIEVED-${chatId}`, dataMessage)
+                    const sql = `INSERT INTO messages (fromUser, toUser, message, date) VALUES('${sender}', '${reciever}', '${message.replace(/'/g, "\\'")}', NOW());`
+                    connection.query(sql, (error, results) => {
+                        if (error) {
+                            return error
+                        } else {
+                            return
+                        }
+                    })
+                }
             }
         })
     }
@@ -308,4 +318,37 @@ const updateLastConnection = (userName) => {
             return
         }
     })
+}
+
+const populareScore = (profilName, like) => {
+	const selectScore = `SELECT likeUser FROM likeuser WHERE profilName='${profilName}'`
+	connection.query(selectScore, (error, results) => {
+		if (error) {
+			return
+		} else {
+			const valueLike = (1 / results.length) * 100
+			let populareScore = 100
+			results.forEach((like) => {
+				if (like.likeUser === 1) {
+					populareScore += valueLike
+				} else {
+					populareScore -= valueLike
+                }
+            })
+            if (populareScore <= 0) {
+                populareScore = 0
+            }
+            if (populareScore >= 100) {
+                populareScore = 100
+            }
+			const insertPopulareScore = `UPDATE userinfos SET populareScore=${populareScore} WHERE userName='${profilName}';`
+			connection.query(insertPopulareScore, (error, results) => {
+				if (error) {
+						return false
+				} else {
+						return true
+				}
+			})
+		}
+	})
 }

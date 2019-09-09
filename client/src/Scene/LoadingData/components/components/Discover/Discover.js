@@ -33,7 +33,7 @@ class Discover extends Component {
     getListPerson = () => {
         const { maxShowProfil } = this.state
         const { dataUser } = this.context
-        blockList(dataUser.userName, dataUser.orientation, maxShowProfil)
+        blockList(dataUser.userName, dataUser.orientation, maxShowProfil, dataUser.gender)
             .then((response) => {
                 if (this._isMounted === true) {
                     this.setState({ listPerson: response.blockList })
@@ -51,7 +51,7 @@ class Discover extends Component {
     chooseDataPerson = (dataPerson) => {
         const { history } = this.props
         const { dataUser, socket } = this.context
-        socket.emit("NOTIFICATIONS_SENT", { reciever: dataPerson.userName, notification: `${dataUser.userName} visit you're profil` })
+        socket.emit("NOTIFICATIONS_SENT", { reciever: dataPerson.userName, notification: `${dataUser.userName} visited your profile` })
         history.push("/InfosPerson", { data: { id: dataPerson.id, userName: dataUser.userName, profilName: dataPerson.userName } })
     }
 

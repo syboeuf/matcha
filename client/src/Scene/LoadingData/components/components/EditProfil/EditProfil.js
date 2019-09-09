@@ -35,7 +35,7 @@ class EditProfil extends Component {
         return (
             <div>
                 {
-                    (width > 768)
+                    (width > 991)
                         ? (
                             <div className="edit-profil">
                                 <div className="row center" style={{width: '70%', marginTop: 80}}>

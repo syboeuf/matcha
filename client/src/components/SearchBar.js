@@ -16,7 +16,7 @@ class SearchBar extends React.Component {
     }
     componentWillMount() {
         const { dataUser } = this.context
-        getAllProfilName(dataUser.id)
+        getAllProfilName(dataUser.id, dataUser.userName)
             .then((response) => this.setState({ arrayProfilName: response.allProfilName }))
             .catch((error) => console.log(error))
     }
@@ -32,7 +32,7 @@ class SearchBar extends React.Component {
     onClick = (id, profilName) => {
         const { history } = this.props
         const { dataUser, socket } = this.context
-        socket.emit("NOTIFICATIONS_SENT", { reciever: profilName, notification: `${dataUser.userName} visit you're profil` })
+        socket.emit("NOTIFICATIONS_SENT", { reciever: profilName, notification: `${dataUser.userName} visited your profile` })
         history.push("/InfosPerson", { data: { id, userName: dataUser.userName, profilName } })
     }
     render() {

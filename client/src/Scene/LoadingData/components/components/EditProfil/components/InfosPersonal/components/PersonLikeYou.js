@@ -32,13 +32,16 @@ class PersonLikeYou extends Component {
         return (
             <div style={{ display: 'flex', flexWrap: 'wrap', padding: 30 }}>
                 <div className="center" style={{ width: '40%' }}>
+                    <h2>Last notifications</h2>
                     {
                         listOfNotif.map((notif, index) => (
                             <p key={ `notif-${index}` }>{ notif.notificationType }</p>
                         ))
                     }
                 </div>
-                <div className="center" style={{ display: 'flex', flexWrap: 'wrap', width: '45%'}}>
+                <div className="center" style={{ display: 'flex', flexDirection: 'column', width: '45%'}}>
+                    <h2>Last persons who liked you</h2>
+                    <div style={{ display: 'flex', flexWrap: 'wrap'}}>
                     {
                         listOfPerson.map((person, index) => (
                             (person.likeUser === 1)
@@ -55,6 +58,7 @@ class PersonLikeYou extends Component {
                                 : null
                         ))
                     }
+                    </div>
                 </div>
             </div>
         )

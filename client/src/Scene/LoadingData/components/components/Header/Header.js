@@ -63,7 +63,7 @@ class Header extends React.Component {
                         <div style={ { display: "flex", float: "right", alignItems: "center", fontSize: "1.3em" } }>
                             <span onClick={ () => history.push("/Discover") } className="header-link"><span style={{ verticalAlign: 'middle', marginRight: 5 }}><FaRegHeart /></span>Discover</span>
                             <span onClick={ () => history.push("/Messages") } className="header-link"><span style={{ verticalAlign: 'middle', marginRight: 5 }}><FaRegEnvelope /></span>Messages</span>
-                            { (width > 767) ? <Notifications /> : null }
+                            { (width > 767) ? <span className="header-link"><Notifications /></span> : null }
                             <span style={{ marginRight: 20, height: 70 }}><Menu /></span>
                         </div>
                     </div>

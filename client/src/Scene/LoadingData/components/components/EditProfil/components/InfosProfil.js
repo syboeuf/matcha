@@ -150,6 +150,12 @@ class InfosProfil extends Component {
                                                     title: 'Oops...',
                                                     text: 'Password is not secure',
                                                 })
+                                            } else if (response === 4) {
+                                                Swal.fire({
+                                                    type: 'error',
+                                                    title: 'Oops...',
+                                                    text: 'Invalid age',
+                                                })
                                             }
                                             else {
                                                 Swal.fire({

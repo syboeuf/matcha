@@ -1,6 +1,6 @@
 import React, { Component } from "react"
 import { UserConsumer } from "store/UserProvider"
-import { recommended } from "utils/fileProvider"
+import { recommended, calculDistance } from "utils/fileProvider"
 
 class Home extends Component {
 
@@ -14,12 +14,47 @@ class Home extends Component {
 		this._isMounted = true
 	}
 
-	componentWillMount() {
+	compare = (a, b) => {
+		const distanceA = a.distance
+		const distanceB = b.distance
+
+		let comparison = 0;
+		if (distanceA > distanceB) {
+		  comparison = 1;
+		} else if (distanceA < distanceB) {
+		  comparison = -1;
+		}
+		return comparison;
+	  }
+	  
+
+	componentDidMount() {
 		const { dataUser } = this.context
-		recommended(dataUser.userName, dataUser.orientation, dataUser.age)
+		recommended(dataUser.userName, dataUser.orientation, dataUser.age, dataUser.gender)
 			.then((res) => {
 				if (this._isMounted === true) {
-					this.setState({ recommended: res.recommended })
+					let userLocation
+					let recommendedArray = []
+
+					if (dataUser.userLocation !== null) {
+						userLocation = dataUser.userLocation.split(',')
+					} else {
+						userLocation = dataUser.userApproximateLocation.split(",")
+					}
+					res.recommended.forEach((user) => {
+						let profilLocation
+						if (user.userLocation !== null) {
+							profilLocation = user.userLocation.split(",")
+						} else {
+							profilLocation = user.userApproximateLocation.split(",")
+						}
+						
+						const distance = calculDistance(userLocation[0], userLocation[1], profilLocation[0], profilLocation[1])
+						user.distance = distance
+						recommendedArray.push(user)
+					})
+					recommendedArray.sort(this.compare)
+					this.setState({ recommended: recommendedArray.slice(0, 19) })
 				}
 			})
 			.catch((error) => console.log(error))

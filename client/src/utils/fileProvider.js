@@ -47,8 +47,8 @@ export const getUserProfil = (id, profilName) => {
         .catch((error) => console.log(error))
 }
 
-export const getAllProfilName = (id) => {
-    return fetch("http://localhost:4000/users/findUser", optionsFetch({ id }))
+export const getAllProfilName = (id, userName) => {
+    return fetch("http://localhost:4000/users/findUser", optionsFetch({ id, userName }))
         .then((response) => response.json())
         .then((responseJson) => responseJson)
         .catch((error) => console.log(error))
@@ -191,11 +191,13 @@ export const recoverPassword = (newPassword, key) => {
 
 export const updateInfosProfil = (id, previousUserName, dataArray) => {
     const infosProfilUser = { id, previousUserName, ...dataArray }
-    const { email, newPassword } = infosProfilUser
+    const { email, newPassword, age } = infosProfilUser
     if (!checkEmail(email)) {
         return new Promise((resolve) => resolve(2))
     } else if (!checkPassword(newPassword)) {
         return new Promise((resolve) => resolve(3))
+    } else if (age < 18 || age > 150) {
+        return new Promise((resolve) => resolve(4))
     } else {
         return fetch("http://localhost:4000/users/updateInfosProfil", optionsFetch(infosProfilUser))
             .then((response) => response.text())
@@ -216,15 +218,15 @@ export const deleteMatch = (user, profilName) => {
     fetch("http://localhost:4000/users/deleteMatch", optionsFetch({ user, profilName }))
 }
 
-export const blockList = (userName, orientation, limit) => {
-    return fetch("http://localhost:4000/users/listBlockProfil", optionsFetch({ userName, orientation, limit }))
+export const blockList = (userName, orientation, limit, gender) => {
+    return fetch("http://localhost:4000/users/listBlockProfil", optionsFetch({ userName, orientation, limit, gender }))
         .then((response) => response.json())
         .then((responseJson) => responseJson)
         .catch((error) => console.log(error))
 }
 
-export const recommended = (userName, orientation, age) => {
-    return fetch("http://localhost:4000/users/recommended", optionsFetch({ userName, orientation, age }))
+export const recommended = (userName, orientation, age, gender) => {
+    return fetch("http://localhost:4000/users/recommended", optionsFetch({ userName, orientation, age, gender }))
         .then((response) => response.json())
         .then((responseJson) => responseJson)
         .catch((error) => console.log(error))

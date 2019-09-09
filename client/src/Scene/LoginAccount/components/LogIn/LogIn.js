@@ -10,6 +10,8 @@ import Typography from "@material-ui/core/Typography"
 import { withStyles } from "@material-ui/core/styles"
 import Container from "@material-ui/core/Container"
 
+import Swal from "sweetalert2"
+
 import { checkLogIn } from "utils/fileProvider"
 
 import Form from "components/Form"
@@ -77,7 +79,11 @@ class LogIn extends Component {
                     setNewDataUser(response)
                     history.push("/", { dataUser: { ...response } })
                 } else {
-                    alert("Wrong userName or password or the user is already log !!!")
+                    Swal.fire(
+                        'Error',
+                        'Invalid password or username',
+                        'error'
+                    )
                 }
             })
             .catch((error) => console.log(error))

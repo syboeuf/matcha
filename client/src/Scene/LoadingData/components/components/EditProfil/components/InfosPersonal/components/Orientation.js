@@ -3,7 +3,7 @@ import PropTypes from "prop-types"
 
 import RadioInput from "components/RadioInput"
 
-const radioInputArray = ["Male", "Femme", "Bisexuelle"]
+const radioInputArray = ["Male", "Female", "Bisexual"]
 
 const Orientation = ({ optionChecked, onChangeValue }) => (
     <div>
