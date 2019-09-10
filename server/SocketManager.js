@@ -50,6 +50,7 @@ module.exports = (socket) => {
     })
 
     socket.on("LOGOUT", () => {
+        console.log(socket.user.name)
         updateLastConnection(socket.user.name)
         connectedUsers = removeUser(connectedUsers, socket.user.name)
         userNotifications = removeUser(userNotifications, socket.user.name)
@@ -58,7 +59,8 @@ module.exports = (socket) => {
 
     socket.on("BAN", ({ banUserName }) => {
         if (banUserName in connectedUsers) {
-            socket.emit("BAN", 1)
+            const recieverSocket = connectedUsers[banUserName].socketId
+            socket.to(recieverSocket).emit("BAN", 1)
         }
     })
 

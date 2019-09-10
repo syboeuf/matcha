@@ -6,7 +6,7 @@ const fs = require("fs")
 const connection = mysql.createConnection({
 	host: "localhost",
 	user: "root",
-	password: "input305",
+	password: "",
 	multipleStatements: true,
 })
 
@@ -222,6 +222,7 @@ https.get(url, (resp) => {
 		fs.existsSync(pathDir, 0777) || fs.mkdirSync(pathDir, 0777)
         fs.writeFile(`${pathDir}/${namePicture}`, body.replace("data:image/jpeg;base64,", ""), "base64", (error) => {
 			if (error) {
+				console.log(error)
 				return (error)
 			}
 		})

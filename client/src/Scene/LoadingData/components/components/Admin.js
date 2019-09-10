@@ -6,7 +6,6 @@ import Form from "components/Form"
 
 import { withStyles } from "@material-ui/core/styles"
 import { UserConsumer } from 'store/UserProvider'
-import { Socket } from 'net';
 
 const styles = {
     searchBarResult: {

@@ -3,6 +3,7 @@ import { withRouter } from "react-router-dom"
 import { FaRegHeart, FaRegEnvelope } from "react-icons/fa"
 import { UserConsumer } from "store/UserProvider"
 import { ReactComponent as MenuIcon } from '../../../../../menu.svg'
+import { deleteCookie } from "utils/fileProvider"
 
 import Grid from '@material-ui/core/Grid'
 
@@ -31,9 +32,12 @@ class Header extends React.Component {
     }
 
     logout = (response) => {
+        const { history } = this.props
         const { socket } = this.context
         if (response === 1) {
+            deleteCookie()
             socket.emit("LOGOUT")
+            history.push("./Login")
         }
     }
 
