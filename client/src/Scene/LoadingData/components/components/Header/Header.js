@@ -19,11 +19,22 @@ class Header extends React.Component {
     }
 
     componentDidMount() {
+        const { socket } = this.context
+        socket.on("BAN", this.logout)
         window.addEventListener("resize", this.updateDimension)
     }
 
     componentWillUnmount() {
+        const { socket } = this.context
+        socket.off("BAN")
         window.removeEventListener("resize", this.updateDimension)
+    }
+
+    logout = (response) => {
+        const { socket } = this.context
+        if (response === 1) {
+            socket.emit("LOGOUT")
+        }
     }
 
     updateDimension = () => {

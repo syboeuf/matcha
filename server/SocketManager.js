@@ -1,18 +1,4 @@
-const mysql = require("mysql")
-
-const connection = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "input305",
-	database: "matcha",
-	multipleStatements: true,
-})
-
-connection.connect(err => {
-	if (err) {
-		return err
-	}
-})
+const connection = require("./Connection.js").query
 
 const io = require("./index.js").io
 
@@ -68,6 +54,12 @@ module.exports = (socket) => {
         connectedUsers = removeUser(connectedUsers, socket.user.name)
         userNotifications = removeUser(userNotifications, socket.user.name)
         io.emit("USER_DISCONNECTED", connectedUsers)
+    })
+
+    socket.on("BAN", ({ banUserName }) => {
+        if (banUserName in connectedUsers) {
+            socket.emit("BAN", 1)
+        }
     })
 
     socket.on("INLINE_USER_CONNECTED", () => {
@@ -136,6 +128,7 @@ module.exports = (socket) => {
                         notificationArray.push({ message: notif.notificationType, read: notif.notificationRead })
                     })
                     userNotifications = { [reciever]: getNotifications({ notificationArray }) }
+                    console.log(userNotifications[reciever])
                     socket.emit("GET_NOTIFICATIONS", userNotifications[reciever])
                 }
             })

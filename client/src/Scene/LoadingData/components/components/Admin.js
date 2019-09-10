@@ -5,7 +5,8 @@ import { banUser, getAllProfilName } from "utils/fileProvider"
 import Form from "components/Form"
 
 import { withStyles } from "@material-ui/core/styles"
-import { UserConsumer } from 'store/UserProvider';
+import { UserConsumer } from 'store/UserProvider'
+import { Socket } from 'net';
 
 const styles = {
     searchBarResult: {
@@ -47,11 +48,12 @@ class Admin extends Component {
     }
 
     banUser = () => {
-        const { dataUser } = this.context
+        const { dataUser, socket } = this.context
         const { banForm } = this.state
         const banTime = (24*60*60) * banForm[1].value
         const timestampUnban = Math.floor(Date.now() / 1000) + banTime
         if (banForm[0].value !== dataUser.userName) {
+            socket.emit("BAN", { banUserName: banForm[0].value })
             banUser(banForm[0].value, timestampUnban) 
         }
     }
