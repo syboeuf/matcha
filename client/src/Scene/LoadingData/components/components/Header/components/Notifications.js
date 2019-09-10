@@ -33,7 +33,7 @@ class Notifications extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            notificationsArray: null,
+            notificationsArray: { "notificationArray": [] },
             maxNotifications: limitNotificationNumber,
             isOpen: false,
             checkRead: undefined,

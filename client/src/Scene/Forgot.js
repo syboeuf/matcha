@@ -59,6 +59,7 @@ class Confirm extends Component {
     }
 
     setNewPassword = () => {
+        const { history } = this.props
         const { key, inputArray } = this.state;
         const password = inputArray[0].value;
         const confirmPassword = inputArray[1].value;
@@ -69,7 +70,7 @@ class Confirm extends Component {
                     'Success',
                     'Your password has been updated',
                     'success'
-                )
+                ).then(() => history.push('/')).catch((error) => console.log(error))
             } else {
                 Swal.fire(
                     'Error',
@@ -92,7 +93,7 @@ class Confirm extends Component {
             .then((res) => {
                 if (res.success) {
 					this.setState({ confirmed: true })
-					this.setState({ user: res.user })
+                    this.setState({ user: res.user })
                 }
             })
 	}

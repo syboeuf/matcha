@@ -139,7 +139,8 @@ let createTableMatcha =
                 confirmKey bigint(20) DEFAULT NULL,
                 confirmKeyOk int(11) NOT NULL DEFAULT '0',
                 keyResetPassword varchar(255) DEFAULT NULL,
-                bantime varchar(50) NOT NULL DEFAULT '0'
+				bantime varchar(50) NOT NULL DEFAULT '0',
+				admin INT NOT NULL DEFAULT '0'
         ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
         CREATE TABLE IF NOT EXISTS profilmatch (
                 id int primary key auto_increment,

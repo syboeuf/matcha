@@ -66,8 +66,8 @@ const listTagArray = [
     "#Movie",
     "#Manga",
     "#Sport",
-    "#NigthParty",
-    "#Data processing",
+    "#NightParty",
+    "#Data Processing",
 ]
 const defaultAgeMin = 18
 const defaultAgeMax = 150

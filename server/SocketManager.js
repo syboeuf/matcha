@@ -80,6 +80,7 @@ module.exports = (socket) => {
 
     socket.on("USERNAME_UPDATED", ({ newUserName }) => {
         if (socket.user.name !== newUserName) {
+            console.log(userNotifications)
             userNotifications[newUserName] = userNotifications[socket.user.name]
             delete userNotifications[socket.user.name]
             connectedUsers[newUserName] = { ...connectedUsers[socket.user.name], name: newUserName }
