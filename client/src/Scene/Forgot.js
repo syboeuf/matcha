@@ -96,16 +96,19 @@ class Confirm extends Component {
         const { key } = this.state;
         verifyKeyForgot(key)
             .then((res) => {
+                const { history } = this.props
                 if (res.success && this._isMounted) {
 					this.setState({ confirmed: true })
                     this.setState({ user: res.user })
+                } else if (res.success === false) {
+                    history.push("/")
                 }
             })
 	}
 
     render() {
         const { confirmed, user, inputArray } = this.state;
-        const { classes, history } = this.props;
+        const { classes } = this.props;
         return (
             <div style={{ height: '100vh', backgroundImage: 'url(../../background.png)', backgroundPosition: 'center', backgroundRepeat: 'no-repeat',backgroundSize: 'cover' }}>
             {
@@ -121,7 +124,7 @@ class Confirm extends Component {
                             </div>
                         </Container>
                     </div>
-                ) : history.push("/Login")
+                ) : null
             }
             </div>
         )
