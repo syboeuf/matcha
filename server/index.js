@@ -33,17 +33,15 @@ const sendMail = (mail, text, subject) => {
 		},
 	})
 	let helperOptions = {
-		from: '"Fred Foo 👻" <foo@example.com>',
+		from: '"Matcha Team 👻" <team@matcha.com>',
 		to: mail,
 		subject,
 		text,
 	}
 	transporter.sendMail(helperOptions, (error, info) => {
 		if (error) {
-			return console.log(error)
+			return (error)
 		}
-		console.log("the message was sent")
-		console.log(info)
 	})
 }
 
@@ -51,11 +49,11 @@ const saveImage = (dataPicture, userId, namePicture) => {
     const pathDir = `../client/public/imageProfil/${userId}`
     fs.existsSync(pathDir, 0777) || fs.mkdirSync(pathDir, 0777)
     if (fs.existsSync(`${pathDir}/${namePicture}`)) {
-        console.log("soon")
+        //console.log("soon")
     } else {
         fs.writeFile(`${pathDir}/${namePicture}`, Buffer.from(dataPicture.split(",")[1], "base64"), (error) => {
         	if (error) {
-        	     throw (error)
+        	     return (error)
         	}
         })
     }
@@ -943,5 +941,5 @@ app.post("/users/getListPersonLikeYou", async(req, res) => {
 })
 
 server.listen(4000, () => {
-        console.log(`Server is launch on port 4000`)
+    console.log(`Server is launch on port 4000`)
 })

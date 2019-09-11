@@ -6,13 +6,12 @@ const fs = require("fs")
 const connection = mysql.createConnection({
 	host: "localhost",
 	user: "root",
-	password: "",
+	password: "input305",
 	multipleStatements: true,
 })
 
 connection.connect(err => {
 	if (err) {
-        console.log(err)
 		return err
 	}
 })
@@ -192,19 +191,18 @@ const sqlCreateDatabase = `CREATE DATABASE IF NOT EXISTS matcha`
 function startDb () {
     connection.query(sqlCreateDatabase, (error, results) => {
         if (error) {
-            console.log("error in creating database", error)
+            return error
         }
         console.log("databse created")
         connection.changeUser({ database: "matcha" }, (error) => {
             if (error) {
-                console.log('error in changing database', err)
+                //console.log('error in changing database', err)
                   return
             }
             connection.query(createTableMatcha, (error) => {
                 if (error) {
-                    console.log("error in creating table", error)
+                    return error
                 }
-                //io.on(("connection"), SocketManager)
                 startFaker()
             })
         })
@@ -222,13 +220,10 @@ https.get(url, (resp) => {
 		fs.existsSync(pathDir, 0777) || fs.mkdirSync(pathDir, 0777)
         fs.writeFile(`${pathDir}/${namePicture}`, body.replace("data:image/jpeg;base64,", ""), "base64", (error) => {
 			if (error) {
-				console.log(error)
 				return (error)
 			}
 		})
     })
-}).on('error', (e) => {
-    console.log(`Got error: ${e.message}`)
 })
 }
 

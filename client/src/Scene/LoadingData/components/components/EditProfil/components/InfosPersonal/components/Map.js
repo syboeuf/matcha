@@ -142,7 +142,6 @@ class MapComp extends Component {
                                     iconSize: [30, 30],
                                 })
                                 let position
-                                console.log()
                                 if (data.userLocation === null) {
                                     position = data.userApproximateLocation.split(",")
                                 } else {

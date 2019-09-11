@@ -66,7 +66,8 @@ class Home extends Component {
 
 	onClick = (id, profilName) => {
 		const { history } = this.props
-		const { dataUser } = this.context
+		const { dataUser, socket } = this.context
+		socket.emit("NOTIFICATIONS_SENT", { reciever: profilName, notification: `${dataUser.userName} visited your profile` })
 		history.push("/InfosPerson", { data: { id, userName: dataUser.userName, profilName } })
 	}
 
@@ -100,7 +101,7 @@ class Home extends Component {
 							recommended.map((profile) => {
 								return (
 									<div onClick={ () => this.onClick(profile.id, profile.userName) } className="col" style={{ textAlign: 'center', margin: 20 }} key={`user-${profile.userName}`}>
-										<img src={`${process.env.PUBLIC_URL}/imageProfil/${profile.id}/${profile.picture}`} alt="profile-pic" style={{ width: 200, height: 200, objectFit: 'cover', borderRadius: '50%' }}/>
+										<img src={`${process.env.PUBLIC_URL}/imageProfil/${profile.id}/${profile.picture}`} alt="profile-pic" className="pointer" style={{ width: 200, height: 200, objectFit: 'cover', borderRadius: '50%' }}/>
 										<p style={{paddingLeft: 20, paddingRight: 20, wordBreak: 'break-word'}}>{profile.userName} ({profile.age} ans)</p>
 									</div>
 								)

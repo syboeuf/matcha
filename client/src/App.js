@@ -14,7 +14,7 @@ const App = () => {
     if (user.socket === null) {
         const socket = io(socketUrl)
         socket.on("connect", () => {
-            console.log("connected in client")
+            // console.log("connected in client")
         })
         user.setSocket(socket)
     }

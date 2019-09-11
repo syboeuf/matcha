@@ -49,6 +49,7 @@ class PersonLikeYou extends Component {
                                     <div onClick={ () => this.onClick(person.id, person.userName) } className="col" style={{textAlign: 'center', margin: 10}} key={ `person-${index}` }>
                                         <img
                                             alt="picProfil"
+                                            className="pointer"
                                             style={ { width: 100, height: 100, objectFit: 'cover', borderRadius: '50%' } }
                                             src={ `${process.env.PUBLIC_URL}/imageProfil/${person.id}/${person.picture}` }
                                         />

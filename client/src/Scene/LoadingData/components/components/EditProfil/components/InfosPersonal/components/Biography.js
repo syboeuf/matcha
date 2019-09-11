@@ -6,7 +6,7 @@ import TextField from "@material-ui/core/TextField"
 const Biography = ({ value, onChangeValue }) => (
     <div>
         <TextField
-            placeholder="Put your summary here !!!"
+            placeholder="Talk about you here..."
             required
             type="text"
             label="Biography"

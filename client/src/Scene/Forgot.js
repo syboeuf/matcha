@@ -46,10 +46,15 @@ class Confirm extends Component {
                 { name: "confirmPassword", type: "password", value: "", placeholder: "Confirm password" },
             ]
         }
+        this._isMounted = true
     }
 
     componentWillMount() {
         this.confirmKey();
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false
     }
 
     onChangeValue = (e, index) => {
@@ -91,7 +96,7 @@ class Confirm extends Component {
         const { key } = this.state;
         verifyKeyForgot(key)
             .then((res) => {
-                if (res.success) {
+                if (res.success && this._isMounted) {
 					this.setState({ confirmed: true })
                     this.setState({ user: res.user })
                 }
@@ -100,7 +105,7 @@ class Confirm extends Component {
 
     render() {
         const { confirmed, user, inputArray } = this.state;
-        const { classes } = this.props;
+        const { classes, history } = this.props;
         return (
             <div style={{ height: '100vh', backgroundImage: 'url(../../background.png)', backgroundPosition: 'center', backgroundRepeat: 'no-repeat',backgroundSize: 'cover' }}>
             {
@@ -116,7 +121,7 @@ class Confirm extends Component {
                             </div>
                         </Container>
                     </div>
-                ) : <div />
+                ) : history.push("/Login")
             }
             </div>
         )

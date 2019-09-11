@@ -50,7 +50,6 @@ module.exports = (socket) => {
     })
 
     socket.on("LOGOUT", () => {
-        console.log(socket.user.name)
         updateLastConnection(socket.user.name)
         connectedUsers = removeUser(connectedUsers, socket.user.name)
         userNotifications = removeUser(userNotifications, socket.user.name)
@@ -74,7 +73,6 @@ module.exports = (socket) => {
 
     socket.on("USERNAME_UPDATED", ({ newUserName }) => {
         if (socket.user.name !== newUserName) {
-            console.log(userNotifications)
             userNotifications[newUserName] = userNotifications[socket.user.name]
             delete userNotifications[socket.user.name]
             connectedUsers[newUserName] = { ...connectedUsers[socket.user.name], name: newUserName }
@@ -130,7 +128,6 @@ module.exports = (socket) => {
                         notificationArray.push({ message: notif.notificationType, read: notif.notificationRead })
                     })
                     userNotifications = { [reciever]: getNotifications({ notificationArray }) }
-                    console.log(userNotifications[reciever])
                     socket.emit("GET_NOTIFICATIONS", userNotifications[reciever])
                 }
             })

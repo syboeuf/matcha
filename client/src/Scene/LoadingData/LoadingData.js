@@ -88,8 +88,6 @@ class LoadingData extends Component {
         if (userConnected === true) {
             deleteCookie()
             history.push("/login")
-        } else {
-            console.log("user connect")
         }
     }
     setUser = (user) => {

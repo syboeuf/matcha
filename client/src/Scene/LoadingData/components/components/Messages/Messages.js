@@ -294,7 +294,13 @@ class Messages extends Component {
                                             onKeyUp={ (e) => this.typingIsProgress(e, activeChat.id) }
                                             onChange={ (e) => this.setState({ messageValue: e.target.value }) }
                                         />
-                                        <button onClick={ () => (activeChat !== null) ? this.sendMessage(activeChat.id, messageValue) : null }>Send</button>
+                                        <div
+                                            className="pointer"
+                                            style={{ textAlign: 'center', color: '#1DA1F2', border: '1px solid #1DA1F2', borderRadius: 10, padding: 10, margin: 10 }}
+                                            onClick={ () => (activeChat !== null) ? this.sendMessage(activeChat.id, messageValue) : null }
+                                        >
+                                            Send
+                                        </div>
                                     </div>
                                 )
                                 : (
